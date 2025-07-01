@@ -50,17 +50,18 @@
       }
 
       .logo-placeholder {
-        width: 32px;
-        height: 32px;
-        background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: 600;
-        font-size: 14px;
-      }
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.logo-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 
       .title-group {
         flex: 1;
@@ -376,9 +377,11 @@
 
       <div class="header">
         <div class="logo-area">
-          <div class="logo-placeholder">Gm</div>
+            <div class="logo-placeholder">
+                <img src="/images/gmLogo.png" alt="Logo" />
+              </div>
           <div class="title-group">
-            <div class="app-title">Gm Patterning</div>
+            <div class="app-title">Underline Pattern</div>
             <div class="app-subtitle">Generative design system</div>
           </div>
         </div>
@@ -397,7 +400,7 @@
           </div>
 
           <div class="status-indicator" id="statusIndicator">
-            Fixed boundary architecture
+           
           </div>
         </div>
 
