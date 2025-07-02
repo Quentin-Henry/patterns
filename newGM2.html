@@ -1,0 +1,1944 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grid Architecture - Morphological Design System v2</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+          "Helvetica Neue", sans-serif;
+        background: #fafbfc;
+        height: 100vh;
+        display: flex;
+        overflow: hidden;
+        color: #1a1a1a;
+      }
+
+      .controls {
+        width: 320px;
+        background: #ffffff;
+        border-right: 1px solid #e8eaed;
+        overflow-y: auto;
+        z-index: 10;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
+        position: relative;
+      }
+
+      .controls.collapsed {
+        transform: translateX(-100%);
+      }
+
+      .header {
+        padding: 24px 24px 20px 24px;
+        border-bottom: 1px solid #f1f3f4;
+        background: #ffffff;
+      }
+
+      .logo-area {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .logo-placeholder {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #0956ff, #667eea);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .title-group {
+        flex: 1;
+      }
+
+      .app-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1a1a1a;
+        line-height: 1.2;
+        margin-bottom: 2px;
+      }
+
+      .app-subtitle {
+        font-size: 12px;
+        color: #5f6368;
+        font-weight: 400;
+        line-height: 1.3;
+      }
+
+      .toggle-btn {
+        position: absolute;
+        right: -48px;
+        top: 24px;
+        width: 40px;
+        height: 40px;
+        background: #ffffff;
+        border: 1px solid #e8eaed;
+        border-radius: 8px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .toggle-btn:hover {
+        background: #f8f9fa;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+      }
+
+      .controls-content {
+        padding: 0 24px 24px 24px;
+      }
+
+      .control-section {
+        margin-bottom: 32px;
+      }
+
+      .control-section:last-child {
+        margin-bottom: 0;
+      }
+
+      .section-title {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: #3c4043;
+        letter-spacing: -0.01em;
+      }
+
+      .control-item {
+        margin-bottom: 20px;
+      }
+
+      .control-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .control-label {
+        display: block;
+        font-size: 12px;
+        color: #5f6368;
+        margin-bottom: 8px;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+      }
+
+      .control-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      input[type="range"] {
+        flex: 1;
+        height: 2px;
+        background: #e8eaed;
+        border-radius: 1px;
+        outline: none;
+        -webkit-appearance: none;
+        cursor: pointer;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        background: #0956ff;
+        border-radius: 50%;
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 2px 6px rgba(25, 118, 210, 0.3);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      input[type="range"]::-webkit-slider-thumb:hover {
+        background: #0956ff;
+        transform: scale(1.1);
+        box-shadow: 0 3px 8px rgba(25, 118, 210, 0.4);
+      }
+
+      .value-display {
+        font-size: 12px;
+        color: #5f6368;
+        width: 32px;
+        text-align: right;
+        font-weight: 500;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .button-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .option-btn {
+        padding: 10px 12px;
+        border: 1px solid #e8eaed;
+        border-radius: 6px;
+        background: #ffffff;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        text-align: center;
+        font-weight: 500;
+        color: #3c4043;
+        letter-spacing: -0.01em;
+      }
+
+      .option-btn:hover {
+        background: #f8f9fa;
+        border-color: #dadce0;
+      }
+
+      .option-btn.active {
+        background: #0956ff;
+        color: #ffffff;
+        border-color: #0956ff;
+        box-shadow: 0 2px 4px rgba(25, 118, 210, 0.2);
+      }
+
+      .primary-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .primary-btn {
+        padding: 12px 16px;
+        border: 1px solid #e8eaed;
+        border-radius: 8px;
+        background: #ffffff;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        text-align: center;
+        font-weight: 500;
+        color: #3c4043;
+        letter-spacing: -0.01em;
+      }
+
+      .primary-btn:hover {
+        background: #f8f9fa;
+        border-color: #dadce0;
+      }
+
+      .primary-btn.active {
+        background: #0956ff;
+        color: #ffffff;
+        border-color: #0956ff;
+        box-shadow: 0 2px 6px rgba(25, 118, 210, 0.24);
+      }
+
+      .canvas-container {
+        flex: 1;
+        background: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      #canvas {
+        background: #ffffff;
+        display: block;
+        border-radius: 0;
+        box-shadow: none;
+      }
+
+      .export-btn {
+        width: 100%;
+        padding: 12px 16px;
+        background: #0956ff;
+        color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        letter-spacing: -0.01em;
+        margin-top: 24px;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .export-btn:hover {
+        background: #0956ff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+      }
+
+      .stats {
+        background: #f8f9fa;
+        padding: 12px 16px;
+        border-radius: 8px;
+        font-size: 11px;
+        color: #5f6368;
+        margin-top: 20px;
+        border: 1px solid #f1f3f4;
+        line-height: 1.4;
+        font-weight: 400;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .status-indicator {
+        background: #e3f2fd;
+        border: 1px solid #bbdefb;
+        border-radius: 6px;
+        padding: 8px 12px;
+        margin: 12px 0;
+        font-size: 11px;
+        color: #0956ff;
+        text-align: center;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+      }
+
+      .status-indicator.flowing {
+        background: #e8f5e8;
+        border-color: #c8e6c9;
+        color: #2e7d32;
+      }
+
+      .section-divider {
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent 0%,
+          #e8eaed 20%,
+          #e8eaed 80%,
+          transparent 100%
+        );
+        margin: 24px 0;
+      }
+
+      .controls::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-image: linear-gradient(#f8f9fa 1px, transparent 1px),
+          linear-gradient(90deg, #f8f9fa 1px, transparent 1px);
+        background-size: 20px 20px;
+        opacity: 0.3;
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      /* Color Palette Styles */
+      .color-palette-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-top: 8px;
+      }
+
+      .palette-option {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        border: 1px solid #e8eaed;
+        border-radius: 6px;
+        background: #ffffff;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 12px;
+        font-weight: 500;
+        color: #3c4043;
+        letter-spacing: -0.01em;
+      }
+
+      .palette-option:hover {
+        background: #f8f9fa;
+        border-color: #dadce0;
+      }
+
+      .palette-option.active {
+        background: #f8f9fa;
+        border-color: #0956ff;
+        box-shadow: 0 2px 4px rgba(25, 118, 210, 0.1);
+      }
+
+      .color-swatch {
+        display: flex;
+        gap: 4px;
+      }
+
+      .swatch-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 3px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .palette-name {
+        flex: 1;
+        text-align: left;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="controls" id="controls">
+      <div class="toggle-btn" id="toggleBtn" title="Toggle Controls">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="#5f6368"
+          stroke-width="2"
+        >
+          <polyline points="15,18 9,12 15,6"></polyline>
+        </svg>
+      </div>
+
+      <div class="header">
+        <div class="logo-area">
+          <div class="logo-placeholder">GM</div>
+          <div class="title-group">
+            <div class="app-title">Grid Engine v2</div>
+            <div class="app-subtitle">Modular morphological system</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls-content">
+        <div class="control-section">
+          <div class="primary-controls">
+            <button class="primary-btn active" id="gridView">
+              Blueprint View
+            </button>
+            <button class="primary-btn" id="cleanView">Production View</button>
+          </div>
+
+          <div class="primary-controls">
+            <button class="primary-btn active" id="stillMode">
+              Base Config
+            </button>
+            <button class="primary-btn" id="flowMode">Flow State</button>
+          </div>
+
+          <div class="status-indicator" id="statusIndicator">
+            Static Blueprint Mode
+          </div>
+        </div>
+
+        <div class="control-section">
+          <div class="section-title">Color Language</div>
+
+          <div class="control-item">
+            <label class="control-label">Palette</label>
+            <div class="color-palette-grid">
+              <div class="palette-option active" data-palette="ocean">
+                <div class="color-swatch">
+                  <div class="swatch-color" style="background: #0956ff"></div>
+                  <div class="swatch-color" style="background: #ffffff"></div>
+                </div>
+                <span class="palette-name">Gm Blue & White</span>
+              </div>
+
+              <div class="palette-option" data-palette="warm">
+                <div class="color-swatch">
+                  <div class="swatch-color" style="background: #e8e6e3"></div>
+                  <div class="swatch-color" style="background: #ffffff"></div>
+                </div>
+                <span class="palette-name">Warm Gray 100 & White</span>
+              </div>
+
+              <div class="palette-option" data-palette="dark">
+                <div class="color-swatch">
+                  <div class="swatch-color" style="background: #000000"></div>
+                  <div class="swatch-color" style="background: #201e1c"></div>
+                </div>
+                <span class="palette-name">Dark Gray & Black</span>
+              </div>
+
+              <div class="palette-option" data-palette="navy">
+                <div class="color-swatch">
+                  <div class="swatch-color" style="background: #48505e"></div>
+                  <div class="swatch-color" style="background: #655e7c"></div>
+                </div>
+                <span class="palette-name">Cool Gray 500 & 600</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-section">
+          <div class="section-title">Motion Dynamics</div>
+
+          <div class="control-item">
+            <label class="control-label">Velocity</label>
+            <div class="control-row">
+              <input
+                type="range"
+                id="flowSpeed"
+                min="0.3"
+                max="2.5"
+                step="0.1"
+                value="1"
+              />
+              <span class="value-display" id="flowSpeedValue">1.0</span>
+            </div>
+          </div>
+
+          <div class="control-item">
+            <label class="control-label">Precision</label>
+            <div class="control-row">
+              <input
+                type="range"
+                id="morphSmoothness"
+                min="2"
+                max="12"
+                step="0.5"
+                value="6"
+              />
+              <span class="value-display" id="morphSmoothnessValue">6.0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <div class="control-section">
+          <div class="section-title">Blueprint Structure</div>
+
+          <div class="control-item">
+            <label class="control-label">Route Lanes</label>
+            <div class="control-row">
+              <input type="range" id="columns" min="2" max="12" value="6" />
+              <span class="value-display" id="columnsValue">6</span>
+            </div>
+          </div>
+
+          <div class="control-item">
+            <label class="control-label">Pattern Segments</label>
+            <div class="control-row">
+              <input type="range" id="baseCells" min="3" max="18" value="10" />
+              <span class="value-display" id="baseCellsValue">10</span>
+            </div>
+          </div>
+
+          <div class="control-item">
+            <label class="control-label">Span</label>
+            <div class="control-row">
+              <input
+                type="range"
+                id="frameWidth"
+                min="600"
+                max="1200"
+                value="800"
+              />
+              <span class="value-display" id="frameWidthValue">800</span>
+            </div>
+          </div>
+
+          <div class="control-item">
+            <label class="control-label">Depth</label>
+            <div class="control-row">
+              <input
+                type="range"
+                id="frameHeight"
+                min="400"
+                max="800"
+                value="600"
+              />
+              <span class="value-display" id="frameHeightValue">600</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-section">
+          <div class="section-title">Traffic Flow</div>
+
+          <div class="control-item">
+            <label class="control-label">Movement</label>
+            <div class="button-grid">
+              <button class="option-btn active" data-density="wave">
+                Highway
+              </button>
+              <button class="option-btn" data-density="pulse">
+                Acceleration
+              </button>
+              <button class="option-btn" data-density="sweep">
+                Lane Shift
+              </button>
+              <button class="option-btn" data-density="breath">Cruise</button>
+            </div>
+          </div>
+
+          <div class="control-item">
+            <label class="control-label">Traffic Density</label>
+            <div class="control-row">
+              <input
+                type="range"
+                id="densityRange"
+                min="0.4"
+                max="2.2"
+                step="0.1"
+                value="1.2"
+              />
+              <span class="value-display" id="densityRangeValue">1.2</span>
+            </div>
+          </div>
+
+          <div class="control-item">
+            <label class="control-label">Response Time</label>
+            <div class="control-row">
+              <input
+                type="range"
+                id="flowIntensity"
+                min="0.3"
+                max="1.8"
+                step="0.1"
+                value="0.8"
+              />
+              <span class="value-display" id="flowIntensityValue">0.8</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-section">
+          <div class="section-title">Design Language</div>
+
+          <div class="control-item">
+            <label class="control-label">Proportion System</label>
+            <div class="button-grid">
+              <button class="option-btn active" data-ratio="fibonacci">
+                Aerodynamic
+              </button>
+              <button class="option-btn" data-ratio="golden">Precision</button>
+              <button class="option-btn" data-ratio="harmonic">
+                Performance
+              </button>
+              <button class="option-btn" data-ratio="prime">Utility</button>
+            </div>
+          </div>
+
+          <div class="control-item">
+            <label class="control-label">Scale Variation</label>
+            <div class="control-row">
+              <input
+                type="range"
+                id="ratioVariance"
+                min="1.2"
+                max="4.5"
+                step="0.1"
+                value="2.8"
+              />
+              <span class="value-display" id="ratioVarianceValue">2.8</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-section">
+          <div class="section-title">Connection Points</div>
+
+          <div class="control-item">
+            <label class="control-label">Underline Weight</label>
+            <div class="control-row">
+              <input
+                type="range"
+                id="connectorSize"
+                min="1"
+                max="24"
+                value="5"
+              />
+              <span class="value-display" id="connectorSizeValue">5</span>
+            </div>
+          </div>
+
+          <div class="control-item">
+            <label class="control-label">Weight Variation</label>
+            <div class="control-row">
+              <input
+                type="range"
+                id="weightVariation"
+                min="1.0"
+                max="8.0"
+                step="0.2"
+                value="3.0"
+              />
+              <span class="value-display" id="weightVariationValue">3.0</span>
+            </div>
+          </div>
+
+          <div class="control-item">
+            <label class="control-label">Flow Response</label>
+            <div class="button-grid">
+              <button class="option-btn active" data-connector="fixed">
+                Static
+              </button>
+              <button class="option-btn" data-connector="flow">Adaptive</button>
+              <button class="option-btn" data-connector="inverse">
+                Counter
+              </button>
+              <button class="option-btn" data-connector="pulse">
+                Rhythmic
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button class="export-btn" onclick="exportGrid()">
+          Export Pattern Blueprint
+        </button>
+
+        <div class="stats" id="stats">
+          Base Config: 6×10 | 800×600 | Ocean Blue+Highway
+        </div>
+      </div>
+    </div>
+
+    <div class="canvas-container">
+      <canvas id="canvas"></canvas>
+    </div>
+
+    <script>
+      // ============================================================================
+      // MODULAR GRID SYSTEM v2.0 with Working Color Palettes
+      // ============================================================================
+
+      // Color Palette System
+      class ColorPalette {
+        constructor() {
+          this.palettes = {
+            ocean: {
+              name: "Ocean Blue",
+              background: "#ffffff",
+              canvasBackground: "#ffffff",
+              primary: "#0956ff",
+              secondary: "#667eea",
+              gridLight: "#e8f4fd",
+              gridMedium: "#e3f2fd",
+              gridDark: "#bbdefb",
+              cellBorder: "#e9ecef",
+              frameColor: "#667eea",
+              centerGuide: "#764ba2",
+              centerGuideStatic: "#f1f2f6",
+              shadowColor: "#0956ff",
+            },
+            warm: {
+              name: "Warm Grey",
+              background: "#ffffff",
+              canvasBackground: "#ffffff",
+              primary: "#E8E6E3",
+              secondary: "#a69384",
+              gridLight: "#ebe8e4",
+              gridMedium: "#e6e1db",
+              gridDark: "#d4cfc7",
+              cellBorder: "#ddd8d2",
+              frameColor: "#a69384",
+              centerGuide: "#8b7b6b",
+              centerGuideStatic: "#e6e1db",
+              shadowColor: "#8b7b6b",
+            },
+            dark: {
+              name: "Dark Mode",
+              background: "#201E1C",
+              canvasBackground: "#201E1C",
+              primary: "#000000",
+              secondary: "#2d2d2d",
+              gridLight: "#555555",
+              gridMedium: "#4a4a4a",
+              gridDark: "#363636",
+              cellBorder: "#505050",
+              frameColor: "#2d2d2d",
+              centerGuide: "#1a1a1a",
+              centerGuideStatic: "#4a4a4a",
+              shadowColor: "#1a1a1a",
+            },
+            navy: {
+              name: "Deep Blue",
+              background: "#48505E",
+              canvasBackground: "#48505E",
+              primary: "#656E7C",
+              secondary: "#3d566e",
+              gridLight: "#4a6278",
+              gridMedium: "#3f5a6f",
+              gridDark: "#2f4352",
+              cellBorder: "#445561",
+              frameColor: "#3d566e",
+              centerGuide: "#2c3e50",
+              centerGuideStatic: "#4a6278",
+              shadowColor: "#2c3e50",
+            },
+          };
+
+          this.currentPalette = "ocean";
+        }
+
+        setPalette(paletteName) {
+          if (this.palettes[paletteName]) {
+            this.currentPalette = paletteName;
+            this.updateCanvasBackground();
+          }
+        }
+
+        getCurrentPalette() {
+          return this.palettes[this.currentPalette];
+        }
+
+        getColor(colorKey) {
+          return this.palettes[this.currentPalette][colorKey];
+        }
+
+        updateCanvasBackground() {
+          const canvasContainer = document.querySelector(".canvas-container");
+          if (canvasContainer) {
+            canvasContainer.style.background =
+              this.getColor("canvasBackground");
+          }
+        }
+      }
+
+      // Configuration Management
+      class GridConfig {
+        constructor() {
+          this.params = {
+            // Grid architecture
+            columns: 6,
+            baseCells: 10,
+            frameWidth: 800,
+            frameHeight: 600,
+
+            // Base unit system
+            unitType: "brand",
+            unitComplexity: 6,
+            symbolDensity: 0.6,
+
+            // Mathematical systems
+            ratioSystem: "fibonacci",
+            ratioVariance: 2.8,
+
+            // Density flow
+            densityPattern: "wave",
+            densityRange: 1.2,
+            flowIntensity: 0.8,
+
+            // Connector system
+            connectorSize: 5,
+            weightVariation: 3.0,
+            connectorResponse: "fixed",
+
+            // Animation
+            isFlowing: false,
+            flowSpeed: 1,
+            morphSmoothness: 6,
+            showGrid: true,
+
+            // Color system
+            colorPalette: "ocean",
+          };
+        }
+
+        updateParam(key, value) {
+          this.params[key] = value;
+        }
+
+        getParam(key) {
+          return this.params[key];
+        }
+      }
+
+      // Mathematical Subdivision Visualizer
+      class MathematicalVisualizer {
+        constructor(config, colorPalette) {
+          this.config = config;
+          this.colorPalette = colorPalette;
+          this.baseUnits = 4;
+        }
+
+        renderCellSubdivisions(ctx, cell) {
+          if (!this.config.getParam("showGrid")) return;
+
+          const subdivisions = this.calculateSubdivisions(cell.ratio);
+          const unitType = this.config.getParam("unitType");
+
+          switch (unitType) {
+            case "brand":
+              this.renderBrandSubdivisions(ctx, cell, subdivisions);
+              break;
+            case "geometric":
+              this.renderGeometricSubdivisions(ctx, cell, subdivisions);
+              break;
+            case "organic":
+              this.renderOrganicSubdivisions(ctx, cell, subdivisions);
+              break;
+            case "minimal":
+            default:
+              this.renderMinimalSubdivisions(ctx, cell, subdivisions);
+              break;
+          }
+        }
+
+        calculateSubdivisions(ratio) {
+          // Convert ratio to subdivision count (reveal mathematical weight)
+          const baseSubdivisions = Math.ceil(ratio * this.baseUnits);
+          return Math.max(2, Math.min(12, baseSubdivisions));
+        }
+
+        renderMinimalSubdivisions(ctx, cell, subdivisions) {
+          // Ultra-minimal hairline guides that reveal the mathematical structure
+          ctx.save();
+          ctx.strokeStyle = this.config.getParam("isFlowing")
+            ? this.colorPalette.getColor("gridLight")
+            : this.colorPalette.getColor("gridMedium");
+          ctx.lineWidth = 0.5;
+          ctx.globalAlpha = 0.6;
+
+          const unitHeight = cell.height / subdivisions;
+
+          // Horizontal subdivision lines
+          for (let i = 1; i < subdivisions; i++) {
+            const y = cell.y + i * unitHeight;
+            ctx.beginPath();
+            ctx.moveTo(cell.x + cell.width * 0.1, y);
+            ctx.lineTo(cell.x + cell.width * 0.9, y);
+            ctx.stroke();
+          }
+
+          // Mathematical weight indicator (subtle)
+          const complexity = this.config.getParam("unitComplexity");
+          const density = this.config.getParam("symbolDensity");
+
+          if (subdivisions >= 6 && density > 0.4) {
+            // Show that this cell has high mathematical weight
+            ctx.strokeStyle = this.config.getParam("isFlowing")
+              ? this.colorPalette.getColor("gridDark")
+              : this.colorPalette.getColor("gridLight");
+            ctx.lineWidth = 0.3;
+
+            // Vertical indicators for high-ratio cells
+            const verticalUnits = Math.min(3, Math.floor(subdivisions / 3));
+            const unitWidth = cell.width / verticalUnits;
+
+            for (let i = 1; i < verticalUnits; i++) {
+              const x = cell.x + i * unitWidth;
+              ctx.beginPath();
+              ctx.moveTo(x, cell.y + cell.height * 0.1);
+              ctx.lineTo(x, cell.y + cell.height * 0.9);
+              ctx.stroke();
+            }
+          }
+
+          ctx.restore();
+        }
+
+        renderGeometricSubdivisions(ctx, cell, subdivisions) {
+          // Clean geometric grid based on mathematical ratios
+          ctx.save();
+          ctx.strokeStyle = this.config.getParam("isFlowing")
+            ? this.colorPalette.getColor("gridLight")
+            : this.colorPalette.getColor("gridMedium");
+          ctx.lineWidth = 0.4;
+          ctx.globalAlpha = 0.7;
+
+          const unitHeight = cell.height / subdivisions;
+
+          // Primary horizontal divisions
+          for (let i = 1; i < subdivisions; i++) {
+            const y = cell.y + i * unitHeight;
+            ctx.beginPath();
+            ctx.moveTo(cell.x, y);
+            ctx.lineTo(cell.x + cell.width, y);
+            ctx.stroke();
+          }
+
+          // Geometric pattern based on ratio
+          if (subdivisions >= 4) {
+            const verticalUnits = Math.ceil(subdivisions / 2);
+            const unitWidth = cell.width / verticalUnits;
+
+            ctx.lineWidth = 0.3;
+            for (let i = 1; i < verticalUnits; i++) {
+              const x = cell.x + i * unitWidth;
+              ctx.beginPath();
+              ctx.moveTo(x, cell.y);
+              ctx.lineTo(x, cell.y + cell.height);
+              ctx.stroke();
+            }
+          }
+
+          ctx.restore();
+        }
+
+        renderBrandSubdivisions(ctx, cell, subdivisions) {
+          // Brand-focused subdivisions that emphasize structure
+          ctx.save();
+          ctx.strokeStyle = this.config.getParam("isFlowing")
+            ? this.colorPalette.getColor("gridMedium")
+            : this.colorPalette.getColor("gridLight");
+          ctx.lineWidth = 0.5;
+          ctx.globalAlpha = 0.8;
+
+          const unitHeight = cell.height / subdivisions;
+
+          // Structured horizontal guides
+          for (let i = 1; i < subdivisions; i++) {
+            const y = cell.y + i * unitHeight;
+            const lineLength = i % 2 === 0 ? 0.8 : 0.6; // Alternating lengths
+
+            ctx.beginPath();
+            ctx.moveTo(cell.x + (cell.width * (1 - lineLength)) / 2, y);
+            ctx.lineTo(cell.x + (cell.width * (1 + lineLength)) / 2, y);
+            ctx.stroke();
+          }
+
+          // Corner indicators for high mathematical weight
+          if (subdivisions >= 6) {
+            ctx.strokeStyle = this.colorPalette.getColor("gridDark");
+            ctx.lineWidth = 1;
+
+            const cornerSize = Math.min(cell.width, cell.height) * 0.05;
+
+            // Top-left corner
+            ctx.beginPath();
+            ctx.moveTo(cell.x, cell.y + cornerSize);
+            ctx.lineTo(cell.x, cell.y);
+            ctx.lineTo(cell.x + cornerSize, cell.y);
+            ctx.stroke();
+
+            // Bottom-right corner
+            ctx.beginPath();
+            ctx.moveTo(cell.x + cell.width - cornerSize, cell.y + cell.height);
+            ctx.lineTo(cell.x + cell.width, cell.y + cell.height);
+            ctx.lineTo(cell.x + cell.width, cell.y + cell.height - cornerSize);
+            ctx.stroke();
+          }
+
+          ctx.restore();
+        }
+
+        renderOrganicSubdivisions(ctx, cell, subdivisions) {
+          // Organic flow-based subdivisions
+          ctx.save();
+          ctx.strokeStyle = this.config.getParam("isFlowing")
+            ? this.colorPalette.getColor("gridLight")
+            : this.colorPalette.getColor("gridMedium");
+          ctx.lineWidth = 0.4;
+          ctx.globalAlpha = 0.5;
+
+          const unitHeight = cell.height / subdivisions;
+
+          // Flowing horizontal guides
+          for (let i = 1; i < subdivisions; i++) {
+            const y = cell.y + i * unitHeight;
+            const wave = Math.sin(i * 0.5) * cell.width * 0.02;
+
+            ctx.beginPath();
+            ctx.moveTo(cell.x + wave, y);
+            ctx.lineTo(cell.x + cell.width + wave, y);
+            ctx.stroke();
+          }
+
+          ctx.restore();
+        }
+
+        renderUnderlineContext(ctx, connector, subdivisions) {
+          // Show how the underline relates to the mathematical subdivisions
+          if (!this.config.getParam("showGrid")) return;
+
+          ctx.save();
+          ctx.strokeStyle = this.colorPalette.getColor("gridDark");
+          ctx.lineWidth = 0.3;
+          ctx.globalAlpha = 0.4;
+
+          // Light guides showing the underline's mathematical basis
+          const unitWidth = connector.width / 6; // Base 6-unit system for underlines
+
+          for (let i = 1; i < 6; i++) {
+            const x = connector.x + i * unitWidth;
+            ctx.beginPath();
+            ctx.moveTo(x, connector.y);
+            ctx.lineTo(x, connector.y + connector.height);
+            ctx.stroke();
+          }
+
+          ctx.restore();
+        }
+      }
+
+      // Enhanced Connector System
+      class ConnectorSystem {
+        constructor(config) {
+          this.config = config;
+        }
+
+        calculateConnectorHeight(cellHeight, columnIndex, rowIndex, time) {
+          const baseSize = this.config.getParam("connectorSize");
+          const variation = this.config.getParam("weightVariation");
+          const response = this.config.getParam("connectorResponse");
+
+          let height = baseSize;
+
+          switch (response) {
+            case "flow":
+              height = this.calculateFlowResponse(cellHeight, variation);
+              break;
+            case "inverse":
+              height = this.calculateInverseResponse(
+                cellHeight,
+                baseSize,
+                variation
+              );
+              break;
+            case "pulse":
+              height = this.calculatePulseResponse(baseSize, variation, time);
+              break;
+            case "fixed":
+            default:
+              height = baseSize;
+              break;
+          }
+
+          return Math.max(1, Math.min(baseSize * variation, height));
+        }
+
+        calculateFlowResponse(cellHeight, variation) {
+          // More dramatic scaling based on cell height
+          const minHeight = 1;
+          const maxHeight = cellHeight * 0.2;
+          const scaleFactor = Math.pow(cellHeight / 50, 0.6); // Non-linear scaling
+
+          return minHeight + scaleFactor * (maxHeight - minHeight) * variation;
+        }
+
+        calculateInverseResponse(cellHeight, baseSize, variation) {
+          // Inverse relationship with enhanced variation
+          const inverseFactor = Math.pow(60 / Math.max(cellHeight, 10), 0.8);
+          return baseSize * inverseFactor * (variation * 0.5 + 0.5);
+        }
+
+        calculatePulseResponse(baseSize, variation, time) {
+          // Rhythmic pulsing with variation control
+          const pulsePhase = Math.sin(time * 3) * 0.5 + 0.5;
+          const minScale = 1 / variation;
+          const maxScale = variation;
+
+          return baseSize * (minScale + pulsePhase * (maxScale - minScale));
+        }
+      }
+
+      // Movement System Registry
+      class MovementSystems {
+        constructor() {
+          this.systems = {
+            wave: this.calculateWaveInterference.bind(this),
+            pulse: this.calculatePulseMovement.bind(this),
+            sweep: this.calculateSweepMovement.bind(this),
+            breath: this.calculateBreathMovement.bind(this),
+          };
+        }
+
+        calculate(pattern, normalizedPos, timeOffset) {
+          const system = this.systems[pattern];
+          return system ? system(normalizedPos, timeOffset) : 1.0;
+        }
+
+        calculateWaveInterference(normalizedPos, timeOffset) {
+          // Enhanced wave interference with mathematical significance
+          const goldenRatioPos = 0.618;
+          const goldenWave = this.createWaveFromSource(
+            normalizedPos,
+            goldenRatioPos,
+            timeOffset,
+            1.0,
+            2.4,
+            0
+          );
+
+          const fibonacciPos = 1 - 0.618;
+          const fibonacciWave = this.createWaveFromSource(
+            normalizedPos,
+            fibonacciPos,
+            timeOffset,
+            0.7,
+            1.618,
+            Math.PI / 3
+          );
+
+          const primePos = 1 / 3;
+          const primeWave = this.createWaveFromSource(
+            normalizedPos,
+            primePos,
+            timeOffset,
+            0.5,
+            3.0,
+            Math.PI / 2
+          );
+
+          const interference = goldenWave + fibonacciWave + primeWave;
+          const normalizedInterference = Math.tanh(interference) * 0.5 + 0.5;
+
+          return 0.4 + normalizedInterference * 1.2;
+        }
+
+        createWaveFromSource(
+          position,
+          sourcePos,
+          time,
+          amplitude,
+          frequency,
+          phaseOffset
+        ) {
+          const distance = Math.abs(position - sourcePos);
+          const distanceDecay = Math.exp(-distance * 2.0);
+          const spatialPhase = distance * frequency * Math.PI;
+          const temporalPhase = time * frequency;
+          const totalPhase = spatialPhase + temporalPhase + phaseOffset;
+
+          return amplitude * distanceDecay * Math.sin(totalPhase);
+        }
+
+        calculatePulseMovement(normalizedPos, timeOffset) {
+          const pulsePhase = Math.sin(timeOffset * 2) * 0.5 + 0.5;
+          const distance = Math.abs(normalizedPos - 0.5) * 2;
+          return 0.4 + pulsePhase * (1.2 - distance);
+        }
+
+        calculateSweepMovement(normalizedPos, timeOffset) {
+          const sweepPos = (timeOffset * 0.3) % 2;
+          const sweepDistance = Math.abs(
+            normalizedPos - (sweepPos > 1 ? 2 - sweepPos : sweepPos)
+          );
+          return 0.6 + (1 - sweepDistance) * 0.8;
+        }
+
+        calculateBreathMovement(normalizedPos, timeOffset) {
+          const breathPhase = Math.sin(timeOffset * 0.8) * 0.5 + 0.5;
+          const centerDistance = Math.abs(normalizedPos - 0.5);
+          return 0.4 + breathPhase * (1.4 - centerDistance * 1.5);
+        }
+      }
+
+      // Mathematical Sequence Provider
+      class MathSequences {
+        constructor() {
+          this.fibonacci = [1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
+          this.golden = [1, 1.618, 2.618, 4.236, 6.854];
+          this.primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
+        }
+
+        getRatioSequence(cellCount, columnIndex, system, variance) {
+          const ratios = [];
+
+          for (let i = 0; i < cellCount; i++) {
+            let ratio = 1.0;
+
+            switch (system) {
+              case "fibonacci":
+                const fibIndex = i % this.fibonacci.length;
+                ratio = this.fibonacci[fibIndex] / 8;
+                break;
+              case "golden":
+                const goldenIndex = i % this.golden.length;
+                ratio = this.golden[goldenIndex] / 6;
+                break;
+              case "harmonic":
+                ratio = (1 / (i + 1)) * 5;
+                break;
+              case "prime":
+                const primeIndex = i % this.primes.length;
+                ratio = this.primes[primeIndex] / 20;
+                break;
+            }
+
+            const minRatio = 1 / variance;
+            const maxRatio = variance;
+            ratio = minRatio + ratio * (maxRatio - minRatio);
+            ratios.push(Math.max(0.2, Math.min(4.0, ratio)));
+          }
+
+          return ratios;
+        }
+      }
+
+      // Main Grid System
+      class ModularGridSystem {
+        constructor() {
+          this.canvas = document.getElementById("canvas");
+          this.ctx = this.canvas.getContext("2d");
+
+          // Initialize modular components
+          this.config = new GridConfig();
+          this.colorPalette = new ColorPalette(); // Initialize color palette
+          this.mathematicalVisualizer = new MathematicalVisualizer(
+            this.config,
+            this.colorPalette
+          );
+          this.connectorSystem = new ConnectorSystem(this.config);
+          this.movementSystems = new MovementSystems();
+          this.mathSequences = new MathSequences();
+
+          // Animation state
+          this.time = 0;
+          this.animationFrame = null;
+          this.renderedCells = [];
+          this.renderedConnectors = [];
+
+          this.init();
+        }
+
+        init() {
+          this.setupCanvas();
+          this.setupControls();
+          this.generateGrid();
+          this.startAnimationLoop();
+        }
+
+        setupCanvas() {
+          const container = this.canvas.parentElement;
+          const resizeCanvas = () => {
+            const rect = container.getBoundingClientRect();
+            this.canvas.width = Math.floor(rect.width);
+            this.canvas.height = Math.floor(rect.height);
+            this.generateGrid();
+          };
+
+          resizeCanvas();
+          window.addEventListener("resize", resizeCanvas);
+        }
+
+        setupControls() {
+          // Toggle controls
+          const toggleBtn = document.getElementById("toggleBtn");
+          const controls = document.getElementById("controls");
+          if (toggleBtn && controls) {
+            toggleBtn.addEventListener("click", () => {
+              controls.classList.toggle("collapsed");
+            });
+          }
+
+          // Range controls
+          this.setupRangeControls();
+          this.setupButtonControls();
+          this.setupViewControls();
+          this.setupColorPalettes(); // Add color palette setup
+        }
+
+        setupColorPalettes() {
+          // Set up color palette selection
+          const paletteOptions = document.querySelectorAll(".palette-option");
+
+          paletteOptions.forEach((option) => {
+            option.addEventListener("click", () => {
+              const paletteName = option.dataset.palette;
+
+              // Update active state
+              paletteOptions.forEach((opt) => opt.classList.remove("active"));
+              option.classList.add("active");
+
+              // Update color palette
+              this.colorPalette.setPalette(paletteName);
+              this.config.updateParam("colorPalette", paletteName);
+
+              // Regenerate grid with new colors
+              this.generateGrid();
+
+              console.log(
+                `Switched to ${
+                  this.colorPalette.getCurrentPalette().name
+                } palette`
+              );
+            });
+          });
+        }
+
+        setupRangeControls() {
+          const rangeControls = [
+            "columns",
+            "baseCells",
+            "frameWidth",
+            "frameHeight",
+            "unitComplexity",
+            "symbolDensity",
+            "ratioVariance",
+            "densityRange",
+            "flowIntensity",
+            "connectorSize",
+            "weightVariation",
+            "flowSpeed",
+            "morphSmoothness",
+          ];
+
+          rangeControls.forEach((controlId) => {
+            const slider = document.getElementById(controlId);
+            const display = document.getElementById(controlId + "Value");
+
+            if (slider && display) {
+              display.textContent = slider.value;
+
+              slider.addEventListener("input", (e) => {
+                const value = parseFloat(e.target.value);
+                this.config.updateParam(controlId, value);
+                display.textContent =
+                  value % 1 === 0 ? value : value.toFixed(1);
+                this.generateGrid();
+              });
+            }
+          });
+        }
+
+        setupButtonControls() {
+          ["ratio", "density", "connector", "unit"].forEach((type) => {
+            document.querySelectorAll(`[data-${type}]`).forEach((btn) => {
+              btn.addEventListener("click", () => {
+                const value = btn.dataset[type];
+
+                if (type === "ratio")
+                  this.config.updateParam("ratioSystem", value);
+                else if (type === "density")
+                  this.config.updateParam("densityPattern", value);
+                else if (type === "connector")
+                  this.config.updateParam("connectorResponse", value);
+                else if (type === "unit")
+                  this.config.updateParam("unitType", value);
+
+                this.updateButtonSelection(`[data-${type}]`, value);
+                this.generateGrid();
+              });
+            });
+          });
+        }
+
+        setupViewControls() {
+          const stillBtn = document.getElementById("stillMode");
+          const flowBtn = document.getElementById("flowMode");
+          const gridBtn = document.getElementById("gridView");
+          const cleanBtn = document.getElementById("cleanView");
+
+          if (stillBtn && flowBtn) {
+            stillBtn.addEventListener("click", () => {
+              this.config.updateParam("isFlowing", false);
+              stillBtn.classList.add("active");
+              flowBtn.classList.remove("active");
+              this.updateStatusIndicator();
+            });
+
+            flowBtn.addEventListener("click", () => {
+              this.config.updateParam("isFlowing", true);
+              flowBtn.classList.add("active");
+              stillBtn.classList.remove("active");
+              this.updateStatusIndicator();
+            });
+          }
+
+          if (gridBtn && cleanBtn) {
+            gridBtn.addEventListener("click", () => {
+              this.config.updateParam("showGrid", true);
+              gridBtn.classList.add("active");
+              cleanBtn.classList.remove("active");
+            });
+
+            cleanBtn.addEventListener("click", () => {
+              this.config.updateParam("showGrid", false);
+              cleanBtn.classList.add("active");
+              gridBtn.classList.remove("active");
+            });
+          }
+        }
+
+        updateButtonSelection(selector, activeValue) {
+          document.querySelectorAll(selector).forEach((btn) => {
+            const dataAttr = selector.slice(6, -1);
+            btn.classList.toggle(
+              "active",
+              btn.dataset[dataAttr] === activeValue
+            );
+          });
+        }
+
+        updateStatusIndicator() {
+          const indicator = document.getElementById("statusIndicator");
+          if (!indicator) return;
+
+          const isFlowing = this.config.getParam("isFlowing");
+          const showGrid = this.config.getParam("showGrid");
+
+          if (isFlowing) {
+            indicator.textContent = "Flow State Active";
+            indicator.className = "status-indicator flowing";
+          } else {
+            indicator.textContent = `Static ${
+              showGrid ? "Blueprint" : "Production"
+            } Mode`;
+            indicator.className = "status-indicator";
+          }
+        }
+
+        generateGrid() {
+          this.renderedCells = [];
+          this.renderedConnectors = [];
+
+          const gridX =
+            (this.canvas.width - this.config.getParam("frameWidth")) / 2;
+          const gridY =
+            (this.canvas.height - this.config.getParam("frameHeight")) / 2;
+          const columnWidth =
+            this.config.getParam("frameWidth") /
+            this.config.getParam("columns");
+
+          for (let col = 0; col < this.config.getParam("columns"); col++) {
+            this.generateColumn(col, gridX, gridY, columnWidth);
+          }
+        }
+
+        generateColumn(columnIndex, gridX, gridY, columnWidth) {
+          const density = this.calculateDensityFlow(columnIndex);
+          const cellCount = Math.round(
+            this.config.getParam("baseCells") * density
+          );
+          const ratios = this.mathSequences.getRatioSequence(
+            cellCount,
+            columnIndex,
+            this.config.getParam("ratioSystem"),
+            this.config.getParam("ratioVariance")
+          );
+
+          const availableHeight = this.config.getParam("frameHeight") * 0.85;
+          const maxY = gridY + this.config.getParam("frameHeight");
+
+          // Calculate total space needed including connectors
+          const baseConnectorSize = this.config.getParam("connectorSize");
+          const estimatedConnectorSpace = (cellCount - 1) * baseConnectorSize;
+          const cellSpace = availableHeight - estimatedConnectorSpace;
+          const totalRatio = ratios.reduce((sum, ratio) => sum + ratio, 0);
+
+          const columnX = gridX + columnIndex * columnWidth;
+          let currentY = gridY;
+
+          for (let i = 0; i < cellCount; i++) {
+            const cellHeight = (cellSpace * ratios[i]) / totalRatio;
+
+            const cell = {
+              columnIndex,
+              rowIndex: i,
+              x: columnX,
+              y: currentY,
+              width: columnWidth,
+              height: Math.max(2, cellHeight),
+              ratio: ratios[i],
+            };
+
+            this.renderedCells.push(cell);
+            currentY += cell.height;
+
+            // Add connector with grid boundary constraints
+            if (i < cellCount - 1) {
+              let connectorHeight =
+                this.connectorSystem.calculateConnectorHeight(
+                  cell.height,
+                  columnIndex,
+                  i,
+                  this.time
+                );
+
+              // Ensure connector doesn't push content outside grid bounds
+              const remainingSpace = maxY - currentY;
+              const remainingCells = cellCount - i - 1;
+              const minSpaceNeeded = remainingCells * 10; // Minimum space for remaining cells
+
+              connectorHeight = Math.min(
+                connectorHeight,
+                Math.max(1, remainingSpace - minSpaceNeeded)
+              );
+
+              const connector = {
+                columnIndex,
+                rowIndex: i,
+                x: columnX,
+                y: currentY,
+                width: columnWidth,
+                height: connectorHeight,
+              };
+
+              this.renderedConnectors.push(connector);
+              currentY += connectorHeight;
+
+              // Stop if we're approaching grid boundary
+              if (currentY >= maxY - 5) break;
+            }
+          }
+        }
+
+        calculateDensityFlow(columnIndex) {
+          const normalizedPos =
+            columnIndex / Math.max(1, this.config.getParam("columns") - 1);
+          const timeOffset = this.config.getParam("isFlowing")
+            ? this.time * this.config.getParam("flowSpeed")
+            : 0;
+
+          const density = this.movementSystems.calculate(
+            this.config.getParam("densityPattern"),
+            normalizedPos,
+            timeOffset
+          );
+
+          return Math.max(
+            0.3,
+            Math.min(
+              2.0,
+              density *
+                this.config.getParam("densityRange") *
+                this.config.getParam("flowIntensity")
+            )
+          );
+        }
+
+        startAnimationLoop() {
+          const animate = (timestamp) => {
+            if (this.config.getParam("isFlowing")) {
+              // Restore original smooth time progression
+              this.time +=
+                0.016 *
+                this.config.getParam("flowSpeed") *
+                this.config.getParam("morphSmoothness") *
+                0.1;
+              this.generateGrid();
+            }
+
+            this.render();
+            this.updateStats();
+            this.animationFrame = requestAnimationFrame(animate);
+          };
+
+          animate();
+        }
+
+        render() {
+          // Clear canvas with palette background
+          this.ctx.fillStyle = this.colorPalette.getColor("background");
+          this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+          if (this.config.getParam("showGrid")) {
+            this.renderGridMode();
+          } else {
+            this.renderCleanMode();
+          }
+
+          this.renderConnectors();
+        }
+
+        renderGridMode() {
+          // Draw constraint frame
+          const gridX =
+            (this.canvas.width - this.config.getParam("frameWidth")) / 2;
+          const gridY =
+            (this.canvas.height - this.config.getParam("frameHeight")) / 2;
+
+          this.ctx.strokeStyle = this.colorPalette.getColor("frameColor");
+          this.ctx.lineWidth = 2;
+          this.ctx.setLineDash([8, 8]);
+          this.ctx.beginPath();
+          this.ctx.rect(
+            gridX,
+            gridY,
+            this.config.getParam("frameWidth"),
+            this.config.getParam("frameHeight")
+          );
+          this.ctx.stroke();
+          this.ctx.setLineDash([]);
+
+          // Column guides
+          this.renderColumnGuides(gridX, gridY);
+          this.renderCenterGuides(gridX, gridY);
+          this.renderCells();
+        }
+
+        renderColumnGuides(gridX, gridY) {
+          this.ctx.strokeStyle = this.colorPalette.getColor("cellBorder");
+          this.ctx.lineWidth = 1;
+          const columnWidth =
+            this.config.getParam("frameWidth") /
+            this.config.getParam("columns");
+
+          for (let col = 1; col < this.config.getParam("columns"); col++) {
+            const x = gridX + col * columnWidth;
+            this.ctx.beginPath();
+            this.ctx.moveTo(x, gridY);
+            this.ctx.lineTo(x, gridY + this.config.getParam("frameHeight"));
+            this.ctx.stroke();
+          }
+        }
+
+        renderCenterGuides(gridX, gridY) {
+          this.ctx.strokeStyle = this.config.getParam("isFlowing")
+            ? this.colorPalette.getColor("centerGuide")
+            : this.colorPalette.getColor("centerGuideStatic");
+          this.ctx.lineWidth = this.config.getParam("isFlowing") ? 1 : 0.5;
+          this.ctx.setLineDash([6, 6]);
+
+          // Horizontal center
+          this.ctx.beginPath();
+          this.ctx.moveTo(
+            gridX,
+            gridY + this.config.getParam("frameHeight") / 2
+          );
+          this.ctx.lineTo(
+            gridX + this.config.getParam("frameWidth"),
+            gridY + this.config.getParam("frameHeight") / 2
+          );
+          this.ctx.stroke();
+
+          // Vertical center
+          this.ctx.beginPath();
+          this.ctx.moveTo(
+            gridX + this.config.getParam("frameWidth") / 2,
+            gridY
+          );
+          this.ctx.lineTo(
+            gridX + this.config.getParam("frameWidth") / 2,
+            gridY + this.config.getParam("frameHeight")
+          );
+          this.ctx.stroke();
+
+          this.ctx.setLineDash([]);
+        }
+
+        renderCells() {
+          this.renderedCells.forEach((cell, index) => {
+            // Cell background
+            this.ctx.fillStyle = this.config.getParam("isFlowing")
+              ? this.colorPalette.getColor("background")
+              : this.colorPalette.getColor("background");
+            this.ctx.fillRect(cell.x, cell.y, cell.width, cell.height);
+
+            // Cell boundary
+            this.ctx.strokeStyle = this.config.getParam("isFlowing")
+              ? this.colorPalette.getColor("gridMedium")
+              : this.colorPalette.getColor("cellBorder");
+            this.ctx.lineWidth = 1;
+            this.ctx.beginPath();
+            this.ctx.rect(cell.x, cell.y, cell.width, cell.height);
+            this.ctx.stroke();
+
+            // Render mathematical subdivisions that reveal the ratio structure
+            this.mathematicalVisualizer.renderCellSubdivisions(this.ctx, cell);
+          });
+        }
+
+        renderCleanMode() {
+          // Only render connectors in clean mode
+          return;
+        }
+
+        renderConnectors() {
+          this.renderedConnectors.forEach((connector) => {
+            // Show mathematical context for underlines (how they relate to subdivisions)
+            this.mathematicalVisualizer.renderUnderlineContext(
+              this.ctx,
+              connector,
+              6
+            );
+
+            if (this.config.getParam("isFlowing") && connector.height > 4) {
+              const gradient = this.ctx.createLinearGradient(
+                connector.x,
+                connector.y,
+                connector.x,
+                connector.y + connector.height
+              );
+              const primaryColor = this.colorPalette.getColor("primary");
+              const secondaryColor = this.colorPalette.getColor("secondary");
+              gradient.addColorStop(0, primaryColor);
+              gradient.addColorStop(0.5, primaryColor);
+              gradient.addColorStop(1, secondaryColor);
+              this.ctx.fillStyle = gradient;
+            } else {
+              this.ctx.fillStyle = this.colorPalette.getColor("primary");
+            }
+
+            this.ctx.fillRect(
+              connector.x,
+              connector.y,
+              connector.width,
+              connector.height
+            );
+
+            // Glow effect for flowing state
+            if (this.config.getParam("isFlowing") && connector.height > 3) {
+              this.ctx.shadowColor = this.colorPalette.getColor("shadowColor");
+              this.ctx.shadowBlur = 2;
+              this.ctx.fillRect(
+                connector.x,
+                connector.y,
+                connector.width,
+                connector.height
+              );
+              this.ctx.shadowBlur = 0;
+            }
+          });
+        }
+
+        updateStats() {
+          const statsElement = document.getElementById("stats");
+          if (!statsElement) return;
+
+          const totalCells = this.renderedCells.length;
+          const totalConnectors = this.renderedConnectors.length;
+          const columns = this.config.getParam("columns");
+          const baseCells = this.config.getParam("baseCells");
+          const frameWidth = this.config.getParam("frameWidth");
+          const frameHeight = this.config.getParam("frameHeight");
+          const unitType = this.config.getParam("unitType");
+          const densityPattern = this.config.getParam("densityPattern");
+          const paletteName = this.colorPalette.getCurrentPalette().name;
+
+          const flowState = this.config.getParam("isFlowing")
+            ? "Flowing"
+            : "Static";
+          const viewMode = this.config.getParam("showGrid") ? "Grid" : "Clean";
+
+          const statsText = `${flowState} ${viewMode}: ${columns}×${baseCells} | ${frameWidth}×${frameHeight} | ${totalCells} cells | ${paletteName}`;
+          statsElement.textContent = statsText;
+        }
+      }
+
+      // Global functions
+      window.exportGrid = function () {
+        const canvas = document.getElementById("canvas");
+        if (!canvas) return;
+
+        const timestamp = new Date()
+          .toISOString()
+          .slice(0, 19)
+          .replace(/:/g, "-");
+        const mode = window.gridSystem.config.getParam("showGrid")
+          ? "grid"
+          : "clean";
+        const flowState = window.gridSystem.config.getParam("isFlowing")
+          ? "flowing"
+          : "static";
+        const palette = window.gridSystem.colorPalette.currentPalette;
+
+        const link = document.createElement("a");
+        link.download = `grid-v2-${mode}-${flowState}-${palette}-${timestamp}.png`;
+        link.href = canvas.toDataURL();
+        link.click();
+      };
+
+      // Initialize system
+      document.addEventListener("DOMContentLoaded", () => {
+        const canvas = document.getElementById("canvas");
+        if (!canvas) {
+          console.error("Canvas element not found!");
+          return;
+        }
+
+        const gridSystem = new ModularGridSystem();
+        window.gridSystem = gridSystem;
+
+        // Enhanced keyboard shortcuts
+        document.addEventListener("keydown", (e) => {
+          switch (e.key.toLowerCase()) {
+            case " ":
+              e.preventDefault();
+              const stillBtn = document.getElementById("stillMode");
+              const flowBtn = document.getElementById("flowMode");
+              if (stillBtn && flowBtn) {
+                if (gridSystem.config.getParam("isFlowing")) {
+                  stillBtn.click();
+                } else {
+                  flowBtn.click();
+                }
+              }
+              break;
+
+            case "v":
+              e.preventDefault();
+              const gridBtn = document.getElementById("gridView");
+              const cleanBtn = document.getElementById("cleanView");
+              if (gridBtn && cleanBtn) {
+                if (gridSystem.config.getParam("showGrid")) {
+                  cleanBtn.click();
+                } else {
+                  gridBtn.click();
+                }
+              }
+              break;
+
+            case "c":
+              e.preventDefault();
+              const toggleBtn = document.getElementById("toggleBtn");
+              if (toggleBtn) toggleBtn.click();
+              break;
+
+            case "e":
+              e.preventDefault();
+              if (window.exportGrid) exportGrid();
+              break;
+
+            case "r":
+              e.preventDefault();
+              location.reload();
+              break;
+
+            // Color palette shortcuts
+            case "1":
+              e.preventDefault();
+              document.querySelector('[data-palette="ocean"]')?.click();
+              break;
+            case "2":
+              e.preventDefault();
+              document.querySelector('[data-palette="warm"]')?.click();
+              break;
+            case "3":
+              e.preventDefault();
+              document.querySelector('[data-palette="dark"]')?.click();
+              break;
+            case "4":
+              e.preventDefault();
+              document.querySelector('[data-palette="navy"]')?.click();
+              break;
+          }
+        });
+
+        // Development console utilities
+        console.log("🌊 Modular Grid System v2.0 initialized");
+        console.log("🎨 Color Palette System: Ocean, Warm, Dark, Navy");
+        console.log("🎯 New Features: Working color picker, palette switching");
+        console.log(
+          "⌨️  Controls: Space=flow, V=view, C=controls, E=export, R=reset"
+        );
+        console.log("🎨 Palettes: 1=Ocean, 2=Warm, 3=Dark, 4=Navy");
+        console.log("🏗️  Architecture: Modular, maintainable, extensible");
+
+        // Development helpers
+        window.inspectConfig = () =>
+          console.log("Current Config:", gridSystem.config.params);
+        window.switchPalette = (paletteName) => {
+          document.querySelector(`[data-palette="${paletteName}"]`)?.click();
+        };
+        window.listPalettes = () => {
+          console.log(
+            "Available palettes:",
+            Object.keys(gridSystem.colorPalette.palettes)
+          );
+        };
+      });
+    </script>
+  </body>
+</html>
