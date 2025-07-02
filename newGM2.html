@@ -528,16 +528,16 @@
           <div class="control-item">
             <label class="control-label">Route Lanes</label>
             <div class="control-row">
-              <input type="range" id="columns" min="2" max="12" value="6" />
-              <span class="value-display" id="columnsValue">6</span>
+              <input type="range" id="columns" min="1" max="12" value="1" />
+              <span class="value-display" id="columnsValue">1</span>
             </div>
           </div>
 
           <div class="control-item">
             <label class="control-label">Pattern Segments</label>
             <div class="control-row">
-              <input type="range" id="baseCells" min="3" max="18" value="10" />
-              <span class="value-display" id="baseCellsValue">10</span>
+              <input type="range" id="baseCells" min="1" max="18" value="1" />
+              <span class="value-display" id="baseCellsValue">1</span>
             </div>
           </div>
 
@@ -663,10 +663,10 @@
                 type="range"
                 id="connectorSize"
                 min="1"
-                max="24"
-                value="5"
+                max="30"
+                value="20"
               />
-              <span class="value-display" id="connectorSizeValue">5</span>
+              <span class="value-display" id="connectorSizeValue">20</span>
             </div>
           </div>
 
@@ -677,7 +677,7 @@
                 type="range"
                 id="weightVariation"
                 min="1.0"
-                max="8.0"
+                max="12.0"
                 step="0.2"
                 value="3.0"
               />
@@ -707,7 +707,7 @@
         </button>
 
         <div class="stats" id="stats">
-          Base Config: 6×10 | 800×600 | Ocean Blue+Highway
+          Base Config: 1×1 | 800×600 | Ocean Blue+Highway
         </div>
       </div>
     </div>
@@ -818,9 +818,9 @@
       class GridConfig {
         constructor() {
           this.params = {
-            // Grid architecture
-            columns: 6,
-            baseCells: 10,
+            // Grid architecture - Updated starting values
+            columns: 1, // Start with 1 column
+            baseCells: 1, // Start with 1 cell
             frameWidth: 800,
             frameHeight: 600,
 
@@ -838,8 +838,8 @@
             densityRange: 1.2,
             flowIntensity: 0.8,
 
-            // Connector system
-            connectorSize: 5,
+            // Connector system - Updated starting values
+            connectorSize: 20, // Start with 20 instead of 5
             weightVariation: 3.0,
             connectorResponse: "fixed",
 
@@ -1091,18 +1091,27 @@
           const baseSize = this.config.getParam("connectorSize");
           const variation = this.config.getParam("weightVariation");
           const response = this.config.getParam("connectorResponse");
+          const isFlowing = this.config.getParam("isFlowing");
 
           let height = baseSize;
 
           switch (response) {
             case "flow":
-              height = this.calculateFlowResponse(cellHeight, variation);
+              height = this.calculateFlowResponse(
+                cellHeight,
+                baseSize,
+                variation,
+                time,
+                isFlowing
+              );
               break;
             case "inverse":
               height = this.calculateInverseResponse(
                 cellHeight,
                 baseSize,
-                variation
+                variation,
+                time,
+                isFlowing
               );
               break;
             case "pulse":
@@ -1117,23 +1126,49 @@
           return Math.max(1, Math.min(baseSize * variation, height));
         }
 
-        calculateFlowResponse(cellHeight, variation) {
-          // More dramatic scaling based on cell height
-          const minHeight = 1;
-          const maxHeight = cellHeight * 0.2;
-          const scaleFactor = Math.pow(cellHeight / 50, 0.6); // Non-linear scaling
+        calculateFlowResponse(
+          cellHeight,
+          baseSize,
+          variation,
+          time,
+          isFlowing
+        ) {
+          const minHeight = baseSize * 0.3;
+          const maxHeight = baseSize * variation;
+          const scaleFactor = Math.pow(cellHeight / 50, 0.6);
 
-          return minHeight + scaleFactor * (maxHeight - minHeight) * variation;
+          let flowHeight = minHeight + scaleFactor * (maxHeight - minHeight);
+
+          // Add smooth time-based variation when flowing
+          if (isFlowing) {
+            const timeVariation = Math.sin(time * 2.0) * 0.3 + 1.0;
+            flowHeight *= timeVariation;
+          }
+
+          return flowHeight;
         }
 
-        calculateInverseResponse(cellHeight, baseSize, variation) {
-          // Inverse relationship with enhanced variation
+        calculateInverseResponse(
+          cellHeight,
+          baseSize,
+          variation,
+          time,
+          isFlowing
+        ) {
           const inverseFactor = Math.pow(60 / Math.max(cellHeight, 10), 0.8);
-          return baseSize * inverseFactor * (variation * 0.5 + 0.5);
+          let height = baseSize * inverseFactor * (variation * 0.5 + 0.5);
+
+          // Add smooth counter-flow when flowing
+          if (isFlowing) {
+            const counterFlow = Math.cos(time * 1.5) * 0.4 + 1.0;
+            height *= counterFlow;
+          }
+
+          return height;
         }
 
         calculatePulseResponse(baseSize, variation, time) {
-          // Rhythmic pulsing with variation control
+          // This one was already smooth - keep as is
           const pulsePhase = Math.sin(time * 3) * 0.5 + 0.5;
           const minScale = 1 / variation;
           const maxScale = variation;
@@ -1158,15 +1193,16 @@
           return system ? system(normalizedPos, timeOffset) : 1.0;
         }
 
+        // Update this method in your MovementSystems class
         calculateWaveInterference(normalizedPos, timeOffset) {
-          // Enhanced wave interference with mathematical significance
+          // More dramatic interference for visible grid morphing
           const goldenRatioPos = 0.618;
           const goldenWave = this.createWaveFromSource(
             normalizedPos,
             goldenRatioPos,
             timeOffset,
-            1.0,
-            2.4,
+            1.2,
+            1.8,
             0
           );
 
@@ -1175,8 +1211,8 @@
             normalizedPos,
             fibonacciPos,
             timeOffset,
-            0.7,
-            1.618,
+            0.8,
+            1.2,
             Math.PI / 3
           );
 
@@ -1185,15 +1221,17 @@
             normalizedPos,
             primePos,
             timeOffset,
-            0.5,
-            3.0,
+            0.6,
+            2.0,
             Math.PI / 2
           );
 
+          // Combine waves for complex morphing patterns
           const interference = goldenWave + fibonacciWave + primeWave;
           const normalizedInterference = Math.tanh(interference) * 0.5 + 0.5;
 
-          return 0.4 + normalizedInterference * 1.2;
+          // Wider range for more dramatic morphing
+          return 0.3 + normalizedInterference * 1.4;
         }
 
         createWaveFromSource(
@@ -1402,6 +1440,62 @@
           });
         }
 
+        // Add these methods to your ModularGridSystem class
+
+        getFlowingRatios(cellCount, columnIndex, time) {
+          const baseRatios = this.mathSequences.getRatioSequence(
+            cellCount,
+            columnIndex,
+            this.config.getParam("ratioSystem"),
+            this.config.getParam("ratioVariance")
+          );
+
+          if (!this.config.getParam("isFlowing")) {
+            return baseRatios;
+          }
+
+          // Apply time-based morphing to ratios
+          return baseRatios.map((ratio, index) => {
+            const timePhase = time * 0.5 + columnIndex * 0.3 + index * 0.2;
+            const morphFactor = Math.sin(timePhase) * 0.3 + 1.0; // ±30% variation
+            return ratio * morphFactor;
+          });
+        }
+
+        getMorphedCellHeight(baseHeight, columnIndex, rowIndex, time) {
+          if (!this.config.getParam("isFlowing")) {
+            return baseHeight;
+          }
+
+          // Create flowing morphology
+          const morphSmoothness = this.config.getParam("morphSmoothness");
+          const timePhase =
+            time * (morphSmoothness * 0.1) + columnIndex * 0.5 + rowIndex * 0.3;
+
+          // Breathing effect - cells expand and contract
+          const breathFactor = Math.sin(timePhase) * 0.4 + 1.0; // ±40% size variation
+
+          // Wave propagation through the grid
+          const wavePhase = time * 0.8 + columnIndex * 0.4;
+          const waveFactor = Math.cos(wavePhase) * 0.2 + 1.0; // ±20% wave variation
+
+          return baseHeight * breathFactor * waveFactor;
+        }
+
+        getFlowingConnectorSize(columnIndex, time) {
+          const baseSize = this.config.getParam("connectorSize");
+
+          if (!this.config.getParam("isFlowing")) {
+            return baseSize;
+          }
+
+          // Connectors pulse in harmony with the grid
+          const pulsePhase = time * 2.0 + columnIndex * 0.6;
+          const pulseFactor = Math.sin(pulsePhase) * 0.5 + 1.0;
+
+          return baseSize * pulseFactor;
+        }
+
         setupButtonControls() {
           ["ratio", "density", "connector", "unit"].forEach((type) => {
             document.querySelectorAll(`[data-${type}]`).forEach((btn) => {
@@ -1507,31 +1601,50 @@
         }
 
         generateColumn(columnIndex, gridX, gridY, columnWidth) {
+          // Get flowing density that changes over time
           const density = this.calculateDensityFlow(columnIndex);
-          const cellCount = Math.round(
-            this.config.getParam("baseCells") * density
-          );
-          const ratios = this.mathSequences.getRatioSequence(
+
+          // Allow fractional cell counts for smoother morphing
+          const baseCellCount = this.config.getParam("baseCells");
+          const flowingCellCount = baseCellCount * density;
+          const cellCount = Math.max(1, Math.round(flowingCellCount));
+
+          // Get ratios that can vary smoothly over time
+          const ratios = this.getFlowingRatios(
             cellCount,
             columnIndex,
-            this.config.getParam("ratioSystem"),
-            this.config.getParam("ratioVariance")
+            this.time
           );
 
           const availableHeight = this.config.getParam("frameHeight") * 0.85;
           const maxY = gridY + this.config.getParam("frameHeight");
 
-          // Calculate total space needed including connectors
-          const baseConnectorSize = this.config.getParam("connectorSize");
-          const estimatedConnectorSpace = (cellCount - 1) * baseConnectorSize;
-          const cellSpace = availableHeight - estimatedConnectorSpace;
+          // Dynamic connector space based on current flow state
+          const connectorCount = Math.max(0, cellCount - 1);
+          const flowingConnectorSize = this.getFlowingConnectorSize(
+            columnIndex,
+            this.time
+          );
+          const totalConnectorSpace = connectorCount * flowingConnectorSize;
+
+          const cellSpace = Math.max(50, availableHeight - totalConnectorSpace);
           const totalRatio = ratios.reduce((sum, ratio) => sum + ratio, 0);
 
           const columnX = gridX + columnIndex * columnWidth;
           let currentY = gridY;
 
           for (let i = 0; i < cellCount; i++) {
-            const cellHeight = (cellSpace * ratios[i]) / totalRatio;
+            // Smoothly morphing cell height
+            const baseHeight =
+              cellCount === 1
+                ? cellSpace
+                : (cellSpace * ratios[i]) / totalRatio;
+            const morphedHeight = this.getMorphedCellHeight(
+              baseHeight,
+              columnIndex,
+              i,
+              this.time
+            );
 
             const cell = {
               columnIndex,
@@ -1539,16 +1652,16 @@
               x: columnX,
               y: currentY,
               width: columnWidth,
-              height: Math.max(2, cellHeight),
+              height: Math.max(5, morphedHeight),
               ratio: ratios[i],
             };
 
             this.renderedCells.push(cell);
             currentY += cell.height;
 
-            // Add connector with grid boundary constraints
+            // Flowing connectors between cells
             if (i < cellCount - 1) {
-              let connectorHeight =
+              const connectorHeight =
                 this.connectorSystem.calculateConnectorHeight(
                   cell.height,
                   columnIndex,
@@ -1556,37 +1669,28 @@
                   this.time
                 );
 
-              // Ensure connector doesn't push content outside grid bounds
-              const remainingSpace = maxY - currentY;
-              const remainingCells = cellCount - i - 1;
-              const minSpaceNeeded = remainingCells * 10; // Minimum space for remaining cells
-
-              connectorHeight = Math.min(
-                connectorHeight,
-                Math.max(1, remainingSpace - minSpaceNeeded)
-              );
-
               const connector = {
                 columnIndex,
                 rowIndex: i,
                 x: columnX,
                 y: currentY,
                 width: columnWidth,
-                height: connectorHeight,
+                height: Math.max(1, connectorHeight),
               };
 
               this.renderedConnectors.push(connector);
-              currentY += connectorHeight;
+              currentY += connector.height;
 
-              // Stop if we're approaching grid boundary
-              if (currentY >= maxY - 5) break;
+              if (currentY >= maxY - 10) break;
             }
           }
         }
-
         calculateDensityFlow(columnIndex) {
           const normalizedPos =
-            columnIndex / Math.max(1, this.config.getParam("columns") - 1);
+            this.config.getParam("columns") === 1
+              ? 0.5
+              : columnIndex / Math.max(1, this.config.getParam("columns") - 1);
+
           const timeOffset = this.config.getParam("isFlowing")
             ? this.time * this.config.getParam("flowSpeed")
             : 0;
@@ -1597,26 +1701,22 @@
             timeOffset
           );
 
-          return Math.max(
-            0.3,
-            Math.min(
-              2.0,
-              density *
-                this.config.getParam("densityRange") *
-                this.config.getParam("flowIntensity")
-            )
-          );
+          // Smoother density scaling with better range
+          const smoothDensity =
+            density *
+            this.config.getParam("densityRange") *
+            this.config.getParam("flowIntensity");
+
+          return Math.max(0.3, Math.min(3.0, smoothDensity));
         }
 
         startAnimationLoop() {
           const animate = (timestamp) => {
             if (this.config.getParam("isFlowing")) {
-              // Restore original smooth time progression
-              this.time +=
-                0.016 *
-                this.config.getParam("flowSpeed") *
-                this.config.getParam("morphSmoothness") *
-                0.1;
+              // Clean, smooth time progression
+              this.time += 0.016 * this.config.getParam("flowSpeed");
+
+              // ALWAYS regenerate for flowing morphology
               this.generateGrid();
             }
 
@@ -1628,6 +1728,28 @@
           animate();
         }
 
+        // Helper to track structural vs animation parameters
+        getStructuralParams() {
+          return {
+            columns: this.config.getParam("columns"),
+            baseCells: this.config.getParam("baseCells"),
+            frameWidth: this.config.getParam("frameWidth"),
+            frameHeight: this.config.getParam("frameHeight"),
+            ratioSystem: this.config.getParam("ratioSystem"),
+            ratioVariance: this.config.getParam("ratioVariance"),
+            densityPattern: this.config.getParam("densityPattern"),
+            densityRange: this.config.getParam("densityRange"),
+            flowIntensity: this.config.getParam("flowIntensity"),
+          };
+        }
+
+        hasStructuralChanges(current) {
+          if (!this.lastStructuralParams) return true;
+
+          return Object.keys(current).some(
+            (key) => current[key] !== this.lastStructuralParams[key]
+          );
+        }
         render() {
           // Clear canvas with palette background
           this.ctx.fillStyle = this.colorPalette.getColor("background");
@@ -1662,8 +1784,10 @@
           this.ctx.stroke();
           this.ctx.setLineDash([]);
 
-          // Column guides
-          this.renderColumnGuides(gridX, gridY);
+          // Column guides (only if more than 1 column)
+          if (this.config.getParam("columns") > 1) {
+            this.renderColumnGuides(gridX, gridY);
+          }
           this.renderCenterGuides(gridX, gridY);
           this.renderCells();
         }
@@ -1678,7 +1802,7 @@
           for (let col = 1; col < this.config.getParam("columns"); col++) {
             const x = gridX + col * columnWidth;
             this.ctx.beginPath();
-            this.ctx.moveTo(x, gridY);
+            this.ctx.moveTo(x, gridY); // Changed from: ctx.moveTo(x, gridY);
             this.ctx.lineTo(x, gridY + this.config.getParam("frameHeight"));
             this.ctx.stroke();
           }
@@ -1747,49 +1871,24 @@
 
         renderConnectors() {
           this.renderedConnectors.forEach((connector) => {
-            // Show mathematical context for underlines (how they relate to subdivisions)
+            // Use the height that was already calculated and stored
+            const connectorHeight = connector.height;
+
+            // Show mathematical context for underlines
             this.mathematicalVisualizer.renderUnderlineContext(
               this.ctx,
               connector,
               6
             );
 
-            if (this.config.getParam("isFlowing") && connector.height > 4) {
-              const gradient = this.ctx.createLinearGradient(
-                connector.x,
-                connector.y,
-                connector.x,
-                connector.y + connector.height
-              );
-              const primaryColor = this.colorPalette.getColor("primary");
-              const secondaryColor = this.colorPalette.getColor("secondary");
-              gradient.addColorStop(0, primaryColor);
-              gradient.addColorStop(0.5, primaryColor);
-              gradient.addColorStop(1, secondaryColor);
-              this.ctx.fillStyle = gradient;
-            } else {
-              this.ctx.fillStyle = this.colorPalette.getColor("primary");
-            }
-
+            // Render connector with stored height
+            this.ctx.fillStyle = this.colorPalette.getColor("primary");
             this.ctx.fillRect(
               connector.x,
               connector.y,
               connector.width,
-              connector.height
+              connectorHeight
             );
-
-            // Glow effect for flowing state
-            if (this.config.getParam("isFlowing") && connector.height > 3) {
-              this.ctx.shadowColor = this.colorPalette.getColor("shadowColor");
-              this.ctx.shadowBlur = 2;
-              this.ctx.fillRect(
-                connector.x,
-                connector.y,
-                connector.width,
-                connector.height
-              );
-              this.ctx.shadowBlur = 0;
-            }
           });
         }
 
@@ -1917,9 +2016,14 @@
         });
 
         // Development console utilities
-        console.log("🌊 Modular Grid System v2.0 initialized");
+        console.log("🌊 Modular Grid System v2.1 initialized");
         console.log("🎨 Color Palette System: Ocean, Warm, Dark, Navy");
-        console.log("🎯 New Features: Working color picker, palette switching");
+        console.log(
+          "🎯 Updated Features: Start with 1×1 grid, underline weight 20, max 30"
+        );
+        console.log(
+          "📐 New Range: Route Lanes 1-12, Pattern Segments 1-18, Weight Variation up to 12x"
+        );
         console.log(
           "⌨️  Controls: Space=flow, V=view, C=controls, E=export, R=reset"
         );
