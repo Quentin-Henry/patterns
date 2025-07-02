@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grid Density Filter</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+        background: #fafbfc;
+        height: 100vh;
+        display: flex;
+        overflow: hidden;
+        color: #1a1a1a;
+    }
+
+    .container {
+        width: 100%;
+        display: flex;
+        align-items: stretch;
+    }
+
+    .controls-panel {
+        width: 320px;
+        background: #ffffff;
+        border-right: 1px solid #e8eaed;
+        overflow-y: auto;
+        z-index: 10;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
+        position: relative;
+    }
+
+    .header {
+        padding: 24px 24px 20px 24px;
+        border-bottom: 1px solid #f1f3f4;
+        background: #ffffff;
+    }
+
+    .logo-area {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .logo-placeholder {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.logo-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+    .title-group {
+        flex: 1;
+    }
+
+    .app-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #1a1a1a;
+        line-height: 1.2;
+        margin-bottom: 2px;
+    }
+
+    .app-subtitle {
+        font-size: 12px;
+        color: #5f6368;
+        font-weight: 400;
+        line-height: 1.3;
+    }
+
+    .controls-content {
+        padding: 0 24px 24px 24px;
+    }
+
+    .control-section {
+        margin-bottom: 32px;
+    }
+
+    .control-section:last-child {
+        margin-bottom: 0;
+    }
+
+    .section-title {
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 16px;
+        color: #3c4043;
+        letter-spacing: -0.01em;
+    }
+
+    .control-item {
+        margin-bottom: 20px;
+    }
+
+    .control-item:last-child {
+        margin-bottom: 0;
+    }
+
+    .control-label {
+        display: block;
+        font-size: 12px;
+        color: #5f6368;
+        margin-bottom: 8px;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+    }
+
+    .upload-area {
+        border: 2px dashed #e8eaed;
+        border-radius: 8px;
+        padding: 24px 16px;
+        text-align: center;
+        margin-bottom: 24px;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        background: #ffffff;
+    }
+
+    .upload-area:hover {
+        border-color: #0956FF;
+        background: #f8f9fa;
+    }
+
+    .upload-area.dragover {
+        border-color: #0956FF;
+        background: #e3f2fd;
+        border-style: solid;
+    }
+
+    .upload-text {
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 4px;
+        color: #3c4043;
+    }
+
+    .upload-subtext {
+        font-size: 11px;
+        color: #5f6368;
+    }
+
+    .file-input {
+        display: none;
+    }
+
+    .control-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    input[type="range"] {
+        flex: 1;
+        height: 2px;
+        background: #e8eaed;
+        border-radius: 1px;
+        outline: none;
+        -webkit-appearance: none;
+        cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        background: #0956ff;
+        border-radius: 50%;
+        cursor: pointer;
+        border: none;
+        box-shadow: 0 2px 6px rgba(9, 86, 255, 0.3);
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+        background: #0956ff;
+        transform: scale(1.1);
+        box-shadow: 0 3px 8px rgba(9, 86, 255, 0.4);
+    }
+
+    input[type="range"]:focus::-webkit-slider-thumb {
+        background: #0956ff;
+        transform: scale(1.1);
+        box-shadow: 0 0 0 4px rgba(9, 86, 255, 0.12);
+    }
+
+    .value-display {
+        font-size: 12px;
+        color: #5f6368;
+        width: 32px;
+        text-align: right;
+        font-weight: 500;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .select-container {
+        position: relative;
+    }
+
+    .select-input {
+        width: 100%;
+        height: 36px;
+        border-radius: 6px;
+        background: #ffffff;
+        border: 1px solid #e8eaed;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+        font-size: 12px;
+        font-weight: 400;
+        padding: 0 32px 0 12px;
+        appearance: none;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        color: #3c4043;
+    }
+
+    .select-input:focus {
+        outline: none;
+        border-color: #0956FF;
+        box-shadow: 0 0 0 3px rgba(9, 86, 255, 0.1);
+    }
+
+    .select-input:hover {
+        background: #f8f9fa;
+        border-color: #dadce0;
+    }
+
+    .select-arrow {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 12px;
+        height: 12px;
+        pointer-events: none;
+    }
+
+    .select-arrow::after {
+        content: '';
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(45deg);
+        width: 5px;
+        height: 5px;
+        border-right: 1.5px solid #5f6368;
+        border-bottom: 1.5px solid #5f6368;
+    }
+
+    .button-group {
+        display: grid;
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .btn {
+        height: 36px;
+        border-radius: 6px;
+        border: 1px solid #e8eaed;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        text-align: center;
+        color: #3c4043;
+        letter-spacing: -0.01em;
+        background: #ffffff;
+    }
+
+    .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none !important;
+    }
+
+    .btn.primary {
+        background: #0956FF;
+        color: #ffffff;
+        border-color: #0956FF;
+    }
+
+    .btn.primary:hover:not(:disabled) {
+        background: #0949e6;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(9, 86, 255, 0.3);
+    }
+
+    .btn.secondary:hover:not(:disabled) {
+        background: #f8f9fa;
+        border-color: #dadce0;
+        transform: translateY(-1px);
+    }
+
+    .export-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .main-area {
+        flex: 1;
+        background: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .canvas-section {
+        text-align: center;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .canvas-title {
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 20px;
+        color: #5f6368;
+        letter-spacing: -0.01em;
+    }
+
+    .canvas-container {
+        background: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    canvas {
+        display: block;
+        border-radius: 8px;
+        max-width: calc(100vw - 340px);
+        max-height: calc(100vh - 100px);
+        background: transparent;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .processing {
+        text-align: center;
+        font-size: 12px;
+        font-weight: 500;
+        margin: 20px 0;
+        color: #5f6368;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .spinner {
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(9, 86, 255, 0.2);
+        border-top: 2px solid #0956FF;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .stats-panel {
+        background: #f8f9fa;
+        border-radius: 6px;
+        padding: 12px 16px;
+        border: 1px solid #f1f3f4;
+        margin-top: 20px;
+    }
+
+    .stats-title {
+        font-size: 12px;
+        font-weight: 600;
+        color: #3c4043;
+        margin-bottom: 12px;
+        letter-spacing: -0.01em;
+    }
+
+    .stats-grid {
+        display: grid;
+        gap: 8px;
+    }
+
+    .stat-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 4px 0;
+    }
+
+    .stat-label {
+        font-size: 11px;
+        color: #5f6368;
+        font-weight: 400;
+    }
+
+    .stat-value {
+        font-size: 11px;
+        font-weight: 500;
+        color: #3c4043;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .section-divider {
+        height: 1px;
+        background: linear-gradient(
+            90deg,
+            transparent 0%,
+            #e8eaed 20%,
+            #e8eaed 80%,
+            transparent 100%
+        );
+        margin: 20px 0;
+    }
+
+    .placeholder-text {
+        color: #9aa0a6;
+        font-size: 14px;
+        text-align: center;
+        margin: 40px;
+        line-height: 1.5;
+    }
+
+    @media (max-width: 1200px) {
+        .container {
+            flex-direction: column;
+        }
+        
+        .controls-panel {
+            width: 100%;
+            height: auto;
+            border-right: none;
+            border-bottom: 1px solid #e8eaed;
+        }
+        
+        canvas {
+            max-width: calc(100vw - 40px);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .controls-panel {
+            position: relative;
+        }
+        
+        .export-group {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="controls-panel">
+        <div class="header">
+            <div class="logo-area">
+                <div class="logo-placeholder">
+                    <img src="/images/gmLogo.png" alt="Logo" />
+                  </div>
+                <div class="title-group">
+                    <div class="app-title">Grid Filter</div>
+                    <div class="app-subtitle">Image density transformation</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-content">
+            <div class="control-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-text">Upload Image</div>
+                    <div class="upload-subtext">Drag and drop or click to browse</div>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*">
+                </div>
+            </div>
+
+            <div class="control-section">
+                <div class="section-title">Grid Structure</div>
+
+                <div class="control-item">
+                    <label class="control-label">Grid Resolution</label>
+                    <div class="control-row">
+                        <input type="range" id="gridSize" min="8" max="80" value="24">
+                        <span class="value-display" id="gridSizeValue">24</span>
+                    </div>
+                </div>
+                
+                <div class="control-item">
+                    <label class="control-label">Element Type</label>
+                    <div class="select-container">
+                        <select class="select-input" id="elementType">
+                            <option value="horizontal">Horizontal Lines</option>
+                            <option value="vertical">Vertical Lines</option>
+                            <option value="squares">Squares</option>
+                            <option value="circles">Circles</option>
+                        </select>
+                        <div class="select-arrow"></div>
+                    </div>
+                </div>
+                
+                <div class="control-item">
+                    <label class="control-label">Maximum Density</label>
+                    <div class="control-row">
+                        <input type="range" id="maxThickness" min="0.2" max="1.0" step="0.05" value="0.85">
+                        <span class="value-display" id="maxThicknessValue">0.85</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+            
+            <div class="control-section">
+                <div class="section-title">Image Processing</div>
+
+                <div class="control-item">
+                    <label class="control-label">Contrast</label>
+                    <div class="control-row">
+                        <input type="range" id="contrast" min="0.5" max="3.0" step="0.1" value="1.8">
+                        <span class="value-display" id="contrastValue">1.8</span>
+                    </div>
+                </div>
+                
+                <div class="control-item">
+                    <label class="control-label">Inversion</label>
+                    <div class="select-container">
+                        <select class="select-input" id="invert">
+                            <option value="false">Dark areas = Thick elements</option>
+                            <option value="true">Light areas = Thick elements</option>
+                        </select>
+                        <div class="select-arrow"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-divider"></div>
+
+            <div class="control-section">
+                <div class="section-title">Animation</div>
+
+                <div class="control-item">
+                    <label class="control-label">Mode</label>
+                    <div class="select-container">
+                        <select class="select-input" id="animationMode">
+                            <option value="none">No Animation</option>
+                            <option value="fill">Fill from Empty</option>
+                            <option value="morph">Morph from Uniform</option>
+                        </select>
+                        <div class="select-arrow"></div>
+                    </div>
+                </div>
+
+                <div class="control-item" id="animationControls" style="display: none;">
+                    <label class="control-label">Duration (seconds)</label>
+                    <div class="control-row">
+                        <input type="range" id="animationDuration" min="0.5" max="5.0" step="0.1" value="2.0">
+                        <span class="value-display" id="animationDurationValue">2.0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn primary" id="convertBtn" disabled>Generate Grid Filter</button>
+                <button class="btn secondary" id="animateBtn" disabled style="display: none;">Play Animation</button>
+                <div class="export-group">
+                    <button class="btn secondary" id="exportPNG" disabled>Export PNG</button>
+                    <button class="btn secondary" id="exportSVG" disabled>Export SVG</button>
+                </div>
+            </div>
+
+            <div class="stats-panel" id="stats" style="display: none;">
+                <div class="stats-title">Output Statistics</div>
+                <div class="stats-grid">
+                    <div class="stat-row">
+                        <span class="stat-label">Grid cells</span>
+                        <span class="stat-value" id="cellCount">0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Grid resolution</span>
+                        <span class="stat-value" id="resolution">0 × 0</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Output size</span>
+                        <span class="stat-value" id="outputSize">0 × 0 px</span>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">Element type</span>
+                        <span class="stat-value" id="currentElement">—</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-area">
+        <div id="processing" class="processing" style="display: none;">
+            <div class="spinner"></div>
+            <span>Processing image...</span>
+        </div>
+
+        <div class="canvas-section" id="canvasSection">
+            <div class="canvas-title">Grid Filter Output</div>
+            <div class="canvas-container">
+                <div class="placeholder-text" id="placeholderText">
+                    Upload an image to see the grid filter transformation
+                </div>
+                <canvas id="gridCanvas" width="800" height="600" style="display: none;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden original canvas for processing -->
+<canvas id="originalCanvas" style="display: none;"></canvas>
+
+<script>
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const convertBtn = document.getElementById('convertBtn');
+    const exportPNG = document.getElementById('exportPNG');
+    const exportSVG = document.getElementById('exportSVG');
+    const originalCanvas = document.getElementById('originalCanvas');
+    const gridCanvas = document.getElementById('gridCanvas');
+    const processing = document.getElementById('processing');
+    const stats = document.getElementById('stats');
+    const placeholderText = document.getElementById('placeholderText');
+
+    // Controls
+    const gridSizeSlider = document.getElementById('gridSize');
+    const elementTypeSelect = document.getElementById('elementType');
+    const maxThicknessSlider = document.getElementById('maxThickness');
+    const contrastSlider = document.getElementById('contrast');
+    const invertSelect = document.getElementById('invert');
+    const animationModeSelect = document.getElementById('animationMode');
+    const animationDurationSlider = document.getElementById('animationDuration');
+    const animationControls = document.getElementById('animationControls');
+    const animateBtn = document.getElementById('animateBtn');
+
+    // Value displays
+    const gridSizeValue = document.getElementById('gridSizeValue');
+    const maxThicknessValue = document.getElementById('maxThicknessValue');
+    const contrastValue = document.getElementById('contrastValue');
+    const animationDurationValue = document.getElementById('animationDurationValue');
+
+    let currentImage = null;
+    let currentGridData = null;
+    let targetElementSizes = null;
+    let isAnimating = false;
+
+    // Slider functionality
+    function updateSliderValue(slider, valueDisplay) {
+        const value = parseFloat(slider.value);
+        valueDisplay.textContent = value % 1 === 0 ? value : value.toFixed(1);
+    }
+
+    function initSlider(slider, valueDisplay) {
+        updateSliderValue(slider, valueDisplay);
+        slider.addEventListener('input', () => updateSliderValue(slider, valueDisplay));
+    }
+
+    // Initialize sliders
+    initSlider(gridSizeSlider, gridSizeValue);
+    initSlider(maxThicknessSlider, maxThicknessValue);
+    initSlider(contrastSlider, contrastValue);
+    initSlider(animationDurationSlider, animationDurationValue);
+
+    // Animation mode change handler
+    animationModeSelect.addEventListener('change', () => {
+        const mode = animationModeSelect.value;
+        if (mode === 'none') {
+            animationControls.style.display = 'none';
+            animateBtn.style.display = 'none';
+        } else {
+            animationControls.style.display = 'block';
+            animateBtn.style.display = 'block';
+        }
+    });
+
+    // Upload area interactions
+    uploadArea.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        fileInput.click();
+    });
+    
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadArea.classList.add('dragover');
+    });
+    
+    uploadArea.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadArea.classList.remove('dragover');
+    });
+    
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        uploadArea.classList.remove('dragover');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleFile(files[0]);
+        }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.target.files.length > 0) {
+            handleFile(e.target.files[0]);
+        }
+    });
+
+    function handleFile(file) {
+        if (!file.type.startsWith('image/')) {
+            alert('Please select an image file');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const img = new Image();
+                img.onload = () => {
+                    try {
+                        currentImage = img;
+                        // Process and show image immediately
+                        displayOriginalImage(img);
+                        generateGridFilter();
+                        
+                        // Show canvas and hide placeholder
+                        placeholderText.style.display = 'none';
+                        gridCanvas.style.display = 'block';
+                        
+                        // Enable controls
+                        convertBtn.disabled = false;
+                        exportPNG.disabled = false;
+                        exportSVG.disabled = false;
+                        animateBtn.disabled = false;
+                        
+                        console.log('Image loaded and processed successfully');
+                    } catch (error) {
+                        console.error('Error processing image:', error);
+                        alert('Error processing image. Please try again.');
+                    }
+                };
+                img.onerror = () => {
+                    console.error('Error loading image');
+                    alert('Error loading image. Please try a different file.');
+                };
+                img.src = e.target.result;
+            } catch (error) {
+                console.error('Error setting up image:', error);
+                alert('Error setting up image. Please try again.');
+            }
+        };
+        reader.onerror = () => {
+            console.error('Error reading file');
+            alert('Error reading file. Please try again.');
+        };
+        
+        try {
+            reader.readAsDataURL(file);
+        } catch (error) {
+            console.error('Error starting file read:', error);
+            alert('Error reading file. Please try again.');
+        }
+    }
+
+    function displayOriginalImage(img) {
+        try {
+            const ctx = originalCanvas.getContext('2d');
+            const maxSize = 1200;
+            let { width, height } = img;
+            
+            // Scale to fit max size while maintaining aspect ratio
+            if (width > maxSize || height > maxSize) {
+                if (width > height) {
+                    height = (height * maxSize) / width;
+                    width = maxSize;
+                } else {
+                    width = (width * maxSize) / height;
+                    height = maxSize;
+                }
+            }
+            
+            originalCanvas.width = width;
+            originalCanvas.height = height;
+            
+            // Clear canvas before drawing
+            ctx.clearRect(0, 0, width, height);
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            console.log(`Original image processed: ${width}x${height}`);
+        } catch (error) {
+            console.error('Error displaying image:', error);
+            alert('Error displaying image. Please try again.');
+        }
+    }
+
+    convertBtn.addEventListener('click', () => {
+        if (!currentImage) return;
+        
+        processing.style.display = 'flex';
+        convertBtn.disabled = true;
+        exportPNG.disabled = true;
+        exportSVG.disabled = true;
+        
+        setTimeout(() => {
+            generateGridFilter();
+            processing.style.display = 'none';
+            convertBtn.disabled = false;
+            exportPNG.disabled = false;
+            exportSVG.disabled = false;
+            animateBtn.disabled = false;
+            stats.style.display = 'block';
+        }, 100);
+    });
+
+    function generateGridFilter() {
+        if (!currentImage) {
+            console.error('No current image to process');
+            return;
+        }
+
+        try {
+            const ctx = originalCanvas.getContext('2d');
+            const gridCtx = gridCanvas.getContext('2d');
+            
+            const sourceWidth = originalCanvas.width;
+            const sourceHeight = originalCanvas.height;
+            
+            console.log(`Processing image: ${sourceWidth}x${sourceHeight}`);
+            
+            // Calculate output size maintaining aspect ratio
+            const maxOutputSize = 1200;
+            let outputWidth, outputHeight;
+            
+            if (sourceWidth > sourceHeight) {
+                outputWidth = maxOutputSize;
+                outputHeight = Math.round((sourceHeight / sourceWidth) * maxOutputSize);
+            } else {
+                outputHeight = maxOutputSize;
+                outputWidth = Math.round((sourceWidth / sourceHeight) * maxOutputSize);
+            }
+            
+            // Set output canvas size
+            gridCanvas.width = outputWidth;
+            gridCanvas.height = outputHeight;
+            
+            console.log(`Output size: ${outputWidth}x${outputHeight}`);
+            
+            // Get image data
+            const imageData = ctx.getImageData(0, 0, sourceWidth, sourceHeight);
+            const data = imageData.data;
+            
+            // Clear grid canvas with white background
+            gridCtx.fillStyle = '#ffffff';
+            gridCtx.fillRect(0, 0, outputWidth, outputHeight);
+            
+            // Grid parameters
+            const gridSize = parseInt(gridSizeSlider.value);
+            const cellWidth = outputWidth / gridSize;
+            const cellHeight = outputHeight / gridSize;
+            const maxThickness = parseFloat(maxThicknessSlider.value);
+            const contrast = parseFloat(contrastSlider.value);
+            const invert = invertSelect.value === 'true';
+            const elementType = elementTypeSelect.value;
+            
+            // Set drawing color
+            gridCtx.fillStyle = '#0956FF';
+            gridCtx.strokeStyle = '#0956FF';
+            
+            // Store grid data for SVG export
+            currentGridData = {
+                gridSize,
+                cellWidth,
+                cellHeight,
+                outputWidth,
+                outputHeight,
+                elements: [],
+                elementType
+            };
+            
+            // Store target element sizes for animation
+            targetElementSizes = [];
+            
+            console.log(`Grid settings: ${gridSize}x${gridSize}, cellSize: ${cellWidth.toFixed(1)}x${cellHeight.toFixed(1)}`);
+            
+            // Calculate brightness for each grid cell
+            for (let row = 0; row < gridSize; row++) {
+                for (let col = 0; col < gridSize; col++) {
+                    const x = col * cellWidth;
+                    const y = row * cellHeight;
+                    
+                    // Sample brightness from source image
+                    const sourceX = Math.floor((col / gridSize) * sourceWidth);
+                    const sourceY = Math.floor((row / gridSize) * sourceHeight);
+                    
+                    if (sourceX < sourceWidth && sourceY < sourceHeight) {
+                        const pixelIndex = (sourceY * sourceWidth + sourceX) * 4;
+                        const r = data[pixelIndex];
+                        const g = data[pixelIndex + 1];
+                        const b = data[pixelIndex + 2];
+                        
+                        // Calculate brightness (0-255)
+                        const brightness = (r * 0.299 + g * 0.587 + b * 0.114);
+                        
+                        // Normalize brightness (0-1)
+                        let normalizedBrightness = brightness / 255;
+                        
+                        // Apply contrast
+                        normalizedBrightness = Math.pow(normalizedBrightness, 1 / contrast);
+                        
+                        // Invert if needed
+                        if (invert) {
+                            normalizedBrightness = 1 - normalizedBrightness;
+                        }
+                        
+                        // Calculate element size based on brightness
+                        const elementSize = (1 - normalizedBrightness) * maxThickness;
+                        
+                        // Store target size for animation
+                        targetElementSizes.push({
+                            row, col, x, y, elementSize, cellWidth, cellHeight
+                        });
+                        
+                        if (elementSize > 0.01) {
+                            const elementData = drawGridElement(gridCtx, x, y, cellWidth, cellHeight, elementSize, elementType);
+                            if (elementData) {
+                                currentGridData.elements.push(elementData);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            console.log(`Generated ${currentGridData.elements.length} elements`);
+            
+            // Update stats
+            document.getElementById('cellCount').textContent = (gridSize * gridSize).toLocaleString();
+            document.getElementById('resolution').textContent = `${gridSize} × ${gridSize}`;
+            document.getElementById('outputSize').textContent = `${outputWidth} × ${outputHeight} px`;
+            document.getElementById('currentElement').textContent = elementType.charAt(0).toUpperCase() + elementType.slice(1);
+            
+            // Show stats panel
+            stats.style.display = 'block';
+            
+        } catch (error) {
+            console.error('Error generating grid filter:', error);
+            alert('Error generating grid filter. Please try again.');
+        }
+    }
+
+    function drawGridElement(ctx, x, y, cellWidth, cellHeight, thickness, type) {
+        try {
+            const centerX = x + cellWidth / 2;
+            const centerY = y + cellHeight / 2;
+            
+            let elementData = { type, x, y, cellWidth, cellHeight, thickness, centerX, centerY };
+            
+            switch (type) {
+                case 'horizontal':
+                    const lineHeight = cellHeight * thickness;
+                    const rectY = centerY - lineHeight / 2;
+                    ctx.fillRect(x, rectY, cellWidth, lineHeight);
+                    elementData.width = cellWidth;
+                    elementData.height = lineHeight;
+                    elementData.rectY = rectY;
+                    break;
+                    
+                case 'vertical':
+                    const lineWidth = cellWidth * thickness;
+                    const rectX = centerX - lineWidth / 2;
+                    ctx.fillRect(rectX, y, lineWidth, cellHeight);
+                    elementData.width = lineWidth;
+                    elementData.height = cellHeight;
+                    elementData.rectX = rectX;
+                    break;
+                    
+                case 'squares':
+                    const squareSize = Math.min(cellWidth, cellHeight) * thickness;
+                    const squareX = centerX - squareSize / 2;
+                    const squareY = centerY - squareSize / 2;
+                    ctx.fillRect(squareX, squareY, squareSize, squareSize);
+                    elementData.size = squareSize;
+                    elementData.squareX = squareX;
+                    elementData.squareY = squareY;
+                    break;
+                    
+                case 'circles':
+                    const radius = Math.min(cellWidth, cellHeight) * thickness / 2;
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    elementData.radius = radius;
+                    break;
+                    
+                default:
+                    console.warn(`Unknown element type: ${type}`);
+                    return null;
+            }
+            
+            return elementData;
+        } catch (error) {
+            console.error('Error drawing grid element:', error);
+            return null;
+        }
+    }
+
+    // Animation functions
+    animateBtn.addEventListener('click', () => {
+        if (isAnimating || !targetElementSizes) return;
+        
+        const mode = animationModeSelect.value;
+        const duration = parseFloat(animationDurationSlider.value) * 1000; // Convert to ms
+        
+        if (mode === 'fill') {
+            animateFillFromEmpty(duration);
+        } else if (mode === 'morph') {
+            animateMorphFromUniform(duration);
+        }
+    });
+
+    function animateFillFromEmpty(duration) {
+        isAnimating = true;
+        animateBtn.disabled = true;
+        animateBtn.textContent = 'Animating...';
+        
+        const gridCtx = gridCanvas.getContext('2d');
+        const outputWidth = gridCanvas.width;
+        const outputHeight = gridCanvas.height;
+        const elementType = elementTypeSelect.value;
+        
+        const startTime = performance.now();
+        
+        function animate(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Easing function (ease-out)
+            const easedProgress = 1 - Math.pow(1 - progress, 3);
+            
+            // Clear canvas with white background
+            gridCtx.fillStyle = '#ffffff';
+            gridCtx.fillRect(0, 0, outputWidth, outputHeight);
+            gridCtx.fillStyle = '#0956FF';
+            
+            // Draw elements with animated sizes
+            targetElementSizes.forEach(target => {
+                if (target.elementSize > 0.01) {
+                    const animatedSize = target.elementSize * easedProgress;
+                    drawGridElement(gridCtx, target.x, target.y, target.cellWidth, target.cellHeight, animatedSize, elementType);
+                }
+            });
+            
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                // Animation complete
+                isAnimating = false;
+                animateBtn.disabled = false;
+                animateBtn.textContent = 'Play Animation';
+            }
+        }
+        
+        requestAnimationFrame(animate);
+    }
+
+    function animateMorphFromUniform(duration) {
+        isAnimating = true;
+        animateBtn.disabled = true;
+        animateBtn.textContent = 'Animating...';
+        
+        const gridCtx = gridCanvas.getContext('2d');
+        const outputWidth = gridCanvas.width;
+        const outputHeight = gridCanvas.height;
+        const elementType = elementTypeSelect.value;
+        const uniformSize = parseFloat(maxThicknessSlider.value) * 0.5; // Start at 50% of max
+        
+        const startTime = performance.now();
+        
+        function animate(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Easing function (ease-in-out)
+            const easedProgress = progress < 0.5 
+                ? 2 * progress * progress 
+                : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+            
+            // Clear canvas with white background
+            gridCtx.fillStyle = '#ffffff';
+            gridCtx.fillRect(0, 0, outputWidth, outputHeight);
+            gridCtx.fillStyle = '#0956FF';
+            
+            // Draw elements with interpolated sizes
+            targetElementSizes.forEach(target => {
+                const startSize = uniformSize;
+                const endSize = target.elementSize;
+                const animatedSize = startSize + (endSize - startSize) * easedProgress;
+                
+                if (animatedSize > 0.01) {
+                    drawGridElement(gridCtx, target.x, target.y, target.cellWidth, target.cellHeight, animatedSize, elementType);
+                }
+            });
+            
+            if (progress < 1) {
+                requestAnimationFrame(animate);
+            } else {
+                // Animation complete
+                isAnimating = false;
+                animateBtn.disabled = false;
+                animateBtn.textContent = 'Play Animation';
+            }
+        }
+        
+        requestAnimationFrame(animate);
+    }
+
+    // Export functions
+    exportPNG.addEventListener('click', () => {
+        try {
+            const link = document.createElement('a');
+            link.download = 'grid-filter.png';
+            link.href = gridCanvas.toDataURL('image/png');
+            link.click();
+        } catch (error) {
+            console.error('Error exporting PNG:', error);
+            alert('Error exporting PNG. Please try again.');
+        }
+    });
+
+    exportSVG.addEventListener('click', () => {
+        if (!currentGridData) {
+            alert('No grid data to export. Please generate a grid filter first.');
+            return;
+        }
+        
+        try {
+            const { gridSize, outputWidth, outputHeight, elements, elementType } = currentGridData;
+            
+            let svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="${outputWidth}" height="${outputHeight}" viewBox="0 0 ${outputWidth} ${outputHeight}">`;
+            svgContent += `<rect width="100%" height="100%" fill="#ffffff"/>`;
+            
+            elements.forEach(element => {
+                switch (elementType) {
+                    case 'horizontal':
+                        svgContent += `<rect x="${element.x}" y="${element.rectY}" width="${element.width}" height="${element.height}" fill="#0956FF"/>`;
+                        break;
+                    case 'vertical':
+                        svgContent += `<rect x="${element.rectX}" y="${element.y}" width="${element.width}" height="${element.height}" fill="#0956FF"/>`;
+                        break;
+                    case 'squares':
+                        svgContent += `<rect x="${element.squareX}" y="${element.squareY}" width="${element.size}" height="${element.size}" fill="#0956FF"/>`;
+                        break;
+                    case 'circles':
+                        svgContent += `<circle cx="${element.centerX}" cy="${element.centerY}" r="${element.radius}" fill="#0956FF"/>`;
+                        break;
+                }
+            });
+            
+            svgContent += '</svg>';
+            
+            const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+            const link = document.createElement('a');
+            link.download = 'grid-filter.svg';
+            link.href = URL.createObjectURL(blob);
+            link.click();
+            URL.revokeObjectURL(link.href);
+        } catch (error) {
+            console.error('Error exporting SVG:', error);
+            alert('Error exporting SVG. Please try again.');
+        }
+    });
+
+    // Auto-convert when controls change (with debouncing)
+    let debounceTimer;
+    function debounceConvert() {
+        if (!currentImage) return;
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            generateGridFilter();
+        }, 200);
+    }
+
+    gridSizeSlider.addEventListener('input', debounceConvert);
+    maxThicknessSlider.addEventListener('input', debounceConvert);
+    contrastSlider.addEventListener('input', debounceConvert);
+    elementTypeSelect.addEventListener('change', debounceConvert);
+    invertSelect.addEventListener('change', debounceConvert);
+</script>
+</body>
+</html>

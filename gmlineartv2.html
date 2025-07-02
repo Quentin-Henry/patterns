@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Grid Filter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+            background: #fafbfc;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            color: #1a1a1a;
+        }
+
+        .container {
+            width: 100%;
+            display: flex;
+            align-items: stretch;
+        }
+
+        .controls-panel {
+            width: 320px;
+            background: #ffffff;
+            border-right: 1px solid #e8eaed;
+            overflow-y: auto;
+            z-index: 10;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
+            position: relative;
+        }
+
+        .header {
+            padding: 24px 24px 20px 24px;
+            border-bottom: 1px solid #f1f3f4;
+            background: #ffffff;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .logo-placeholder {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.logo-placeholder img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+        .title-group {
+            flex: 1;
+        }
+
+        .app-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            line-height: 1.2;
+            margin-bottom: 2px;
+        }
+
+        .app-subtitle {
+            font-size: 12px;
+            color: #5f6368;
+            font-weight: 400;
+            line-height: 1.3;
+        }
+
+        .controls-content {
+            padding: 0 24px 24px 24px;
+        }
+
+        .control-section {
+            margin-bottom: 32px;
+        }
+
+        .control-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #3c4043;
+            letter-spacing: -0.01em;
+        }
+
+        .control-item {
+            margin-bottom: 20px;
+        }
+
+        .control-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .control-label {
+            display: block;
+            font-size: 12px;
+            color: #5f6368;
+            margin-bottom: 8px;
+            font-weight: 500;
+            letter-spacing: -0.01em;
+        }
+
+        .control-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .color-input-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+        }
+
+        input[type="color"] {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #e8eaed;
+            border-radius: 6px;
+            cursor: pointer;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background: none;
+            padding: 2px;
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 4px;
+        }
+
+        .color-value {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 12px;
+            color: #5f6368;
+            min-width: 70px;
+            font-weight: 500;
+            font-variant-numeric: tabular-nums;
+        }
+
+        input[type="range"] {
+            flex: 1;
+            height: 2px;
+            background: #e8eaed;
+            border-radius: 1px;
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #0956ff;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(9, 86, 255, 0.3);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #0956ff;
+            transform: scale(1.1);
+            box-shadow: 0 3px 8px rgba(9, 86, 255, 0.4);
+        }
+
+        input[type="range"]:focus::-webkit-slider-thumb {
+            background: #0956ff;
+            transform: scale(1.1);
+            box-shadow: 0 0 0 4px rgba(9, 86, 255, 0.12);
+        }
+
+        .value-display {
+            font-size: 12px;
+            color: #5f6368;
+            width: 32px;
+            text-align: right;
+            font-weight: 500;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .select-container {
+            position: relative;
+        }
+
+        .select-input {
+            width: 100%;
+            height: 36px;
+            border-radius: 6px;
+            background: #ffffff;
+            border: 1px solid #e8eaed;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+            font-size: 12px;
+            font-weight: 400;
+            padding: 0 32px 0 12px;
+            appearance: none;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #3c4043;
+        }
+
+        .select-input:focus {
+            outline: none;
+            border-color: #0956FF;
+            box-shadow: 0 0 0 3px rgba(9, 86, 255, 0.1);
+        }
+
+        .select-input:hover {
+            background: #f8f9fa;
+            border-color: #dadce0;
+        }
+
+        .select-arrow {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            pointer-events: none;
+        }
+
+        .select-arrow::after {
+            content: '';
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+            width: 5px;
+            height: 5px;
+            border-right: 1.5px solid #5f6368;
+            border-bottom: 1.5px solid #5f6368;
+        }
+
+        .button-group {
+            display: grid;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            height: 36px;
+            border-radius: 6px;
+            border: 1px solid #e8eaed;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            color: #3c4043;
+            letter-spacing: -0.01em;
+            background: #ffffff;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn.primary {
+            background: #0956FF;
+            color: #ffffff;
+            border-color: #0956FF;
+        }
+
+        .btn.primary:hover:not(:disabled) {
+            background: #0949e6;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(9, 86, 255, 0.3);
+        }
+
+        .btn.secondary:hover:not(:disabled) {
+            background: #f8f9fa;
+            border-color: #dadce0;
+            transform: translateY(-1px);
+        }
+
+        .file-input-area {
+            border: 2px dashed #e8eaed;
+            border-radius: 8px;
+            padding: 24px 16px;
+            text-align: center;
+            margin-bottom: 24px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #ffffff;
+        }
+
+        .file-input-area:hover {
+            border-color: #0956FF;
+            background: #f8f9fa;
+        }
+
+        .file-input-area.dragover {
+            border-color: #0956FF;
+            background: #e3f2fd;
+            border-style: solid;
+        }
+
+        .file-input-text {
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: #3c4043;
+        }
+
+        .file-input-subtext {
+            font-size: 11px;
+            color: #5f6368;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .main-area {
+            flex: 1;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-section {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow: auto;
+        }
+
+        .video-panel {
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #e8eaed;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .video-panel-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f1f3f4;
+            background: #fafbfc;
+        }
+
+        .video-panel-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #3c4043;
+            letter-spacing: -0.01em;
+        }
+
+        .video-panel-content {
+            padding: 20px;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            border-radius: 6px;
+            background: #fff;
+            border: 1px solid #e8eaed;
+            object-fit: contain;
+            max-width: 100%;
+            display: block;
+        }
+
+        #processedCanvas {
+            background: #fff;
+            border: 1px solid #e8eaed;
+        }
+
+        .status {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            display: none;
+            letter-spacing: -0.01em;
+        }
+
+        .status.info {
+            background: #e3f2fd;
+            border: 1px solid #bbdefb;
+            color: #0956ff;
+        }
+
+        .status.error {
+            background: #ffebee;
+            border: 1px solid #ffcdd2;
+            color: #d32f2f;
+        }
+
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(
+                90deg,
+                transparent 0%,
+                #e8eaed 20%,
+                #e8eaed 80%,
+                transparent 100%
+            );
+            margin: 20px 0;
+        }
+
+        .stats-panel {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 12px 16px;
+            border: 1px solid #f1f3f4;
+            margin-top: 20px;
+        }
+
+        .stats-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #3c4043;
+            margin-bottom: 12px;
+            letter-spacing: -0.01em;
+        }
+
+        .stats-grid {
+            display: grid;
+            gap: 8px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 0;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: #5f6368;
+            font-weight: 400;
+        }
+
+        .stat-value {
+            font-size: 11px;
+            font-weight: 500;
+            color: #3c4043;
+            font-variant-numeric: tabular-nums;
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .controls-panel {
+                width: 100%;
+                height: auto;
+                border-right: none;
+                border-bottom: 1px solid #e8eaed;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .controls-panel {
+                position: relative;
+            }
+            
+            .video-section {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="controls-panel">
+            <div class="header">
+                <div class="logo-area">
+                    <div class="logo-placeholder">
+                        <img src="/images/gmLogo.png" alt="Logo" />
+                      </div>
+                    <div class="title-group">
+                        <div class="app-title">Live Grid</div>
+                        <div class="app-subtitle">Real-time video transformation</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls-content">
+                <div class="control-section">
+                    <div class="file-input-area" onclick="document.getElementById('videoFile').click()">
+                        <div class="file-input-text">Upload Video or Use Camera</div>
+                        <div class="file-input-subtext">Click to browse or start webcam below</div>
+                        <input type="file" id="videoFile" accept="video/*">
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <div class="section-title">Color Scheme</div>
+
+                    <div class="control-item">
+                        <label class="control-label">Background Color</label>
+                        <div class="color-input-group">
+                            <input type="color" id="backgroundColor" value="#ffffff">
+                            <span class="color-value" id="backgroundHex">#ffffff</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-item">
+                        <label class="control-label">Element Color</label>
+                        <div class="color-input-group">
+                            <input type="color" id="elementColor" value="#000000">
+                            <span class="color-value" id="elementHex">#000000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+                
+                <div class="control-section">
+                    <div class="section-title">Grid Structure</div>
+
+                    <div class="control-item">
+                        <label class="control-label">Grid Resolution</label>
+                        <div class="control-row">
+                            <input type="range" id="gridResolution" min="10" max="100" step="1" value="40">
+                            <span class="value-display" id="gridValue">40</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-item">
+                        <label class="control-label">Element Type</label>
+                        <div class="select-container">
+                            <select class="select-input" id="elementType">
+                                <option value="horizontal">Horizontal Lines</option>
+                                <option value="vertical">Vertical Lines</option>
+                                <option value="squares">Squares</option>
+                                <option value="circles">Circles</option>
+                            </select>
+                            <div class="select-arrow"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="control-item">
+                        <label class="control-label">Maximum Density</label>
+                        <div class="control-row">
+                            <input type="range" id="maxDensity" min="0.1" max="1.0" step="0.05" value="0.85">
+                            <span class="value-display" id="densityValue">0.85</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-divider"></div>
+                
+                <div class="control-section">
+                    <div class="section-title">Image Processing</div>
+
+                    <div class="control-item">
+                        <label class="control-label">Contrast</label>
+                        <div class="control-row">
+                            <input type="range" id="contrast" min="0.5" max="3.0" step="0.1" value="1.5">
+                            <span class="value-display" id="contrastValue">1.5</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-item">
+                        <label class="control-label">Brightness Mapping</label>
+                        <div class="select-container">
+                            <select class="select-input" id="invert">
+                                <option value="false">Dark areas = Thick elements</option>
+                                <option value="true">Light areas = Thick elements</option>
+                            </select>
+                            <div class="select-arrow"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="control-item">
+                        <label class="control-label">Smoothing</label>
+                        <div class="control-row">
+                            <input type="range" id="smoothing" min="0" max="5" step="1" value="1">
+                            <span class="value-display" id="smoothingValue">1</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn primary" onclick="startWebcam()">Start Camera</button>
+                    <button class="btn secondary" onclick="stopWebcam()">Stop Camera</button>
+                    <button class="btn secondary" onclick="downloadFrame()">Save Frame</button>
+                </div>
+
+                <div class="stats-panel" id="statsPanel" style="display: none;">
+                    <div class="stats-title">Processing Statistics</div>
+                    <div class="stats-grid">
+                        <div class="stat-row">
+                            <span class="stat-label">Resolution</span>
+                            <span class="stat-value" id="resolutionStat">—</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Grid cells</span>
+                            <span class="stat-value" id="cellsStat">—</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Frame rate</span>
+                            <span class="stat-value" id="fpsStat">—</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Element type</span>
+                            <span class="stat-value" id="elementStat">—</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-area">
+            <div class="status" id="status"></div>
+            
+            <div class="video-section">
+                <div class="video-panel">
+                    <div class="video-panel-header">
+                        <div class="video-panel-title">Live Grid Filter</div>
+                    </div>
+                    <div class="video-panel-content">
+                        <canvas id="processedCanvas"></canvas>
+                        <video id="originalVideo" muted playsinline style="display: none;"></video>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let originalVideo = document.getElementById('originalVideo');
+        let processedCanvas = document.getElementById('processedCanvas');
+        let ctx = processedCanvas.getContext('2d');
+        let animationId;
+        let webcamStream;
+        let frameCount = 0;
+        let lastFpsUpdate = 0;
+        
+        // Control elements
+        const backgroundColorInput = document.getElementById('backgroundColor');
+        const elementColorInput = document.getElementById('elementColor');
+        const gridResolutionInput = document.getElementById('gridResolution');
+        const elementTypeInput = document.getElementById('elementType');
+        const maxDensityInput = document.getElementById('maxDensity');
+        const contrastInput = document.getElementById('contrast');
+        const invertInput = document.getElementById('invert');
+        const smoothingInput = document.getElementById('smoothing');
+        const videoFileInput = document.getElementById('videoFile');
+        const statusDiv = document.getElementById('status');
+        
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setupControls();
+            setupVideoHandlers();
+            
+            // Handle window resize to maintain aspect ratio
+            window.addEventListener('resize', () => {
+                if (originalVideo.videoWidth && originalVideo.videoHeight) {
+                    resizeCanvas();
+                }
+            });
+        });
+        
+        // Update display values and setup event listeners
+        function setupControls() {
+            backgroundColorInput.addEventListener('input', (e) => {
+                document.getElementById('backgroundHex').textContent = e.target.value;
+            });
+            
+            elementColorInput.addEventListener('input', (e) => {
+                document.getElementById('elementHex').textContent = e.target.value;
+            });
+            
+            gridResolutionInput.addEventListener('input', (e) => {
+                document.getElementById('gridValue').textContent = e.target.value;
+                updateStats();
+            });
+            
+            maxDensityInput.addEventListener('input', (e) => {
+                document.getElementById('densityValue').textContent = e.target.value;
+            });
+            
+            contrastInput.addEventListener('input', (e) => {
+                document.getElementById('contrastValue').textContent = e.target.value;
+            });
+            
+            smoothingInput.addEventListener('input', (e) => {
+                document.getElementById('smoothingValue').textContent = e.target.value;
+            });
+
+            elementTypeInput.addEventListener('change', updateStats);
+        }
+        
+        // Setup video event handlers
+        function setupVideoHandlers() {
+            // File input handler
+            videoFileInput.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    console.log('File selected:', file.name, file.type);
+                    
+                    // Stop webcam if running
+                    if (webcamStream) {
+                        stopWebcam();
+                    }
+                    
+                    const url = URL.createObjectURL(file);
+                    originalVideo.src = url;
+                    originalVideo.srcObject = null;
+                    
+                    try {
+                        originalVideo.load();
+                        await originalVideo.play();
+                        showStatus('Video loaded and playing', 'info');
+                        startProcessing();
+                    } catch (error) {
+                        console.error('Error playing video file:', error);
+                        showStatus('Error playing video file', 'error');
+                    }
+                }
+            });
+            
+            // Video metadata loaded
+            originalVideo.addEventListener('loadedmetadata', () => {
+                resizeCanvas();
+                updateStats();
+            });
+            
+            // Video play event
+            originalVideo.addEventListener('play', () => {
+                startProcessing();
+            });
+            
+            // Video pause event
+            originalVideo.addEventListener('pause', () => {
+                stopProcessing();
+            });
+        }
+        
+        // Start webcam
+        async function startWebcam() {
+            try {
+                // Stop any existing streams
+                if (webcamStream) {
+                    stopWebcam();
+                }
+                
+                webcamStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 1280 },
+                        height: { ideal: 720 }
+                    } 
+                });
+                
+                originalVideo.srcObject = webcamStream;
+                originalVideo.src = '';
+                await originalVideo.play();
+                
+                showStatus('Webcam started successfully', 'info');
+                startProcessing();
+                
+            } catch (error) {
+                console.error('Error starting webcam:', error);
+                showStatus('Error accessing webcam: ' + error.message, 'error');
+            }
+        }
+        
+        // Stop webcam
+        function stopWebcam() {
+            if (webcamStream) {
+                webcamStream.getTracks().forEach(track => track.stop());
+                webcamStream = null;
+                originalVideo.srcObject = null;
+                stopProcessing();
+                showStatus('Webcam stopped', 'info');
+            }
+        }
+        
+        // Start processing loop
+        function startProcessing() {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            processFrame();
+        }
+        
+        // Stop processing loop
+        function stopProcessing() {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+        }
+        
+        // Main processing loop
+        function processFrame() {
+            if (originalVideo.videoWidth === 0 || originalVideo.videoHeight === 0) {
+                animationId = requestAnimationFrame(processFrame);
+                return;
+            }
+            
+            // Resize canvas if needed
+            if (processedCanvas.width !== originalVideo.videoWidth || 
+                processedCanvas.height !== originalVideo.videoHeight) {
+                resizeCanvas();
+            }
+            
+            // Draw original video to canvas to get image data
+            ctx.drawImage(originalVideo, 0, 0, processedCanvas.width, processedCanvas.height);
+            const imageData = ctx.getImageData(0, 0, processedCanvas.width, processedCanvas.height);
+            
+            // Get current settings
+            const backgroundColor = hexToRgb(backgroundColorInput.value);
+            const elementColor = hexToRgb(elementColorInput.value);
+            const gridResolution = parseInt(gridResolutionInput.value);
+            const elementType = elementTypeInput.value;
+            const maxDensity = parseFloat(maxDensityInput.value);
+            const contrast = parseFloat(contrastInput.value);
+            const invert = invertInput.value === 'true';
+            const smoothing = parseInt(smoothingInput.value);
+            
+            // Apply grid filter
+            const { cols, rows } = applyGridFilter(
+                imageData, backgroundColor, elementColor, gridResolution, 
+                elementType, maxDensity, contrast, invert, smoothing
+            );
+            
+            // Update stats
+            updateProcessingStats(cols, rows);
+            
+            // Continue loop
+            animationId = requestAnimationFrame(processFrame);
+        }
+        
+        // Resize canvas to match video with proper aspect ratio
+        function resizeCanvas() {
+            if (originalVideo.videoWidth && originalVideo.videoHeight) {
+                const videoWidth = originalVideo.videoWidth;
+                const videoHeight = originalVideo.videoHeight;
+                const aspectRatio = videoWidth / videoHeight;
+                
+                // Set canvas to actual video dimensions for processing
+                processedCanvas.width = videoWidth;
+                processedCanvas.height = videoHeight;
+                
+                // Set CSS dimensions to maintain aspect ratio while fitting container
+                const container = processedCanvas.parentElement;
+                const containerWidth = container.clientWidth - 40; // Account for padding
+                const containerHeight = window.innerHeight * 0.6; // Max 60% of viewport height
+                
+                let displayWidth, displayHeight;
+                
+                if (containerWidth / aspectRatio <= containerHeight) {
+                    // Width is the limiting factor
+                    displayWidth = containerWidth;
+                    displayHeight = containerWidth / aspectRatio;
+                } else {
+                    // Height is the limiting factor
+                    displayHeight = containerHeight;
+                    displayWidth = containerHeight * aspectRatio;
+                }
+                
+                processedCanvas.style.width = displayWidth + 'px';
+                processedCanvas.style.height = displayHeight + 'px';
+                
+                // Show stats panel
+                document.getElementById('statsPanel').style.display = 'block';
+            }
+        }
+        
+        // Update stats display
+        function updateStats() {
+            const resolution = gridResolutionInput.value;
+            const elementType = elementTypeInput.value;
+            
+            document.getElementById('resolutionStat').textContent = 
+                originalVideo.videoWidth ? `${originalVideo.videoWidth}×${originalVideo.videoHeight}` : '—';
+            document.getElementById('elementStat').textContent = 
+                elementType.charAt(0).toUpperCase() + elementType.slice(1);
+        }
+        
+        // Update processing stats during runtime
+        function updateProcessingStats(cols, rows) {
+            const totalCells = cols * rows;
+            document.getElementById('cellsStat').textContent = totalCells.toLocaleString();
+            
+            // Calculate FPS
+            frameCount++;
+            const now = performance.now();
+            if (now - lastFpsUpdate > 1000) {
+                const fps = Math.round(frameCount * 1000 / (now - lastFpsUpdate));
+                document.getElementById('fpsStat').textContent = fps + ' fps';
+                frameCount = 0;
+                lastFpsUpdate = now;
+            }
+        }
+        
+        // Show status message
+        function showStatus(message, type = 'info') {
+            statusDiv.textContent = message;
+            statusDiv.className = `status ${type}`;
+            statusDiv.style.display = 'block';
+            
+            // Auto-hide after 3 seconds
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Download current frame
+        function downloadFrame() {
+            if (processedCanvas.width === 0 || processedCanvas.height === 0) {
+                showStatus('No frame to download', 'error');
+                return;
+            }
+            
+            const link = document.createElement('a');
+            link.download = `grid-filter-${new Date().getTime()}.png`;
+            link.href = processedCanvas.toDataURL();
+            link.click();
+            
+            showStatus('Frame saved successfully', 'info');
+        }
+        
+        // Hex to RGB conversion
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : null;
+        }
+        
+        // ASCII-style grid filter algorithm
+        function applyGridFilter(imageData, backgroundColor, elementColor, gridResolution, elementType, maxDensity, contrast, invert, smoothing) {
+            const data = imageData.data;
+            const width = imageData.width;
+            const height = imageData.height;
+            
+            // Clear canvas with background color
+            ctx.fillStyle = `rgb(${backgroundColor.r}, ${backgroundColor.g}, ${backgroundColor.b})`;
+            ctx.fillRect(0, 0, width, height);
+            
+            // Calculate cell size
+            const cellSize = Math.min(width, height) / gridResolution;
+            const cols = Math.floor(width / cellSize);
+            const rows = Math.floor(height / cellSize);
+            
+            // Set element color
+            ctx.fillStyle = `rgb(${elementColor.r}, ${elementColor.g}, ${elementColor.b})`;
+            ctx.strokeStyle = `rgb(${elementColor.r}, ${elementColor.g}, ${elementColor.b})`;
+            
+            // Process each grid cell
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    const cellX = col * cellSize;
+                    const cellY = row * cellSize;
+                    
+                    // Sample brightness from multiple points in the cell for better quality
+                    let totalBrightness = 0;
+                    let sampleCount = 0;
+                    const sampleSize = Math.max(1, Math.floor(cellSize / 4));
+                    
+                    for (let sy = 0; sy < cellSize; sy += sampleSize) {
+                        for (let sx = 0; sx < cellSize; sx += sampleSize) {
+                            const pixelX = Math.floor(cellX + sx);
+                            const pixelY = Math.floor(cellY + sy);
+                            
+                            if (pixelX < width && pixelY < height) {
+                                const pixelIndex = (pixelY * width + pixelX) * 4;
+                                const r = data[pixelIndex];
+                                const g = data[pixelIndex + 1];
+                                const b = data[pixelIndex + 2];
+                                
+                                // Calculate brightness (0-255)
+                                const brightness = (r * 0.299 + g * 0.587 + b * 0.114);
+                                totalBrightness += brightness;
+                                sampleCount++;
+                            }
+                        }
+                    }
+                    
+                    if (sampleCount === 0) continue;
+                    
+                    // Average brightness
+                    let avgBrightness = totalBrightness / sampleCount;
+                    
+                    // Normalize brightness (0-1)
+                    let normalizedBrightness = avgBrightness / 255;
+                    
+                    // Apply contrast
+                    normalizedBrightness = Math.pow(normalizedBrightness, 1 / contrast);
+                    
+                    // Apply smoothing (blur effect)
+                    if (smoothing > 0) {
+                        let smoothedBrightness = 0;
+                        let smoothCount = 0;
+                        
+                        for (let dy = -smoothing; dy <= smoothing; dy++) {
+                            for (let dx = -smoothing; dx <= smoothing; dx++) {
+                                const neighborRow = row + dy;
+                                const neighborCol = col + dx;
+                                
+                                if (neighborRow >= 0 && neighborRow < rows && neighborCol >= 0 && neighborCol < cols) {
+                                    const neighborX = neighborCol * cellSize + cellSize / 2;
+                                    const neighborY = neighborRow * cellSize + cellSize / 2;
+                                    
+                                    if (neighborX < width && neighborY < height) {
+                                        const pixelIndex = (Math.floor(neighborY) * width + Math.floor(neighborX)) * 4;
+                                        const r = data[pixelIndex];
+                                        const g = data[pixelIndex + 1];
+                                        const b = data[pixelIndex + 2];
+                                        const brightness = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
+                                        smoothedBrightness += brightness;
+                                        smoothCount++;
+                                    }
+                                }
+                            }
+                        }
+                        
+                        if (smoothCount > 0) {
+                            normalizedBrightness = smoothedBrightness / smoothCount;
+                        }
+                    }
+                    
+                    // Invert if needed
+                    if (invert) {
+                        normalizedBrightness = 1 - normalizedBrightness;
+                    }
+                    
+                    // Calculate element size based on brightness (darker = bigger elements)
+                    const elementSize = (1 - normalizedBrightness) * maxDensity;
+                    
+                    // Draw element if significant enough
+                    if (elementSize > 0.05) {
+                        drawGridElement(cellX, cellY, cellSize, cellSize, elementSize, elementType);
+                    }
+                }
+            }
+
+            return { cols, rows };
+        }
+        
+        // Draw individual grid element
+        function drawGridElement(x, y, cellWidth, cellHeight, thickness, type) {
+            const centerX = x + cellWidth / 2;
+            const centerY = y + cellHeight / 2;
+            
+            switch (type) {
+                case 'horizontal':
+                    const lineHeight = cellHeight * thickness;
+                    ctx.fillRect(x, centerY - lineHeight / 2, cellWidth, lineHeight);
+                    break;
+                    
+                case 'vertical':
+                    const lineWidth = cellWidth * thickness;
+                    ctx.fillRect(centerX - lineWidth / 2, y, lineWidth, cellHeight);
+                    break;
+                    
+                case 'squares':
+                    const squareSize = Math.min(cellWidth, cellHeight) * thickness;
+                    ctx.fillRect(centerX - squareSize / 2, centerY - squareSize / 2, squareSize, squareSize);
+                    break;
+                    
+                case 'circles':
+                    const radius = Math.min(cellWidth, cellHeight) * thickness / 2;
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+                    ctx.fill();
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>
