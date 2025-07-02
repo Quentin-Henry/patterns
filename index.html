@@ -50,18 +50,18 @@
       }
 
       .logo-placeholder {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  overflow: hidden;
-}
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        overflow: hidden;
+      }
 
-.logo-placeholder img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
+      .logo-placeholder img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
 
       .title-group {
         flex: 1;
@@ -377,12 +377,12 @@
 
       <div class="header">
         <div class="logo-area">
-            <div class="logo-placeholder">
-                <img src="./images/gmLogo.png" alt="Logo" />
-              </div>
+          <div class="logo-placeholder">
+            <img src="./images/gmLogo.png" alt="Logo" />
+          </div>
           <div class="title-group">
             <div class="app-title">Underline Pattern</div>
-            <div class="app-subtitle">Generative design system</div>
+            <div class="app-subtitle">Kinetic design system</div>
           </div>
         </div>
       </div>
@@ -390,25 +390,27 @@
       <div class="controls-content">
         <div class="control-section">
           <div class="primary-controls">
-            <button class="primary-btn active" id="gridView">Grid View</button>
-            <button class="primary-btn" id="cleanView">Clean View</button>
+            <button class="primary-btn active" id="gridView">
+              Blueprint View
+            </button>
+            <button class="primary-btn" id="cleanView">Production View</button>
           </div>
 
           <div class="primary-controls">
-            <button class="primary-btn active" id="stillMode">Static</button>
-            <button class="primary-btn" id="flowMode">Flow</button>
+            <button class="primary-btn active" id="stillMode">
+              Base Config
+            </button>
+            <button class="primary-btn" id="flowMode">Flow State</button>
           </div>
 
-          <div class="status-indicator" id="statusIndicator">
-           
-          </div>
+          <div class="status-indicator" id="statusIndicator"></div>
         </div>
 
         <div class="control-section">
-          <div class="section-title">Animation</div>
+          <div class="section-title">Motion Dynamics</div>
 
           <div class="control-item">
-            <label class="control-label">Flow Speed</label>
+            <label class="control-label">Velocity</label>
             <div class="control-row">
               <input
                 type="range"
@@ -423,7 +425,7 @@
           </div>
 
           <div class="control-item">
-            <label class="control-label">Smoothness</label>
+            <label class="control-label">Precision</label>
             <div class="control-row">
               <input
                 type="range"
@@ -441,10 +443,10 @@
         <div class="section-divider"></div>
 
         <div class="control-section">
-          <div class="section-title">Grid Structure</div>
+          <div class="section-title">Blueprint Structure</div>
 
           <div class="control-item">
-            <label class="control-label">Columns</label>
+            <label class="control-label">Route Lanes</label>
             <div class="control-row">
               <input type="range" id="columns" min="4" max="12" value="6" />
               <span class="value-display" id="columnsValue">6</span>
@@ -452,7 +454,7 @@
           </div>
 
           <div class="control-item">
-            <label class="control-label">Base Cells</label>
+            <label class="control-label">Pattern Segments</label>
             <div class="control-row">
               <input type="range" id="baseCells" min="6" max="18" value="10" />
               <span class="value-display" id="baseCellsValue">10</span>
@@ -460,7 +462,7 @@
           </div>
 
           <div class="control-item">
-            <label class="control-label">Width</label>
+            <label class="control-label">Span</label>
             <div class="control-row">
               <input
                 type="range"
@@ -474,7 +476,7 @@
           </div>
 
           <div class="control-item">
-            <label class="control-label">Height</label>
+            <label class="control-label">Depth</label>
             <div class="control-row">
               <input
                 type="range"
@@ -489,22 +491,26 @@
         </div>
 
         <div class="control-section">
-          <div class="section-title">Density Flow</div>
+          <div class="section-title">Traffic Flow</div>
 
           <div class="control-item">
-            <label class="control-label">Pattern</label>
+            <label class="control-label">Movement</label>
             <div class="button-grid">
               <button class="option-btn active" data-density="wave">
-                Wave
+                Highway
               </button>
-              <button class="option-btn" data-density="pulse">Pulse</button>
-              <button class="option-btn" data-density="sweep">Sweep</button>
-              <button class="option-btn" data-density="breath">Breath</button>
+              <button class="option-btn" data-density="pulse">
+                Acceleration
+              </button>
+              <button class="option-btn" data-density="sweep">
+                Lane Shift
+              </button>
+              <button class="option-btn" data-density="breath">Cruise</button>
             </div>
           </div>
 
           <div class="control-item">
-            <label class="control-label">Range</label>
+            <label class="control-label">Traffic Density</label>
             <div class="control-row">
               <input
                 type="range"
@@ -519,7 +525,7 @@
           </div>
 
           <div class="control-item">
-            <label class="control-label">Intensity</label>
+            <label class="control-label">Response Time</label>
             <div class="control-row">
               <input
                 type="range"
@@ -535,22 +541,24 @@
         </div>
 
         <div class="control-section">
-          <div class="section-title">Mathematical Ratios</div>
+          <div class="section-title">Design Language</div>
 
           <div class="control-item">
-            <label class="control-label">System</label>
+            <label class="control-label">Proportion System</label>
             <div class="button-grid">
               <button class="option-btn active" data-ratio="fibonacci">
-                Fibonacci
+                Aerodynamic
               </button>
-              <button class="option-btn" data-ratio="golden">Golden</button>
-              <button class="option-btn" data-ratio="harmonic">Harmonic</button>
-              <button class="option-btn" data-ratio="prime">Prime</button>
+              <button class="option-btn" data-ratio="golden">Precision</button>
+              <button class="option-btn" data-ratio="harmonic">
+                Performance
+              </button>
+              <button class="option-btn" data-ratio="prime">Utility</button>
             </div>
           </div>
 
           <div class="control-item">
-            <label class="control-label">Variance</label>
+            <label class="control-label">Scale Variation</label>
             <div class="control-row">
               <input
                 type="range"
@@ -566,10 +574,10 @@
         </div>
 
         <div class="control-section">
-          <div class="section-title">Connector Logic</div>
+          <div class="section-title">Connection Points</div>
 
           <div class="control-item">
-            <label class="control-label">Size</label>
+            <label class="control-label">Underline Weight</label>
             <div class="control-row">
               <input
                 type="range"
@@ -583,26 +591,28 @@
           </div>
 
           <div class="control-item">
-            <label class="control-label">Response</label>
+            <label class="control-label">Flow Response</label>
             <div class="button-grid">
               <button class="option-btn active" data-connector="fixed">
-                Fixed
+                Static
               </button>
-              <button class="option-btn" data-connector="flow">Flow</button>
+              <button class="option-btn" data-connector="flow">Adaptive</button>
               <button class="option-btn" data-connector="inverse">
-                Inverse
+                Counter
               </button>
-              <button class="option-btn" data-connector="pulse">Pulse</button>
+              <button class="option-btn" data-connector="pulse">
+                Rhythmic
+              </button>
             </div>
           </div>
         </div>
 
         <button class="export-btn" onclick="exportGrid()">
-          Export Current State
+          Export Pattern Blueprint
         </button>
 
         <div class="stats" id="stats">
-          Static Grid: 6×10 | 800×600 | Fibonacci+Wave
+          Base Config: 6×10 | 800×600 | Aerodynamic+Highway
         </div>
       </div>
     </div>
