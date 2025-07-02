@@ -576,9 +576,11 @@
           <div class="control-item">
             <label class="control-label">Movement</label>
             <div class="button-grid">
-              <button class="option-btn active" data-density="wave">
-                Highway
+              <button class="option-btn active" data-density="standard">
+                Standard
               </button>
+              <button class="option-btn" data-density="offset">Offset</button>
+              <button class="option-btn" data-density="wave">Highway</button>
               <button class="option-btn" data-density="pulse">
                 Acceleration
               </button>
@@ -819,8 +821,8 @@
         constructor() {
           this.params = {
             // Grid architecture - Updated starting values
-            columns: 1, // Start with 1 column
-            baseCells: 1, // Start with 1 cell
+            columns: 1,
+            baseCells: 1,
             frameWidth: 800,
             frameHeight: 600,
 
@@ -833,13 +835,13 @@
             ratioSystem: "fibonacci",
             ratioVariance: 2.8,
 
-            // Density flow
-            densityPattern: "wave",
+            // Density flow - CHANGED: Start with standard grid
+            densityPattern: "standard", // Changed from "wave"
             densityRange: 1.2,
             flowIntensity: 0.8,
 
-            // Connector system - Updated starting values
-            connectorSize: 20, // Start with 20 instead of 5
+            // Connector system
+            connectorSize: 20,
             weightVariation: 3.0,
             connectorResponse: "fixed",
 
@@ -1178,9 +1180,12 @@
       }
 
       // Movement System Registry
+      // Movement System Registry
       class MovementSystems {
         constructor() {
           this.systems = {
+            standard: this.calculateStandardGrid.bind(this),
+            offset: this.calculateOffsetGrid.bind(this),
             wave: this.calculateWaveInterference.bind(this),
             pulse: this.calculatePulseMovement.bind(this),
             sweep: this.calculateSweepMovement.bind(this),
@@ -1193,16 +1198,29 @@
           return system ? system(normalizedPos, timeOffset) : 1.0;
         }
 
-        // Update this method in your MovementSystems class
+        // NEW: Standard grid - no displacement, ensures minimum content
+        calculateStandardGrid(normalizedPos, timeOffset) {
+          // Always return consistent density for standard grid
+          // This ensures all columns have the same amount of content
+          return 1.0;
+        }
+        // NEW: Offset grid - subtle brick pattern
+        calculateOffsetGrid(normalizedPos, timeOffset) {
+          // Create a subtle alternating pattern
+          const columnIndex = Math.floor(normalizedPos * 10); // Approximate column
+          const isEven = columnIndex % 2 === 0;
+          return isEven ? 1.0 : 0.85; // Slight variation for offset effect
+        }
+
+        // Keep existing wave method but constrain better
         calculateWaveInterference(normalizedPos, timeOffset) {
-          // More dramatic interference for visible grid morphing
           const goldenRatioPos = 0.618;
           const goldenWave = this.createWaveFromSource(
             normalizedPos,
             goldenRatioPos,
             timeOffset,
-            1.2,
-            1.8,
+            0.8, // Reduced amplitude
+            1.5, // Reduced frequency
             0
           );
 
@@ -1211,27 +1229,16 @@
             normalizedPos,
             fibonacciPos,
             timeOffset,
-            0.8,
-            1.2,
+            0.6, // Reduced amplitude
+            1.0, // Reduced frequency
             Math.PI / 3
           );
 
-          const primePos = 1 / 3;
-          const primeWave = this.createWaveFromSource(
-            normalizedPos,
-            primePos,
-            timeOffset,
-            0.6,
-            2.0,
-            Math.PI / 2
-          );
-
-          // Combine waves for complex morphing patterns
-          const interference = goldenWave + fibonacciWave + primeWave;
+          const interference = goldenWave + fibonacciWave;
           const normalizedInterference = Math.tanh(interference) * 0.5 + 0.5;
 
-          // Wider range for more dramatic morphing
-          return 0.3 + normalizedInterference * 1.4;
+          // Better constrained range to keep columns visible
+          return 0.5 + normalizedInterference * 1.0;
         }
 
         createWaveFromSource(
@@ -1243,7 +1250,7 @@
           phaseOffset
         ) {
           const distance = Math.abs(position - sourcePos);
-          const distanceDecay = Math.exp(-distance * 2.0);
+          const distanceDecay = Math.exp(-distance * 1.5); // Less aggressive decay
           const spatialPhase = distance * frequency * Math.PI;
           const temporalPhase = time * frequency;
           const totalPhase = spatialPhase + temporalPhase + phaseOffset;
@@ -1254,7 +1261,7 @@
         calculatePulseMovement(normalizedPos, timeOffset) {
           const pulsePhase = Math.sin(timeOffset * 2) * 0.5 + 0.5;
           const distance = Math.abs(normalizedPos - 0.5) * 2;
-          return 0.4 + pulsePhase * (1.2 - distance);
+          return 0.6 + pulsePhase * (0.8 - distance * 0.3); // Better constrained
         }
 
         calculateSweepMovement(normalizedPos, timeOffset) {
@@ -1262,13 +1269,13 @@
           const sweepDistance = Math.abs(
             normalizedPos - (sweepPos > 1 ? 2 - sweepPos : sweepPos)
           );
-          return 0.6 + (1 - sweepDistance) * 0.8;
+          return 0.7 + (1 - sweepDistance) * 0.6; // Better constrained
         }
 
         calculateBreathMovement(normalizedPos, timeOffset) {
           const breathPhase = Math.sin(timeOffset * 0.8) * 0.5 + 0.5;
           const centerDistance = Math.abs(normalizedPos - 0.5);
-          return 0.4 + breathPhase * (1.4 - centerDistance * 1.5);
+          return 0.6 + breathPhase * (1.0 - centerDistance * 0.8); // Better constrained
         }
       }
 
@@ -1607,7 +1614,14 @@
           // Allow fractional cell counts for smoother morphing
           const baseCellCount = this.config.getParam("baseCells");
           const flowingCellCount = baseCellCount * density;
-          const cellCount = Math.max(1, Math.round(flowingCellCount));
+          let cellCount = Math.max(1, Math.round(flowingCellCount));
+
+          // SPECIAL CASE: For standard grid, ensure minimum content visibility
+          const isStandardGrid =
+            this.config.getParam("densityPattern") === "standard";
+          if (isStandardGrid && baseCellCount === 1) {
+            cellCount = 2; // Force 2 cells so we get 1 connector, regardless of column count
+          }
 
           // Get ratios that can vary smoothly over time
           const ratios = this.getFlowingRatios(
@@ -1701,15 +1715,24 @@
             timeOffset
           );
 
-          // Smoother density scaling with better range
-          const smoothDensity =
-            density *
-            this.config.getParam("densityRange") *
-            this.config.getParam("flowIntensity");
+          // Better density scaling with tighter constraints
+          const densityRange = this.config.getParam("densityRange");
+          const flowIntensity = this.config.getParam("flowIntensity");
 
-          return Math.max(0.3, Math.min(3.0, smoothDensity));
+          // For standard and offset grids, ignore flow intensity when not flowing
+          const pattern = this.config.getParam("densityPattern");
+          if (
+            (pattern === "standard" || pattern === "offset") &&
+            !this.config.getParam("isFlowing")
+          ) {
+            return density; // Use raw density without scaling
+          }
+
+          const smoothDensity = density * densityRange * flowIntensity;
+
+          // Tighter bounds to keep content visible
+          return Math.max(0.4, Math.min(2.0, smoothDensity));
         }
-
         startAnimationLoop() {
           const animate = (timestamp) => {
             if (this.config.getParam("isFlowing")) {
