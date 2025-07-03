@@ -461,15 +461,9 @@
         <!-- ENGINEERING SPECS -->
         <div class="control-section">
           <div class="section-title">
-            <svg
-              class="section-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <circle cx="12" cy="12" r="3" />
-              <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1" />
+            <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
             </svg>
             Engineering Specs
           </div>
@@ -515,16 +509,10 @@
         <!-- CHASSIS ARCHITECTURE -->
         <div class="control-section">
           <div class="section-title">
-            <svg
-              class="section-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-              <line x1="9" y1="9" x2="15" y2="15" />
-              <line x1="15" y1="9" x2="9" y2="15" />
+            <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
             </svg>
             Chassis Architecture
           </div>
@@ -548,13 +536,7 @@
           <div class="control-item">
             <label class="control-label">Frame Width</label>
             <div class="control-row">
-              <input
-                type="range"
-                id="frameWidth"
-                min="600"
-                max="1200"
-                value="900"
-              />
+              <input type="range" id="frameWidth" min="600" max="1200" value="900" />
               <span class="value-display" id="frameWidthValue">900</span>
             </div>
           </div>
@@ -562,13 +544,7 @@
           <div class="control-item">
             <label class="control-label">Frame Height</label>
             <div class="control-row">
-              <input
-                type="range"
-                id="frameHeight"
-                min="400"
-                max="800"
-                value="600"
-              />
+              <input type="range" id="frameHeight" min="400" max="800" value="600" />
               <span class="value-display" id="frameHeightValue">600</span>
             </div>
           </div>
@@ -577,18 +553,10 @@
         <!-- DYNAMICS & FLOW -->
         <div class="control-section">
           <div class="section-title">
-            <svg
-              class="section-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path
-                d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z"
-              />
-              <line x1="8" y1="1" x2="8" y2="6" />
-              <line x1="16" y1="1" x2="16" y2="6" />
+            <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z"/>
+              <line x1="8" y1="1" x2="8" y2="6"/>
+              <line x1="16" y1="1" x2="16" y2="6"/>
             </svg>
             Dynamics & Flow
           </div>
@@ -599,26 +567,63 @@
               <button class="option-btn active" data-movement="standard">
                 Static
               </button>
-              <button class="option-btn" data-movement="wave">Highway</button>
-              <button class="option-btn" data-movement="pulse">Pulse</button>
-              <button class="option-btn" data-movement="sweep">Sweep</button>
-              <button class="option-btn" data-movement="breath">Cruise</button>
-              <button class="option-btn" data-movement="offset">Offset</button>
+              <button class="option-btn" data-movement="wave">
+                Highway
+              </button>
+              <button class="option-btn" data-movement="pulse">
+                Pulse
+              </button>
+              <button class="option-btn" data-movement="sweep">
+                Sweep
+              </button>
+              <button class="option-btn" data-movement="breath">
+                Cruise
+              </button>
+              <button class="option-btn" data-movement="offset">
+                Offset
+              </button>
             </div>
           </div>
 
-          <div class="linked-control" id="flowControls" style="display: none">
+          <div class="linked-control" id="staticControls" style="display: block;">
+            <div class="control-item">
+              <label class="control-label">Static Pattern</label>
+              <div class="button-grid">
+                <button class="option-btn active" data-static="uniform">
+                  Uniform
+                </button>
+                <button class="option-btn" data-static="alternating">
+                  Alternating
+                </button>
+                <button class="option-btn" data-static="cascade">
+                  Cascade
+                </button>
+                <button class="option-btn" data-static="fibonacci">
+                  Fibonacci
+                </button>
+                <button class="option-btn" data-static="golden">
+                  Golden
+                </button>
+                <button class="option-btn" data-static="mirror">
+                  Mirror
+                </button>
+              </div>
+            </div>
+
+            <div class="control-item">
+              <label class="control-label">Pattern Intensity</label>
+              <div class="control-row">
+                <input type="range" id="staticIntensity" min="0.1" max="2.0" step="0.1" value="1.0" />
+                <span class="value-display" id="staticIntensityValue">1.0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="linked-control" id="flowControls" style="display: none;">
             <div class="control-item">
               <label class="control-label">Flow Velocity</label>
               <div class="control-row">
-                <input
-                  type="range"
-                  id="flowSpeed"
-                  min="0.3"
-                  max="2.5"
-                  step="0.1"
-                  value="1"
-                />
+                <input type="range" id="flowSpeed" min="0.3" max="2.5" step="0.1" value="1" />
                 <span class="value-display" id="flowSpeedValue">1.0</span>
               </div>
             </div>
@@ -626,14 +631,7 @@
             <div class="control-item">
               <label class="control-label">Response Intensity</label>
               <div class="control-row">
-                <input
-                  type="range"
-                  id="flowIntensity"
-                  min="0.3"
-                  max="2.0"
-                  step="0.1"
-                  value="1.0"
-                />
+                <input type="range" id="flowIntensity" min="0.3" max="2.0" step="0.1" value="1.0" />
                 <span class="value-display" id="flowIntensityValue">1.0</span>
               </div>
             </div>
@@ -643,14 +641,8 @@
         <!-- PRECISION RATIOS -->
         <div class="control-section">
           <div class="section-title">
-            <svg
-              class="section-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <polygon points="13,2 3,14 12,14 11,22 21,10 12,10" />
+            <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>
             </svg>
             Precision Ratios
           </div>
@@ -662,7 +654,9 @@
                 Fibonacci
               </button>
               <button class="option-btn" data-ratio="golden">Golden</button>
-              <button class="option-btn" data-ratio="harmonic">Harmonic</button>
+              <button class="option-btn" data-ratio="harmonic">
+                Harmonic
+              </button>
               <button class="option-btn" data-ratio="uniform">Uniform</button>
             </div>
           </div>
@@ -670,14 +664,7 @@
           <div class="control-item">
             <label class="control-label">Tolerance Range</label>
             <div class="control-row">
-              <input
-                type="range"
-                id="ratioVariance"
-                min="1.2"
-                max="4.5"
-                step="0.1"
-                value="2.8"
-              />
+              <input type="range" id="ratioVariance" min="1.2" max="4.5" step="0.1" value="2.8" />
               <span class="value-display" id="ratioVarianceValue">2.8</span>
             </div>
           </div>
@@ -686,16 +673,10 @@
         <!-- CONNECTION JOINTS -->
         <div class="control-section">
           <div class="section-title">
-            <svg
-              class="section-icon"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
-              <line x1="8" y1="21" x2="16" y2="21" />
-              <line x1="12" y1="17" x2="12" y2="21" />
+            <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
             </svg>
             Connection Joints
           </div>
@@ -703,13 +684,7 @@
           <div class="control-item">
             <label class="control-label">Base Thickness</label>
             <div class="control-row">
-              <input
-                type="range"
-                id="connectorSize"
-                min="1"
-                max="30"
-                value="12"
-              />
+              <input type="range" id="connectorSize" min="1" max="30" value="12" />
               <span class="value-display" id="connectorSizeValue">12</span>
             </div>
           </div>
@@ -717,14 +692,7 @@
           <div class="control-item">
             <label class="control-label">Thickness Variance</label>
             <div class="control-row">
-              <input
-                type="range"
-                id="weightVariation"
-                min="1.0"
-                max="6.0"
-                step="0.2"
-                value="2.5"
-              />
+              <input type="range" id="weightVariation" min="1.0" max="6.0" step="0.2" value="2.5" />
               <span class="value-display" id="weightVariationValue">2.5</span>
             </div>
           </div>
@@ -738,7 +706,9 @@
               <button class="option-btn" data-connector="inverse">
                 Inverse
               </button>
-              <button class="option-btn" data-connector="fixed">Fixed</button>
+              <button class="option-btn" data-connector="fixed">
+                Fixed
+              </button>
               <button class="option-btn" data-connector="rhythmic">
                 Rhythmic
               </button>
@@ -852,13 +822,12 @@
         updateCanvasBackground() {
           const canvasContainer = document.querySelector(".canvas-container");
           if (canvasContainer) {
-            canvasContainer.style.background =
-              this.getColor("canvasBackground");
+            canvasContainer.style.background = this.getColor("canvasBackground");
           }
         }
       }
 
-      // Enhanced Configuration with logical grouping
+      // Enhanced Configuration with static patterns
       class GridConfig {
         constructor() {
           this.params = {
@@ -872,6 +841,10 @@
             movementPattern: "standard",
             flowSpeed: 1.0,
             flowIntensity: 1.0,
+
+            // Static pattern system
+            staticPattern: "uniform",
+            staticIntensity: 1.0,
 
             // Proportional system
             ratioSystem: "fibonacci",
@@ -911,22 +884,13 @@
           };
         }
 
-        calculate(
-          pattern,
-          columnIndex,
-          cellIndex,
-          totalColumns,
-          time,
-          intensity
-        ) {
+        calculate(pattern, columnIndex, cellIndex, totalColumns, time, intensity) {
           const system = this.systems[pattern];
-          if (!system)
-            return { heightMod: 1.0, connectorMod: 1.0, opacity: 1.0 };
+          if (!system) return { heightMod: 1.0, connectorMod: 1.0, opacity: 1.0 };
 
-          const normalizedColumn =
-            totalColumns > 1 ? columnIndex / (totalColumns - 1) : 0.5;
+          const normalizedColumn = totalColumns > 1 ? columnIndex / (totalColumns - 1) : 0.5;
           const result = system(normalizedColumn, cellIndex, time, intensity);
-
+          
           return {
             heightMod: Math.max(0.2, Math.min(2.5, result.heightMod)),
             connectorMod: Math.max(0.1, Math.min(3.0, result.connectorMod)),
@@ -939,29 +903,26 @@
         }
 
         calculateOffset(normalizedColumn, cellIndex, time, intensity) {
-          const columnOffset =
-            Math.floor(normalizedColumn * 10) % 2 === 0 ? 1.0 : 0.8;
+          const columnOffset = Math.floor(normalizedColumn * 10) % 2 === 0 ? 1.0 : 0.8;
           const cellOffset = cellIndex % 2 === 0 ? 1.0 : 0.9;
           const combined = (columnOffset + cellOffset) / 2;
-
-          return {
-            heightMod: combined,
-            connectorMod: 1.0 - (combined - 1.0) * 0.5,
-            opacity: 1.0,
+          
+          return { 
+            heightMod: combined, 
+            connectorMod: 1.0 - (combined - 1.0) * 0.5, 
+            opacity: 1.0 
           };
         }
 
         calculateWave(normalizedColumn, cellIndex, time, intensity) {
-          const wavePhase =
-            Math.sin(normalizedColumn * Math.PI * 2 + time * 2) * intensity;
-          const cellWave =
-            Math.sin(cellIndex * 0.5 + time * 1.5) * 0.3 * intensity;
+          const wavePhase = Math.sin(normalizedColumn * Math.PI * 2 + time * 2) * intensity;
+          const cellWave = Math.sin(cellIndex * 0.5 + time * 1.5) * 0.3 * intensity;
           const combined = wavePhase + cellWave;
-
-          return {
-            heightMod: 1.0 + combined * 0.5,
-            connectorMod: 1.0 + combined * 0.8,
-            opacity: 1.0, // Fixed: Solid color
+          
+          return { 
+            heightMod: 1.0 + combined * 0.5, 
+            connectorMod: 1.0 + combined * 0.8, 
+            opacity: 1.0 // Fixed: Solid color
           };
         }
 
@@ -969,14 +930,13 @@
           const pulsePhase = Math.sin(time * 3) * 0.5 + 0.5;
           const distance = Math.abs(normalizedColumn - 0.5) * 2;
           const cellPhase = Math.sin(cellIndex * 0.8 + time * 2) * 0.3;
-
-          const modulation =
-            pulsePhase * (1.0 - distance * 0.4) * intensity + cellPhase;
-
-          return {
-            heightMod: 0.7 + modulation * 0.6,
-            connectorMod: 0.5 + modulation * 1.0,
-            opacity: 1.0, // Fixed: Solid color
+          
+          const modulation = pulsePhase * (1.0 - distance * 0.4) * intensity + cellPhase;
+          
+          return { 
+            heightMod: 0.7 + modulation * 0.6, 
+            connectorMod: 0.5 + modulation * 1.0, 
+            opacity: 1.0 // Fixed: Solid color
           };
         }
 
@@ -985,14 +945,14 @@
           const sweepPhase = sweepPos > 1 ? 2 - sweepPos : sweepPos;
           const sweepDistance = Math.abs(normalizedColumn - sweepPhase);
           const cellDelay = cellIndex * 0.1;
-
+          
           const activation = Math.max(0, 1.0 - sweepDistance * 2) * intensity;
           const delayedActivation = Math.max(0, activation - cellDelay);
-
-          return {
-            heightMod: 0.6 + delayedActivation * 0.8,
-            connectorMod: 0.4 + delayedActivation * 1.2,
-            opacity: 1.0, // Fixed: Solid color
+          
+          return { 
+            heightMod: 0.6 + delayedActivation * 0.8, 
+            connectorMod: 0.4 + delayedActivation * 1.2, 
+            opacity: 1.0 // Fixed: Solid color
           };
         }
 
@@ -1000,19 +960,135 @@
           const breathPhase = Math.sin(time * 0.8) * 0.5 + 0.5;
           const centerDistance = Math.abs(normalizedColumn - 0.5);
           const cellBreath = Math.sin(cellIndex * 0.3 + time * 0.6) * 0.2;
-
-          const expansion =
-            breathPhase * (1.0 - centerDistance * 0.6) * intensity + cellBreath;
-
-          return {
-            heightMod: 0.8 + expansion * 0.4,
-            connectorMod: 0.7 + expansion * 0.6,
-            opacity: 1.0, // Fixed: Solid color
+          
+          const expansion = breathPhase * (1.0 - centerDistance * 0.6) * intensity + cellBreath;
+          
+          return { 
+            heightMod: 0.8 + expansion * 0.4, 
+            connectorMod: 0.7 + expansion * 0.6, 
+            opacity: 1.0 // Fixed: Solid color
           };
         }
       }
 
-      // Enhanced Mathematical Sequences
+      // Static Pattern System for sophisticated layouts
+      class StaticPatternSystem {
+        constructor() {
+          this.patterns = {
+            uniform: this.calculateUniform.bind(this),
+            alternating: this.calculateAlternating.bind(this),
+            cascade: this.calculateCascade.bind(this),
+            fibonacci: this.calculateFibonacci.bind(this),
+            golden: this.calculateGolden.bind(this),
+            mirror: this.calculateMirror.bind(this),
+          };
+        }
+
+        calculate(pattern, columnIndex, cellIndex, totalColumns, totalCells, intensity) {
+          const system = this.patterns[pattern];
+          if (!system) return { heightMod: 1.0, connectorMod: 1.0, opacity: 1.0 };
+
+          const result = system(columnIndex, cellIndex, totalColumns, totalCells, intensity);
+          
+          return {
+            heightMod: Math.max(0.3, Math.min(2.5, result.heightMod)),
+            connectorMod: Math.max(0.2, Math.min(3.0, result.connectorMod)),
+            opacity: 1.0,
+          };
+        }
+
+        calculateUniform(columnIndex, cellIndex, totalColumns, totalCells, intensity) {
+          return { heightMod: 1.0, connectorMod: 1.0, opacity: 1.0 };
+        }
+
+        calculateAlternating(columnIndex, cellIndex, totalColumns, totalCells, intensity) {
+          const columnAlt = columnIndex % 2 === 0 ? 1.0 : 0.7;
+          const cellAlt = cellIndex % 2 === 0 ? 1.0 : 0.8;
+          const checkerboard = (columnIndex + cellIndex) % 2 === 0 ? 1.0 : 0.75;
+          
+          const combined = (columnAlt + cellAlt + checkerboard) / 3;
+          const modulated = 1.0 + (combined - 1.0) * intensity;
+          
+          return {
+            heightMod: modulated,
+            connectorMod: 1.0 + (combined - 1.0) * intensity * 0.8,
+            opacity: 1.0
+          };
+        }
+
+        calculateCascade(columnIndex, cellIndex, totalColumns, totalCells, intensity) {
+          const columnPhase = columnIndex / Math.max(totalColumns - 1, 1);
+          const cellPhase = cellIndex / Math.max(totalCells - 1, 1);
+          
+          // Create a cascading wave across columns and down cells
+          const cascade = Math.sin(columnPhase * Math.PI * 2 + cellPhase * Math.PI) * 0.5 + 0.5;
+          const modulated = 0.6 + cascade * 0.8 * intensity;
+          
+          return {
+            heightMod: modulated,
+            connectorMod: 0.5 + cascade * 1.0 * intensity,
+            opacity: 1.0
+          };
+        }
+
+        calculateFibonacci(columnIndex, cellIndex, totalColumns, totalCells, intensity) {
+          const fibSequence = [1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
+          
+          // Use fibonacci numbers to create organic growth patterns
+          const columnFib = fibSequence[columnIndex % fibSequence.length] / 34;
+          const cellFib = fibSequence[cellIndex % fibSequence.length] / 34;
+          
+          // Combine for complex organic scaling
+          const combined = (columnFib + cellFib * 0.7) / 1.7;
+          const modulated = 0.5 + combined * intensity;
+          
+          return {
+            heightMod: modulated,
+            connectorMod: 0.4 + combined * 1.2 * intensity,
+            opacity: 1.0
+          };
+        }
+
+        calculateGolden(columnIndex, cellIndex, totalColumns, totalCells, intensity) {
+          const goldenRatio = 1.618;
+          
+          // Use golden ratio for proportional scaling
+          const columnRatio = Math.pow(goldenRatio, (columnIndex - totalColumns/2) * 0.3);
+          const cellRatio = Math.pow(goldenRatio, (cellIndex - totalCells/2) * 0.2);
+          
+          // Normalize and apply intensity
+          const normalized = (columnRatio * cellRatio) / (goldenRatio * goldenRatio);
+          const modulated = 0.4 + normalized * 0.8 * intensity;
+          
+          return {
+            heightMod: Math.max(0.3, Math.min(2.0, modulated)),
+            connectorMod: Math.max(0.2, Math.min(2.5, normalized * intensity)),
+            opacity: 1.0
+          };
+        }
+
+        calculateMirror(columnIndex, cellIndex, totalColumns, totalCells, intensity) {
+          // Create symmetrical patterns
+          const columnCenter = (totalColumns - 1) / 2;
+          const cellCenter = (totalCells - 1) / 2;
+          
+          const columnDistance = Math.abs(columnIndex - columnCenter) / columnCenter;
+          const cellDistance = Math.abs(cellIndex - cellCenter) / cellCenter;
+          
+          // Combine distances for radial symmetry
+          const combined = (columnDistance + cellDistance) / 2;
+          const mirrored = 1.0 - combined * 0.5;
+          const modulated = 0.5 + mirrored * 0.8 * intensity;
+          
+          return {
+            heightMod: modulated,
+            connectorMod: 0.6 + mirrored * 0.8 * intensity,
+            opacity: 1.0
+          };
+        }
+      }
+
+      // FIXED MathSequences class - this was the missing piece!
       class MathSequences {
         constructor() {
           this.fibonacci = [1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
@@ -1071,17 +1147,14 @@
               height = baseSize * (cellHeight / 60) * movement.connectorMod;
               break;
             case "inverse":
-              height =
-                baseSize *
-                (60 / Math.max(cellHeight, 20)) *
-                (2 - movement.connectorMod);
+              height = baseSize * (60 / Math.max(cellHeight, 20)) * (2 - movement.connectorMod);
               break;
             case "fixed":
               height = baseSize;
               break;
             case "rhythmic":
               const rhythm = Math.sin(time * 4) * 0.5 + 0.5;
-              height = baseSize * (rhythm * variation + (1 - variation / 2));
+              height = baseSize * (rhythm * variation + (1 - variation/2));
               break;
           }
 
@@ -1099,6 +1172,7 @@
           this.config = new GridConfig();
           this.colorPalette = new ColorPalette();
           this.movementSystems = new MovementSystems();
+          this.staticPatternSystem = new StaticPatternSystem();
           this.mathSequences = new MathSequences();
           this.connectorSystem = new ConnectorSystem(this.config);
 
@@ -1146,20 +1220,23 @@
         setupMovementControls() {
           const movementButtons = document.querySelectorAll("[data-movement]");
           const flowControls = document.getElementById("flowControls");
+          const staticControls = document.getElementById("staticControls");
 
           movementButtons.forEach((btn) => {
             btn.addEventListener("click", () => {
               const movement = btn.dataset.movement;
               this.config.updateParam("movementPattern", movement);
-
-              // Show/hide flow controls based on movement type
+              
+              // Show/hide controls based on movement type
               if (movement === "standard") {
                 flowControls.style.display = "none";
+                staticControls.style.display = "block";
                 this.config.updateParam("isFlowing", false);
                 document.getElementById("stillMode").classList.add("active");
                 document.getElementById("flowMode").classList.remove("active");
               } else {
                 flowControls.style.display = "block";
+                staticControls.style.display = "none";
                 this.config.updateParam("isFlowing", true);
                 document.getElementById("flowMode").classList.add("active");
                 document.getElementById("stillMode").classList.remove("active");
@@ -1167,6 +1244,16 @@
 
               this.updateButtonSelection("[data-movement]", movement);
               this.updateStatusIndicator();
+            });
+          });
+
+          // Setup static pattern controls
+          const staticButtons = document.querySelectorAll("[data-static]");
+          staticButtons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const pattern = btn.dataset.static;
+              this.config.updateParam("staticPattern", pattern);
+              this.updateButtonSelection("[data-static]", pattern);
             });
           });
         }
@@ -1189,15 +1276,9 @@
 
         setupRangeControls() {
           const rangeControls = [
-            "columns",
-            "baseCells",
-            "frameWidth",
-            "frameHeight",
-            "ratioVariance",
-            "connectorSize",
-            "weightVariation",
-            "flowSpeed",
-            "flowIntensity",
+            "columns", "baseCells", "frameWidth", "frameHeight",
+            "ratioVariance", "connectorSize", "weightVariation",
+            "flowSpeed", "flowIntensity", "staticIntensity"
           ];
 
           rangeControls.forEach((controlId) => {
@@ -1210,8 +1291,7 @@
               slider.addEventListener("input", (e) => {
                 const value = parseFloat(e.target.value);
                 this.config.updateParam(controlId, value);
-                display.textContent =
-                  value % 1 === 0 ? value : value.toFixed(1);
+                display.textContent = value % 1 === 0 ? value : value.toFixed(1);
               });
             }
           });
@@ -1223,10 +1303,8 @@
               btn.addEventListener("click", () => {
                 const value = btn.dataset[type];
 
-                if (type === "ratio")
-                  this.config.updateParam("ratioSystem", value);
-                else if (type === "connector")
-                  this.config.updateParam("connectorResponse", value);
+                if (type === "ratio") this.config.updateParam("ratioSystem", value);
+                else if (type === "connector") this.config.updateParam("connectorResponse", value);
 
                 this.updateButtonSelection(`[data-${type}]`, value);
               });
@@ -1247,6 +1325,7 @@
               stillBtn.classList.add("active");
               flowBtn.classList.remove("active");
               document.getElementById("flowControls").style.display = "none";
+              document.getElementById("staticControls").style.display = "block";
               this.updateButtonSelection("[data-movement]", "standard");
               this.updateStatusIndicator();
             });
@@ -1258,6 +1337,7 @@
                 this.config.updateParam("movementPattern", "wave");
                 this.updateButtonSelection("[data-movement]", "wave");
                 document.getElementById("flowControls").style.display = "block";
+                document.getElementById("staticControls").style.display = "none";
               }
               this.config.updateParam("isFlowing", true);
               flowBtn.classList.add("active");
@@ -1286,10 +1366,7 @@
         updateButtonSelection(selector, activeValue) {
           document.querySelectorAll(selector).forEach((btn) => {
             const dataAttr = selector.slice(6, -1);
-            btn.classList.toggle(
-              "active",
-              btn.dataset[dataAttr] === activeValue
-            );
+            btn.classList.toggle("active", btn.dataset[dataAttr] === activeValue);
           });
         }
 
@@ -1330,15 +1407,29 @@
           let currentY = 0;
 
           for (let cellIndex = 0; cellIndex < baseCellCount; cellIndex++) {
-            // Calculate movement effects
-            const movement = this.movementSystems.calculate(
-              this.config.getParam("movementPattern"),
-              columnIndex,
-              cellIndex,
-              this.config.getParam("columns"),
-              time,
-              this.config.getParam("flowIntensity")
-            );
+            let movement;
+
+            // Calculate movement effects based on mode
+            if (this.config.getParam("isFlowing")) {
+              movement = this.movementSystems.calculate(
+                this.config.getParam("movementPattern"),
+                columnIndex,
+                cellIndex,
+                this.config.getParam("columns"),
+                time,
+                this.config.getParam("flowIntensity")
+              );
+            } else {
+              // Use static pattern system for static mode
+              movement = this.staticPatternSystem.calculate(
+                this.config.getParam("staticPattern"),
+                columnIndex,
+                cellIndex,
+                this.config.getParam("columns"),
+                baseCellCount,
+                this.config.getParam("staticIntensity")
+              );
+            }
 
             const currentRatio = ratios[cellIndex];
             const cellHeight = baseSpacing * currentRatio * movement.heightMod;
@@ -1349,26 +1440,25 @@
               opacity: movement.opacity,
               index: cellIndex,
               columnIndex: columnIndex,
-              movement: movement,
+              movement: movement
             });
 
             currentY += cellHeight;
 
             // Add connector (except after last cell)
             if (cellIndex < baseCellCount - 1) {
-              const connectorHeight =
-                this.connectorSystem.calculateConnectorHeight(
-                  this.config.getParam("connectorSize"),
-                  cellHeight,
-                  movement,
-                  time
-                );
+              const connectorHeight = this.connectorSystem.calculateConnectorHeight(
+                this.config.getParam("connectorSize"),
+                cellHeight,
+                movement,
+                time
+              );
 
               connectors.push({
                 y: currentY,
                 height: connectorHeight,
                 opacity: movement.opacity,
-                columnIndex: columnIndex,
+                columnIndex: columnIndex
               });
 
               currentY += connectorHeight;
@@ -1397,13 +1487,9 @@
           this.ctx.fillStyle = this.colorPalette.getColor("background");
           this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-          const gridX =
-            (this.canvas.width - this.config.getParam("frameWidth")) / 2;
-          const gridY =
-            (this.canvas.height - this.config.getParam("frameHeight")) / 2;
-          const columnWidth =
-            this.config.getParam("frameWidth") /
-            this.config.getParam("columns");
+          const gridX = (this.canvas.width - this.config.getParam("frameWidth")) / 2;
+          const gridY = (this.canvas.height - this.config.getParam("frameHeight")) / 2;
+          const columnWidth = this.config.getParam("frameWidth") / this.config.getParam("columns");
 
           // Render grid guides if in design mode
           if (this.config.getParam("showGrid")) {
@@ -1417,13 +1503,12 @@
           for (let col = 0; col < columns; col++) {
             const columnData = this.generateColumnData(col, this.time);
             maxHeight = Math.max(maxHeight, columnData.totalHeight);
-
+            
             const columnX = gridX + col * columnWidth;
-
+            
             // Scale to fit frame height
-            const scale =
-              this.config.getParam("frameHeight") / columnData.totalHeight;
-
+            const scale = this.config.getParam("frameHeight") / columnData.totalHeight;
+            
             this.renderColumn(columnData, columnX, gridY, columnWidth, scale);
           }
         }
@@ -1432,13 +1517,13 @@
           const { cells, connectors } = columnData;
 
           // Render cells
-          cells.forEach((cell) => {
+          cells.forEach(cell => {
             const y = startY + cell.y * scale;
             const height = cell.height * scale;
 
             // Fixed: Always solid opacity
             this.ctx.globalAlpha = 1.0;
-
+            
             // Cell background
             this.ctx.fillStyle = this.colorPalette.getColor("background");
             this.ctx.fillRect(x, y, width, height);
@@ -1457,7 +1542,7 @@
           });
 
           // Render connectors
-          connectors.forEach((connector) => {
+          connectors.forEach(connector => {
             const y = startY + connector.y * scale;
             const height = connector.height * scale;
 
@@ -1516,8 +1601,7 @@
           }
 
           // Center guides
-          this.ctx.strokeStyle =
-            this.colorPalette.getColor("centerGuideStatic");
+          this.ctx.strokeStyle = this.colorPalette.getColor("centerGuideStatic");
           this.ctx.lineWidth = 0.5;
           this.ctx.setLineDash([6, 6]);
 
@@ -1548,13 +1632,8 @@
           const paletteName = this.colorPalette.getCurrentPalette().name;
           const movementPattern = this.config.getParam("movementPattern");
 
-          const flowState =
-            this.config.getParam("isFlowing") && movementPattern !== "standard"
-              ? "Animated"
-              : "Static";
-          const viewMode = this.config.getParam("showGrid")
-            ? "Design"
-            : "Export";
+          const flowState = this.config.getParam("isFlowing") && movementPattern !== "standard" ? "Animated" : "Static";
+          const viewMode = this.config.getParam("showGrid") ? "Design" : "Export";
 
           const statsText = `${flowState} ${viewMode}: ${columns}×${baseCells} | ${frameWidth}×${frameHeight} | ${ratioSystem} | ${paletteName}`;
           statsElement.textContent = statsText;
@@ -1566,16 +1645,9 @@
         const canvas = document.getElementById("canvas");
         if (!canvas) return;
 
-        const timestamp = new Date()
-          .toISOString()
-          .slice(0, 19)
-          .replace(/:/g, "-");
-        const mode = window.gridSystem.config.getParam("showGrid")
-          ? "design"
-          : "export";
-        const flowState = window.gridSystem.config.getParam("isFlowing")
-          ? "animated"
-          : "static";
+        const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, "-");
+        const mode = window.gridSystem.config.getParam("showGrid") ? "design" : "export";
+        const flowState = window.gridSystem.config.getParam("isFlowing") ? "animated" : "static";
         const palette = window.gridSystem.colorPalette.currentPalette;
 
         const link = document.createElement("a");
@@ -1641,30 +1713,12 @@
               break;
 
             // Movement shortcuts
-            case "1":
-              e.preventDefault();
-              document.querySelector('[data-movement="standard"]')?.click();
-              break;
-            case "2":
-              e.preventDefault();
-              document.querySelector('[data-movement="wave"]')?.click();
-              break;
-            case "3":
-              e.preventDefault();
-              document.querySelector('[data-movement="pulse"]')?.click();
-              break;
-            case "4":
-              e.preventDefault();
-              document.querySelector('[data-movement="sweep"]')?.click();
-              break;
-            case "5":
-              e.preventDefault();
-              document.querySelector('[data-movement="breath"]')?.click();
-              break;
-            case "6":
-              e.preventDefault();
-              document.querySelector('[data-movement="offset"]')?.click();
-              break;
+            case "1": e.preventDefault(); document.querySelector('[data-movement="standard"]')?.click(); break;
+            case "2": e.preventDefault(); document.querySelector('[data-movement="wave"]')?.click(); break;
+            case "3": e.preventDefault(); document.querySelector('[data-movement="pulse"]')?.click(); break;
+            case "4": e.preventDefault(); document.querySelector('[data-movement="sweep"]')?.click(); break;
+            case "5": e.preventDefault(); document.querySelector('[data-movement="breath"]')?.click(); break;
+            case "6": e.preventDefault(); document.querySelector('[data-movement="offset"]')?.click(); break;
           }
         });
 
@@ -1675,9 +1729,7 @@
         console.log("  • Enhanced connector flow response");
         console.log("  • Streamlined terminology");
         console.log("⌨️  Controls: Space=flow, V=view, C=controls, E=export");
-        console.log(
-          "🎮 Movement: 1=Static, 2=Wave, 3=Pulse, 4=Sweep, 5=Breath, 6=Offset"
-        );
+        console.log("🎮 Movement: 1=Static, 2=Wave, 3=Pulse, 4=Sweep, 5=Breath, 6=Offset");
       });
     </script>
   </body>
