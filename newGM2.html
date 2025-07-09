@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Grid Architecture - Streamlined v4</title>
+    <title>Grid Architecture - Streamlined v3</title>
     <style>
       * {
         margin: 0;
@@ -14,22 +14,26 @@
       body {
         font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
           "Helvetica Neue", sans-serif;
-        background: #fafbfc;
+      
         height: 100vh;
         display: flex;
         overflow: hidden;
-        color: #1a1a1a;
+      
+        background: var(--ui-bg, #fafbfc);
+  color: var(--ui-text, #1a1a1a);
       }
 
       .controls {
         width: 340px;
-        background: #ffffff;
-        border-right: 1px solid #e8eaed;
+      
+     
         overflow-y: auto;
         z-index: 10;
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
         position: relative;
+        background: var(--ui-sidebar, #ffffff);
+  border-right: 1px solid var(--ui-border, #e8eaed);
       }
 
       .controls.collapsed {
@@ -38,8 +42,8 @@
 
       .header {
         padding: 24px 24px 20px 24px;
-        border-bottom: 1px solid #f1f3f4;
-        background: #ffffff;
+        background: var(--ui-sidebar, #ffffff);
+        border-bottom: 1px solid var(--ui-border, #f1f3f4);
       }
 
       .logo-area {
@@ -69,14 +73,14 @@
       .app-title {
         font-size: 18px;
         font-weight: 600;
-        color: #1a1a1a;
+        color: var(--ui-text, #1a1a1a);
         line-height: 1.2;
         margin-bottom: 2px;
       }
 
       .app-subtitle {
         font-size: 12px;
-        color: #5f6368;
+        color: var(--ui-text-secondary, #5f6368);
         font-weight: 400;
         line-height: 1.3;
       }
@@ -103,6 +107,11 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
       }
 
+      .control-label {
+  color: var(--ui-text-secondary, #5f6368);
+}
+
+
       .controls-content {
         padding: 0 24px 24px 24px;
       }
@@ -119,7 +128,7 @@
         font-size: 13px;
         font-weight: 600;
         margin-bottom: 16px;
-        color: #3c4043;
+        color: var(--ui-text, #3c4043);
         letter-spacing: -0.01em;
         display: flex;
         align-items: center;
@@ -158,7 +167,7 @@
       input[type="range"] {
         flex: 1;
         height: 2px;
-        background: #e8eaed;
+        background: var(--ui-slider-track, #e8eaed);
         border-radius: 1px;
         outline: none;
         -webkit-appearance: none;
@@ -169,7 +178,7 @@
         -webkit-appearance: none;
         width: 16px;
         height: 16px;
-        background: #0956ff;
+        background: var(--ui-slider-thumb, #0956ff);
         border-radius: 50%;
         cursor: pointer;
         border: none;
@@ -178,10 +187,27 @@
       }
 
       input[type="range"]::-webkit-slider-thumb:hover {
-        background: #0956ff;
+        background: var(--ui-slider-thumb, #0956ff);
         transform: scale(1.1);
         box-shadow: 0 3px 8px rgba(25, 118, 210, 0.4);
       }
+
+      /* Firefox support */
+input[type="range"]::-moz-range-track {
+  background: var(--ui-slider-track, #e8eaed);
+  height: 2px;
+  border: none;
+  border-radius: 1px;
+}
+
+input[type="range"]::-moz-range-thumb {
+  background: var(--ui-slider-thumb, #0956ff);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
 
       .value-display {
         font-size: 12px;
@@ -203,29 +229,42 @@
         grid-template-columns: 1fr 1fr 1fr;
       }
 
+      .option-btn, .primary-btn {
+  background: var(--ui-sidebar, #ffffff);
+  border: 1px solid var(--ui-border, #e8eaed);
+  color: var(--ui-text, #3c4043);
+}
+
+.option-btn:hover, .primary-btn:hover {
+  background: var(--ui-hover, #f8f9fa);
+}
+
+.option-btn.active, .primary-btn.active {
+  background: var(--ui-active, #0956ff);
+  border-color: var(--ui-active, #0956ff);
+  color: var(--ui-sidebar, #ffffff);
+}
+
+
+
       .option-btn {
         padding: 10px 12px;
-        border: 1px solid #e8eaed;
+       
         border-radius: 6px;
-        background: #ffffff;
+       
         font-size: 12px;
         cursor: pointer;
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         text-align: center;
         font-weight: 500;
-        color: #3c4043;
+        
         letter-spacing: -0.01em;
       }
 
-      .option-btn:hover {
-        background: #f8f9fa;
-        border-color: #dadce0;
-      }
+     
 
       .option-btn.active {
-        background: #0956ff;
-        color: #ffffff;
-        border-color: #0956ff;
+       
         box-shadow: 0 2px 4px rgba(25, 118, 210, 0.2);
       }
 
@@ -238,27 +277,22 @@
 
       .primary-btn {
         padding: 12px 16px;
-        border: 1px solid #e8eaed;
+       
         border-radius: 8px;
-        background: #ffffff;
+        
         font-size: 13px;
         cursor: pointer;
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         text-align: center;
         font-weight: 500;
-        color: #3c4043;
+       
         letter-spacing: -0.01em;
       }
 
-      .primary-btn:hover {
-        background: #f8f9fa;
-        border-color: #dadce0;
-      }
+     
 
       .primary-btn.active {
-        background: #0956ff;
-        color: #ffffff;
-        border-color: #0956ff;
+     
         box-shadow: 0 2px 6px rgba(25, 118, 210, 0.24);
       }
 
@@ -282,7 +316,7 @@
       .export-btn {
         width: 100%;
         padding: 12px 16px;
-        background: #0956ff;
+        background: var(--ui-accent, #0956ff);
         color: #ffffff;
         border: none;
         border-radius: 8px;
@@ -357,25 +391,26 @@
         align-items: center;
         gap: 12px;
         padding: 10px 12px;
-        border: 1px solid #e8eaed;
         border-radius: 6px;
-        background: #ffffff;
+        background: var(--ui-sidebar, #ffffff);
+  border: 1px solid var(--ui-border, #e8eaed);
+  color: var(--ui-text, #3c4043);
         cursor: pointer;
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         font-size: 12px;
         font-weight: 500;
-        color: #3c4043;
         letter-spacing: -0.01em;
       }
 
       .palette-option:hover {
-        background: #f8f9fa;
-        border-color: #dadce0;
+        background: var(--ui-hover, #f8f9fa);
+
       }
 
       .palette-option.active {
-        background: #f8f9fa;
-        border-color: #0956ff;
+        background: var(--ui-active, #0956ff);
+  border-color: var(--ui-active, #0956ff);
+  color: var(--ui-sidebar, #ffffff);
         box-shadow: 0 2px 4px rgba(25, 118, 210, 0.1);
       }
 
@@ -397,8 +432,8 @@
       }
 
       .linked-control {
-        background: #f8f9fa;
-        border: 1px solid #e8eaed;
+        background: var(--ui-sidebar, #ffffff);
+        border: 1px solid var(--ui-border, #e8eaed);
         border-radius: 6px;
         padding: 12px;
         margin-top: 8px;
@@ -755,14 +790,26 @@
               canvasBackground: "#ffffff",
               primary: "#0956ff",
               secondary: "#667eea",
-              gridLight: "#e8f4fd",
-              gridMedium: "#e3f2fd",
-              gridDark: "#bbdefb",
-              cellBorder: "#e9ecef",
+              gridLight: "#667eea",
+              gridMedium: "#667eea",
+              gridDark: "#667eeaf",
+              cellBorder: "#667eea",
               frameColor: "#667eea",
               centerGuide: "#764ba2",
               centerGuideStatic: "#f1f2f6",
               shadowColor: "#0956ff",
+              
+              //ui colors
+              uiBackground: "#ffffff",
+    uiSidebar: "#ffffff", 
+    uiText: "#1a1a1a",
+    uiTextSecondary: "#5f6368",
+    uiAccent: "#0956ff",
+    uiBorder: "#e8eaed",
+    uiHover: "#f8f9fa",
+    uiActive: "#0956ff",
+    uiSliderTrack: "#e8eaed",
+    uiSliderThumb: "#0956ff"
             },
             warm: {
               name: "Warm Grey",
@@ -770,7 +817,7 @@
               canvasBackground: "#ffffff",
               primary: "#E8E6E3",
               secondary: "#a69384",
-              gridLight: "#ebe8e4",
+              gridLight: "#ddd8d2",
               gridMedium: "#e6e1db",
               gridDark: "#d4cfc7",
               cellBorder: "#ddd8d2",
@@ -778,6 +825,17 @@
               centerGuide: "#8b7b6b",
               centerGuideStatic: "#e6e1db",
               shadowColor: "#8b7b6b",
+              //ui colors
+              uiBackground: "#f5f3f0",
+    uiSidebar: "#ebe8e4", 
+    uiText: "#3c3935",
+    uiTextSecondary: "#6b6460",
+    uiAccent: "#8b7b6b",
+    uiBorder: "#d4cfc7",
+    uiHover: "#e0ddd8",
+    uiActive: "#8b7b6b",
+     uiSliderTrack: "#d4cfc7",  // Darker than background so it's visible
+    uiSliderThumb: "#8b7b6b"
             },
             dark: {
               name: "Dark Mode",
@@ -785,7 +843,7 @@
               canvasBackground: "#201E1C",
               primary: "#000000",
               secondary: "#2d2d2d",
-              gridLight: "#555555",
+              gridLight: "#505050",
               gridMedium: "#4a4a4a",
               gridDark: "#363636",
               cellBorder: "#505050",
@@ -793,6 +851,17 @@
               centerGuide: "#1a1a1a",
               centerGuideStatic: "#4a4a4a",
               shadowColor: "#1a1a1a",
+              //ui colors
+              uiBackground: "#201E1C",
+    uiSidebar: "#2d2b28", 
+    uiText: "#e8e6e3",
+    uiTextSecondary: "#a8a5a2",
+    uiAccent: "#666666",
+    uiBorder: "#505050",
+    uiHover: "#3a3835",
+    uiActive: "#666666",
+    uiSliderTrack: "#505050",
+    uiSliderThumb: "#666666"
             },
             navy: {
               name: "Deep Blue",
@@ -800,14 +869,25 @@
               canvasBackground: "#48505E",
               primary: "#656E7C",
               secondary: "#3d566e",
-              gridLight: "#4a6278",
-              gridMedium: "#3f5a6f",
-              gridDark: "#2f4352",
+              gridLight: "#656E7C",
+              gridMedium: "#656E7C",
+              gridDark: "#656E7C",
               cellBorder: "#445561",
               frameColor: "#3d566e",
               centerGuide: "#2c3e50",
               centerGuideStatic: "#4a6278",
               shadowColor: "#2c3e50",
+              //ui colors
+              uiBackground: "#48505E",
+    uiSidebar: "#3d4552", 
+    uiText: "#e8eaed",
+    uiTextSecondary: "#b8bcc2",
+    uiAccent: "#656E7C",
+    uiBorder: "#5a6169",
+    uiHover: "#4a525f",
+    uiActive: "#656E7C",
+    uiSliderTrack: "#5a6169",
+    uiSliderThumb: "#656E7C"
             },
           };
 
@@ -835,6 +915,30 @@
             canvasContainer.style.background = this.getColor("canvasBackground");
           }
         }
+        updateUITheme() {
+  const palette = this.getCurrentPalette();
+  const root = document.documentElement;
+  
+  // Set CSS custom properties
+  root.style.setProperty('--ui-bg', palette.uiBackground);
+  root.style.setProperty('--ui-sidebar', palette.uiSidebar);
+  root.style.setProperty('--ui-text', palette.uiText);
+  root.style.setProperty('--ui-text-secondary', palette.uiTextSecondary);
+  root.style.setProperty('--ui-accent', palette.uiAccent);
+  root.style.setProperty('--ui-border', palette.uiBorder);
+  root.style.setProperty('--ui-hover', palette.uiHover);
+  root.style.setProperty('--ui-active', palette.uiActive);
+  root.style.setProperty('--ui-slider-track', palette.uiSliderTrack);
+  root.style.setProperty('--ui-slider-thumb', palette.uiSliderThumb);
+}
+
+setPalette(paletteName) {
+  if (this.palettes[paletteName]) {
+    this.currentPalette = paletteName;
+    this.updateCanvasBackground();
+    this.updateUITheme(); // Add this line
+  }
+}
       }
 
       // Enhanced Configuration with static patterns
@@ -1305,7 +1409,7 @@ function addEnhancedConnectorControls() {
     // Add new controls HTML
     const newControlsHTML = `
       <div class="control-item">
-        <label class="control-label">Minimum Thickness (Zero allows invisible)</label>
+        <label class="control-label">Minimum Thickness</label>
         <div class="control-row">
           <input type="range" id="minConnectorThreshold" min="-2" max="1" step="0.1" value="0" />
           <span class="value-display" id="minConnectorThresholdValue">0</span>
@@ -1401,7 +1505,7 @@ function setupEnhancedConnectorControls(gridSystem) {
           this.staticPatternSystem = new StaticPatternSystem();
           this.mathSequences = new MathSequences();
           this.connectorSystem = new ConnectorSystem(this.config);
-
+          this.colorPalette.updateUITheme();
           // Animation state
           this.time = 0;
           this.animationFrame = null;
