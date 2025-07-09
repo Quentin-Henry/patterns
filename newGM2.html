@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Grid Architecture - Streamlined v3</title>
+    <title>Grid Architecture - Streamlined v4</title>
     <style>
       * {
         margin: 0;
@@ -520,16 +520,16 @@
           <div class="control-item">
             <label class="control-label">Lane Count</label>
             <div class="control-row">
-              <input type="range" id="columns" min="1" max="12" value="3" />
-              <span class="value-display" id="columnsValue">3</span>
+              <input type="range" id="columns" min="1" max="20" value="1" />
+              <span class="value-display" id="columnsValue">1</span>
             </div>
           </div>
 
           <div class="control-item">
             <label class="control-label">Segments per Lane</label>
             <div class="control-row">
-              <input type="range" id="baseCells" min="1" max="18" value="6" />
-              <span class="value-display" id="baseCellsValue">6</span>
+              <input type="range" id="baseCells" min="1" max="30" value="2" />
+              <span class="value-display" id="baseCellsValue">2</span>
             </div>
           </div>
 
@@ -629,6 +629,14 @@
             </div>
 
             <div class="control-item">
+                <label class="control-label">Flow Smoothness</label>
+                <div class="control-row">
+                  <input type="range" id="flowSmoothness" min="0.3" max="3.0" step="0.1" value="1.0" />
+                  <span class="value-display" id="flowSmoothnessValue">1.0</span>
+                </div>
+              </div>
+
+            <div class="control-item">
               <label class="control-label">Response Intensity</label>
               <div class="control-row">
                 <input type="range" id="flowIntensity" min="0.3" max="2.0" step="0.1" value="1.0" />
@@ -637,6 +645,8 @@
             </div>
           </div>
         </div>
+
+       
 
         <!-- PRECISION RATIOS -->
         <div class="control-section">
@@ -650,22 +660,22 @@
           <div class="control-item">
             <label class="control-label">Engineering System</label>
             <div class="button-grid">
-              <button class="option-btn active" data-ratio="fibonacci">
+              <button class="option-btn" data-ratio="fibonacci">
                 Fibonacci
               </button>
               <button class="option-btn" data-ratio="golden">Golden</button>
               <button class="option-btn" data-ratio="harmonic">
                 Harmonic
               </button>
-              <button class="option-btn" data-ratio="uniform">Uniform</button>
+              <button class="option-btn active" data-ratio="uniform">Uniform</button>
             </div>
           </div>
 
           <div class="control-item">
             <label class="control-label">Tolerance Range</label>
             <div class="control-row">
-              <input type="range" id="ratioVariance" min="1.2" max="4.5" step="0.1" value="2.8" />
-              <span class="value-display" id="ratioVarianceValue">2.8</span>
+              <input type="range" id="ratioVariance" min="1.2" max="4.5" step="0.1" value="1" />
+              <span class="value-display" id="ratioVarianceValue">1</span>
             </div>
           </div>
         </div>
@@ -832,10 +842,17 @@
         constructor() {
           this.params = {
             // Grid structure
-            columns: 3,
-            baseCells: 6,
+            columns: 1,
+            baseCells: 2,
             frameWidth: 900,
             frameHeight: 600,
+
+            minConnectorThreshold: 0.0,
+maxConnectorMultiplier: 8.0,
+varianceSharpness: 1.0,
+connectorOpacityLink: false,
+
+flowSmoothness: 1.0,  // 0.5 = choppy, 1.0 = normal, 2.0 = very smooth
 
             // Movement system
             movementPattern: "standard",
@@ -847,8 +864,8 @@
             staticIntensity: 1.0,
 
             // Proportional system
-            ratioSystem: "fibonacci",
-            ratioVariance: 2.8,
+            ratioSystem: "uniform",
+            ratioVariance: 1.0,
 
             // Connector system
             connectorSize: 12,
@@ -884,19 +901,26 @@
           };
         }
 
-        calculate(pattern, columnIndex, cellIndex, totalColumns, time, intensity) {
-          const system = this.systems[pattern];
-          if (!system) return { heightMod: 1.0, connectorMod: 1.0, opacity: 1.0 };
+        calculate(pattern, columnIndex, cellIndex, totalColumns, time, intensity, smoothness = 1.0) {
+  const system = this.systems[pattern];
+  if (!system) return { heightMod: 1.0, connectorMod: 1.0, opacity: 1.0 };
 
-          const normalizedColumn = totalColumns > 1 ? columnIndex / (totalColumns - 1) : 0.5;
-          const result = system(normalizedColumn, cellIndex, time, intensity);
-          
-          return {
-            heightMod: Math.max(0.2, Math.min(2.5, result.heightMod)),
-            connectorMod: Math.max(0.1, Math.min(3.0, result.connectorMod)),
-            opacity: 1.0, // Fixed: Always solid opacity
-          };
-        }
+  const normalizedColumn = totalColumns > 1 ? columnIndex / (totalColumns - 1) : 0.5;
+  
+  // Apply smoothness to time - higher values = smoother transitions
+  const smoothTime = time / smoothness;
+  
+  const result = system(normalizedColumn, cellIndex, smoothTime, intensity);
+  
+  // Apply additional smoothing to the result if needed
+  const smoothingFactor = Math.min(smoothness, 2.0); // Cap smoothing effect
+  
+  return {
+    heightMod: Math.max(0.2, Math.min(2.5, result.heightMod)),
+    connectorMod: Math.max(0.1, Math.min(3.0, result.connectorMod)),
+    opacity: 1.0,
+  };
+}
 
         calculateStatic(normalizedColumn, cellIndex, time, intensity) {
           return { heightMod: 1.0, connectorMod: 1.0, opacity: 1.0 };
@@ -1131,36 +1155,237 @@
       }
 
       // Enhanced Connector System with better flow response
-      class ConnectorSystem {
-        constructor(config) {
-          this.config = config;
+      // Enhanced Connector System with expanded variance range and better control
+class ConnectorSystem {
+  constructor(config) {
+    this.config = config;
+  }
+
+  calculateConnectorHeight(baseSize, cellHeight, movement, time, columnIndex, cellIndex) {
+    const variation = this.config.getParam("weightVariation");
+    const response = this.config.getParam("connectorResponse");
+    const minThreshold = this.config.getParam("minConnectorThreshold") || 0.0;
+    const maxMultiplier = this.config.getParam("maxConnectorMultiplier") || 8.0;
+    
+    // DEBUG: Log what response mode we're in
+    if (columnIndex === 0 && cellIndex === 0 && Math.floor(time * 5) % 25 === 0) {
+      console.log('CONNECTOR RESPONSE MODE:', response);
+    }
+    
+    let height = baseSize;
+    let varianceMultiplier = 1.0;
+
+    // Calculate base variance multiplier - keeping values more reasonable
+    switch (response) {
+      case "proportional":
+        // Use cell height ratio with movement modifier
+        const heightRatio = cellHeight / 60;
+        varianceMultiplier = heightRatio * movement.connectorMod;
+        break;
+        
+      case "inverse":
+        // Inverse relationship - smaller cells get thicker connectors
+        const inverseRatio = 60 / Math.max(cellHeight, 20);
+        varianceMultiplier = inverseRatio * (2 - movement.connectorMod);
+        break;
+        
+      case "fixed":
+        // Fixed size regardless of cell height
+        varianceMultiplier = 1.0;
+        break;
+        
+      case "rhythmic":
+        // DEBUG: Rhythmic variation that definitely stays visible
+        const rhythm = Math.sin(time * 2 + columnIndex * 0.8 + cellIndex * 0.4) * 0.4 + 1.0; // Range 0.6 to 1.4
+        varianceMultiplier = rhythm;
+        
+        // DEBUG: Log rhythmic values for first connector only - simplified condition
+        if (columnIndex === 0 && cellIndex === 0) {
+          console.log('RHYTHMIC VALUES:', {
+            time: time.toFixed(2),
+            rhythm: rhythm.toFixed(3),
+            varianceMultiplier: varianceMultiplier.toFixed(3),
+            baseSize,
+            variation,
+            minThreshold,
+            maxMultiplier,
+            willBeVisible: varianceMultiplier > 0.1
+          });
         }
+        break;
+        
+      case "organic":
+        // Combine multiple factors for organic variation
+        const organicBase = Math.sin(columnIndex * 0.7 + cellIndex * 0.4) * 0.3 + 0.7; // Range 0.4 to 1.0
+        const organicFlow = Math.sin(time * 1.5 + columnIndex * 0.3) * 0.2 + 0.8; // Range 0.6 to 1.0
+        varianceMultiplier = (organicBase * organicFlow) * movement.connectorMod;
+        break;
+        
+      case "exponential":
+        // FIXED: Less aggressive exponential scaling
+        const expBase = Math.pow(Math.max(0.3, movement.connectorMod), 1.5); // Gentler curve
+        const positionFactor = Math.sin((columnIndex + cellIndex) * 0.5) * 0.2 + 0.8; // Range 0.6 to 1.0
+        varianceMultiplier = expBase * positionFactor;
+        break;
+        
+      default:
+        // DEBUG: Catch unknown response types
+        console.log('UNKNOWN RESPONSE TYPE:', response);
+        varianceMultiplier = 1.0;
+        break;
+    }
 
-        calculateConnectorHeight(baseSize, cellHeight, movement, time) {
-          const variation = this.config.getParam("weightVariation");
-          const response = this.config.getParam("connectorResponse");
+    // FIXED: Smoother variance application with less dramatic jumps
+    // Clamp variance multiplier to reasonable range first
+    varianceMultiplier = Math.max(0.1, Math.min(3.0, varianceMultiplier));
+    
+    // Apply variance more smoothly
+    if (varianceMultiplier <= 1.0) {
+      // Scale down smoothly to minimum
+      const t = varianceMultiplier; // 0.1 to 1.0
+      height = baseSize * (minThreshold + t * (variation - minThreshold));
+    } else {
+      // Scale up smoothly to maximum
+      const t = (varianceMultiplier - 1.0) / 2.0; // 0 to 1 range for multipliers 1-3
+      height = baseSize * (variation + t * (maxMultiplier - variation));
+    }
 
-          let height = baseSize;
+    // Final bounds check
+    const absoluteMin = Math.max(0, minThreshold);
+    const absoluteMax = baseSize * maxMultiplier;
+    
+    const finalHeight = Math.max(absoluteMin, Math.min(absoluteMax, height));
 
-          switch (response) {
-            case "proportional":
-              height = baseSize * (cellHeight / 60) * movement.connectorMod;
-              break;
-            case "inverse":
-              height = baseSize * (60 / Math.max(cellHeight, 20)) * (2 - movement.connectorMod);
-              break;
-            case "fixed":
-              height = baseSize;
-              break;
-            case "rhythmic":
-              const rhythm = Math.sin(time * 4) * 0.5 + 0.5;
-              height = baseSize * (rhythm * variation + (1 - variation/2));
-              break;
-          }
+    // DEBUG: Log final calculations for rhythmic mode - simplified condition
+    if (response === "rhythmic" && columnIndex === 0 && cellIndex === 0) {
+      console.log('RHYTHMIC FINAL HEIGHT:', {
+        varianceMultiplier: varianceMultiplier.toFixed(3),
+        calculatedHeight: height.toFixed(2),
+        finalHeight: finalHeight.toFixed(2),
+        absoluteMin,
+        absoluteMax,
+        isVisible: finalHeight > 1
+      });
+    }
+    
+    return finalHeight;
+  }
+}
 
-          return Math.max(1, Math.min(baseSize * variation, height));
-        }
-      }
+// Enhanced Configuration with new parameters
+function enhanceGridConfig(config) {
+  // Add new parameters to the existing config
+  const newParams = {
+    minConnectorThreshold: 0.0,     // Minimum connector thickness (0 = invisible)
+    maxConnectorMultiplier: 8.0,    // Maximum multiplier for connector thickness
+    varianceSharpness: 1.0,         // Controls how sharp/smooth the variance transitions are
+    connectorOpacityLink: false,    // Whether to link opacity to connector size
+  };
+  
+  // Merge with existing params
+  Object.assign(config.params, newParams);
+  
+  return config;
+}
+
+// Enhanced UI Controls for the new parameters
+function addEnhancedConnectorControls() {
+  // Find the Connection Joints section by looking for the specific text content
+  const sections = document.querySelectorAll('.control-section');
+  let connectionSection = null;
+  
+  sections.forEach(section => {
+    const sectionTitle = section.querySelector('.section-title');
+    if (sectionTitle && sectionTitle.textContent.includes('Connection Joints')) {
+      connectionSection = section;
+    }
+  });
+  
+  if (connectionSection) {
+    // Add new controls HTML
+    const newControlsHTML = `
+      <div class="control-item">
+        <label class="control-label">Minimum Thickness (Zero allows invisible)</label>
+        <div class="control-row">
+          <input type="range" id="minConnectorThreshold" min="-2" max="1" step="0.1" value="0" />
+          <span class="value-display" id="minConnectorThresholdValue">0</span>
+        </div>
+      </div>
+
+      <div class="control-item">
+        <label class="control-label">Maximum Multiplier</label>
+        <div class="control-row">
+          <input type="range" id="maxConnectorMultiplier" min="2" max="30" step="0.5" value="8" />
+          <span class="value-display" id="maxConnectorMultiplierValue">8.0</span>
+        </div>
+      </div>
+
+      <div class="control-item">
+        <label class="control-label">Variance Sharpness</label>
+        <div class="control-row">
+          <input type="range" id="varianceSharpness" min="0.5" max="3.0" step="0.1" value="1.0" />
+          <span class="value-display" id="varianceSharpnessValue">1.0</span>
+        </div>
+      </div>
+
+      <div class="control-item">
+        <label class="control-label">Advanced Response Types</label>
+        <div class="button-grid">
+          <button class="option-btn" data-connector="organic">
+            Organic
+          </button>
+          <button class="option-btn" data-connector="exponential">
+            Exponential
+          </button>
+        </div>
+      </div>
+    `;
+    
+    // Insert before the export button
+    const exportBtn = connectionSection.querySelector('.export-btn');
+    if (exportBtn) {
+      exportBtn.insertAdjacentHTML('beforebegin', newControlsHTML);
+    } else {
+      // If no export button in this section, add at the end of controls-content
+      const controlsContent = connectionSection.querySelector('.controls-content') || connectionSection;
+      controlsContent.insertAdjacentHTML('beforeend', newControlsHTML);
+    }
+  }
+}
+
+// Enhanced setup function for the new controls
+function setupEnhancedConnectorControls(gridSystem) {
+  // Setup range controls for new parameters
+  const newRangeControls = [
+    "minConnectorThreshold", 
+    "maxConnectorMultiplier", 
+    "varianceSharpness"
+  ];
+
+  newRangeControls.forEach((controlId) => {
+    const slider = document.getElementById(controlId);
+    const display = document.getElementById(controlId + "Value");
+
+    if (slider && display) {
+      display.textContent = slider.value;
+
+      slider.addEventListener("input", (e) => {
+        const value = parseFloat(e.target.value);
+        gridSystem.config.updateParam(controlId, value);
+        display.textContent = value % 1 === 0 ? value : value.toFixed(1);
+      });
+    }
+  });
+
+  // Setup new connector response types
+  document.querySelectorAll('[data-connector]').forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const value = btn.dataset.connector;
+      gridSystem.config.updateParam("connectorResponse", value);
+      gridSystem.updateButtonSelection('[data-connector]', value);
+    });
+  });
+}
 
       // Main Grid System - Streamlined and Enhanced
       class StreamlinedGridSystem {
@@ -1170,6 +1395,7 @@
 
           // Initialize modular components
           this.config = new GridConfig();
+          this.config = enhanceGridConfig(this.config);
           this.colorPalette = new ColorPalette();
           this.movementSystems = new MovementSystems();
           this.staticPatternSystem = new StaticPatternSystem();
@@ -1204,6 +1430,7 @@
         setupControls() {
           const toggleBtn = document.getElementById("toggleBtn");
           const controls = document.getElementById("controls");
+          
           if (toggleBtn && controls) {
             toggleBtn.addEventListener("click", () => {
               controls.classList.toggle("collapsed");
@@ -1215,6 +1442,9 @@
           this.setupViewControls();
           this.setupColorPalettes();
           this.setupMovementControls();
+          
+          addEnhancedConnectorControls();
+setupEnhancedConnectorControls(this);
         }
 
         setupMovementControls() {
@@ -1275,11 +1505,11 @@
         }
 
         setupRangeControls() {
-          const rangeControls = [
-            "columns", "baseCells", "frameWidth", "frameHeight",
-            "ratioVariance", "connectorSize", "weightVariation",
-            "flowSpeed", "flowIntensity", "staticIntensity"
-          ];
+            const rangeControls = [
+  "columns", "baseCells", "frameWidth", "frameHeight",
+  "ratioVariance", "connectorSize", "weightVariation",
+  "flowSpeed", "flowIntensity", "staticIntensity", "flowSmoothness"  // Add this
+];
 
           rangeControls.forEach((controlId) => {
             const slider = document.getElementById(controlId);
@@ -1411,15 +1641,16 @@
 
             // Calculate movement effects based on mode
             if (this.config.getParam("isFlowing")) {
-              movement = this.movementSystems.calculate(
-                this.config.getParam("movementPattern"),
-                columnIndex,
-                cellIndex,
-                this.config.getParam("columns"),
-                time,
-                this.config.getParam("flowIntensity")
-              );
-            } else {
+  movement = this.movementSystems.calculate(
+    this.config.getParam("movementPattern"),
+    columnIndex,
+    cellIndex,
+    this.config.getParam("columns"),
+    time,
+    this.config.getParam("flowIntensity"),
+    this.config.getParam("flowSmoothness")  // Add this line
+  );
+} else {
               // Use static pattern system for static mode
               movement = this.staticPatternSystem.calculate(
                 this.config.getParam("staticPattern"),
@@ -1451,7 +1682,9 @@
                 this.config.getParam("connectorSize"),
                 cellHeight,
                 movement,
-                time
+                time,
+                columnIndex,  // Add this
+                cellIndex  
               );
 
               connectors.push({
