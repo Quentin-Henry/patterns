@@ -444,6 +444,225 @@ input[type="range"]::-moz-range-thumb {
         font-size: 11px;
         color: #5f6368;
       }
+
+
+  /* EXPORT VIDEO */
+
+      .video-export-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-export-popup {
+            background: var(--ui-sidebar, #ffffff);
+            border: 1px solid var(--ui-border, #e8eaed);
+            border-radius: 12px;
+            padding: 24px;
+            width: 400px;
+            max-width: 90vw;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .popup-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .popup-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--ui-text, #1a1a1a);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--ui-text-secondary, #5f6368);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .close-btn:hover {
+            background: var(--ui-hover, #f8f9fa);
+        }
+
+        .video-settings {
+            display: grid;
+            gap: 16px;
+        }
+
+        .setting-group {
+            display: grid;
+            gap: 8px;
+        }
+
+        .setting-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--ui-text, #3c4043);
+        }
+
+        .setting-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .setting-control input[type="range"] {
+            flex: 1;
+            height: 2px;
+            background: var(--ui-slider-track, #e8eaed);
+            border-radius: 1px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .setting-control input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--ui-slider-thumb, #0956ff);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .setting-value {
+            font-size: 12px;
+            color: var(--ui-text-secondary, #5f6368);
+            width: 60px;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .quality-select {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--ui-sidebar, #ffffff);
+            border: 1px solid var(--ui-border, #e8eaed);
+            border-radius: 6px;
+            color: var(--ui-text, #3c4043);
+            font-size: 13px;
+        }
+
+        .export-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .action-btn {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--ui-border, #e8eaed);
+        }
+
+        .action-btn.primary {
+            background: var(--ui-accent, #0956ff);
+            color: #ffffff;
+            border-color: var(--ui-accent, #0956ff);
+        }
+
+        .action-btn.secondary {
+            background: var(--ui-sidebar, #ffffff);
+            color: var(--ui-text, #3c4043);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .action-btn.primary:hover {
+            box-shadow: 0 4px 12px rgba(9, 86, 255, 0.3);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .recording-status {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            padding: 12px;
+            background: #e8f5e8;
+            border: 1px solid #c8e6c9;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #2e7d32;
+        }
+
+        .recording-dot {
+            width: 8px;
+            height: 8px;
+            background: #e53e3e;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--ui-slider-track, #e8eaed);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--ui-accent, #0956ff);
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        /* Button to trigger video export */
+        .video-export-btn {
+            width: 100%;
+            padding: 12px 16px;
+            background: #28a745;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            letter-spacing: -0.01em;
+            margin-top: 12px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .video-export-btn:hover {
+            background: #218838;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
     </style>
   </head>
   <body>
@@ -765,6 +984,10 @@ input[type="range"]::-moz-range-thumb {
           Export Blueprint
         </button>
 
+        <button class="video-export-btn" onclick="openVideoExportPopup()">
+            Export Video
+        </button>
+
         <div class="stats" id="stats">
           Static Blueprint: 3×6 | 900×600 | Fibonacci | GM Blue
         </div>
@@ -775,11 +998,323 @@ input[type="range"]::-moz-range-thumb {
       <canvas id="canvas"></canvas>
     </div>
 
+    <div class="video-export-overlay" id="videoExportOverlay">
+        <div class="video-export-popup">
+            <div class="popup-header">
+                <h3 class="popup-title">Export Video</h3>
+                <button class="close-btn" onclick="closeVideoExportPopup()">&times;</button>
+            </div>
+
+            <div class="video-settings">
+                <div class="setting-group">
+                    <label class="setting-label">Duration (seconds)</label>
+                    <div class="setting-control">
+                        <input type="range" id="videoDuration" min="2" max="30" value="5" step="1">
+                        <span class="setting-value" id="videoDurationValue">5s</span>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Frame Rate (fps)</label>
+                    <div class="setting-control">
+                        <input type="range" id="videoFrameRate" min="15" max="60" value="30" step="15">
+                        <span class="setting-value" id="videoFrameRateValue">30fps</span>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Quality</label>
+                    <select class="quality-select" id="videoQuality">
+                        <option value="720">HD (720p)</option>
+                        <option value="1080" selected>Full HD (1080p)</option>
+                        <option value="1440">2K (1440p)</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Export Format</label>
+                    <select class="quality-select" id="videoFormat">
+                        <option value="webm">WebM (VP8 - better compatibility)</option>
+                        <option value="mp4">MP4 (H.264 - if supported)</option>
+                    </select>
+                    <div style="font-size: 11px; color: var(--ui-text-secondary, #5f6368); margin-top: 4px;">
+                        MP4 support varies by browser. WebM recommended for universal playback.
+                    </div>
+                </div>
+            </div>
+
+            <div class="recording-status" id="recordingStatus">
+                <div class="recording-dot"></div>
+                <span id="recordingText">Recording... 0s</span>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <div class="export-actions">
+                <button class="action-btn secondary" onclick="closeVideoExportPopup()">
+                    Cancel
+                </button>
+                <button class="action-btn primary" id="startRecordingBtn" onclick="startVideoRecording()">
+                    Start Recording
+                </button>
+            </div>
+        </div>
+    </div>
+
+
     <script>
       // ============================================================================
       // STREAMLINED GRID SYSTEM v3.0 - Reorganized and Enhanced
       // ============================================================================
 
+
+       // Video recording variables
+       let mediaRecorder = null;
+        let recordedChunks = [];
+        let recordingStartTime = 0;
+        let recordingInterval = null;
+
+        // Open video export popup
+        function openVideoExportPopup() {
+            document.getElementById('videoExportOverlay').style.display = 'flex';
+            setupVideoSettings();
+        }
+
+        // Close video export popup
+        function closeVideoExportPopup() {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                stopVideoRecording();
+            }
+            document.getElementById('videoExportOverlay').style.display = 'none';
+        }
+
+        // Setup video settings controls
+        function setupVideoSettings() {
+            const durationSlider = document.getElementById('videoDuration');
+            const durationValue = document.getElementById('videoDurationValue');
+            const frameRateSlider = document.getElementById('videoFrameRate');
+            const frameRateValue = document.getElementById('videoFrameRateValue');
+
+            // Duration slider
+            durationSlider.addEventListener('input', (e) => {
+                durationValue.textContent = e.target.value + 's';
+            });
+
+            // Frame rate slider
+            frameRateSlider.addEventListener('input', (e) => {
+                frameRateValue.textContent = e.target.value + 'fps';
+            });
+        }
+
+        // Start video recording
+        async function startVideoRecording() {
+            const canvas = document.getElementById('canvas');
+            if (!canvas) {
+                alert('Canvas not found!');
+                return;
+            }
+
+            // Get settings
+            const duration = parseInt(document.getElementById('videoDuration').value) * 1000; // Convert to ms
+            const frameRate = parseInt(document.getElementById('videoFrameRate').value);
+            const format = document.getElementById('videoFormat').value;
+
+            try {
+                // Create video stream from canvas
+                const stream = canvas.captureStream(frameRate);
+                
+                // Setup MediaRecorder with better codec support
+                let mediaRecorderOptions;
+                
+                if (format === 'mp4') {
+                    // Try H.264 codec for better compatibility
+                    if (MediaRecorder.isTypeSupported('video/mp4; codecs=h264')) {
+                        mediaRecorderOptions = {
+                            mimeType: 'video/mp4; codecs=h264',
+                            videoBitsPerSecond: 2500000
+                        };
+                    } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+                        mediaRecorderOptions = {
+                            mimeType: 'video/mp4',
+                            videoBitsPerSecond: 2500000
+                        };
+                    } else {
+                        // Fallback to WebM if MP4 not supported
+                        console.warn('MP4 not supported, falling back to WebM');
+                        mediaRecorderOptions = {
+                            mimeType: 'video/webm; codecs=vp8',
+                            videoBitsPerSecond: 2500000
+                        };
+                    }
+                } else {
+                    // WebM with VP8 for better compatibility than VP9
+                    if (MediaRecorder.isTypeSupported('video/webm; codecs=vp8')) {
+                        mediaRecorderOptions = {
+                            mimeType: 'video/webm; codecs=vp8',
+                            videoBitsPerSecond: 2500000
+                        };
+                    } else {
+                        mediaRecorderOptions = {
+                            mimeType: 'video/webm',
+                            videoBitsPerSecond: 2500000
+                        };
+                    }
+                }
+
+                mediaRecorder = new MediaRecorder(stream, mediaRecorderOptions);
+                console.log('Using codec:', mediaRecorderOptions.mimeType);
+
+                recordedChunks = [];
+
+                // Handle data available
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+
+                // Handle recording stop
+                mediaRecorder.onstop = () => {
+                    downloadVideoFile();
+                    hideRecordingStatus();
+                };
+
+                // Start recording
+                mediaRecorder.start();
+                recordingStartTime = Date.now();
+                
+                // Show recording status
+                showRecordingStatus(duration);
+                
+                // Auto-stop after duration
+                setTimeout(() => {
+                    if (mediaRecorder && mediaRecorder.state === 'recording') {
+                        stopVideoRecording();
+                    }
+                }, duration);
+
+                console.log(`Started recording: ${duration/1000}s at ${frameRate}fps`);
+
+            } catch (error) {
+                console.error('Error starting video recording:', error);
+                alert('Error starting video recording. Your browser might not support this feature.');
+            }
+        }
+
+        // Stop video recording
+        function stopVideoRecording() {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                clearInterval(recordingInterval);
+            }
+        }
+
+        // Show recording status
+        function showRecordingStatus(duration) {
+            const statusDiv = document.getElementById('recordingStatus');
+            const textSpan = document.getElementById('recordingText');
+            const progressFill = document.getElementById('progressFill');
+            const startBtn = document.getElementById('startRecordingBtn');
+
+            statusDiv.style.display = 'flex';
+            startBtn.disabled = true;
+            startBtn.textContent = 'Recording...';
+
+            // Update progress
+            recordingInterval = setInterval(() => {
+                const elapsed = Date.now() - recordingStartTime;
+                const progress = (elapsed / duration) * 100;
+                const seconds = Math.floor(elapsed / 1000);
+
+                textSpan.textContent = `Recording... ${seconds}s`;
+                progressFill.style.width = Math.min(progress, 100) + '%';
+
+                if (elapsed >= duration) {
+                    clearInterval(recordingInterval);
+                }
+            }, 100);
+        }
+
+        // Hide recording status
+        function hideRecordingStatus() {
+            const statusDiv = document.getElementById('recordingStatus');
+            const startBtn = document.getElementById('startRecordingBtn');
+            const progressFill = document.getElementById('progressFill');
+
+            statusDiv.style.display = 'none';
+            startBtn.disabled = false;
+            startBtn.textContent = 'Start Recording';
+            progressFill.style.width = '0%';
+        }
+
+        // Download the recorded video
+        function downloadVideoFile() {
+            if (recordedChunks.length === 0) {
+                alert('No video data recorded');
+                return;
+            }
+
+            // Get actual format from MediaRecorder
+            const actualMimeType = mediaRecorder.mimeType;
+            console.log('Actual recorded format:', actualMimeType);
+            
+            // Determine file extension based on actual mime type
+            let fileExtension = 'webm'; // default
+            if (actualMimeType.includes('mp4')) {
+                fileExtension = 'mp4';
+            } else if (actualMimeType.includes('webm')) {
+                fileExtension = 'webm';
+            }
+            
+            const blob = new Blob(recordedChunks, { type: actualMimeType });
+            const url = URL.createObjectURL(blob);
+            
+            // Generate filename with actual format
+            const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+            const duration = document.getElementById('videoDuration').value;
+            const frameRate = document.getElementById('videoFrameRate').value;
+            const mode = window.gridSystem.config.getParam("showGrid") ? "design" : "export";
+            const palette = window.gridSystem.colorPalette.currentPalette;
+            
+            const filename = `grid-video-${mode}-${palette}-${duration}s-${frameRate}fps-${timestamp}.${fileExtension}`;
+            
+            // Download
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            // Cleanup
+            URL.revokeObjectURL(url);
+            
+            console.log(`Downloaded: ${filename} (${(blob.size / 1024 / 1024).toFixed(2)} MB)`);
+            console.log(`Codec used: ${actualMimeType}`);
+            
+            // Close popup after successful download
+            setTimeout(() => {
+                closeVideoExportPopup();
+            }, 1000);
+        }
+
+        // Close popup when clicking outside
+        document.addEventListener('click', (e) => {
+            const overlay = document.getElementById('videoExportOverlay');
+            const popup = document.querySelector('.video-export-popup');
+            
+            if (e.target === overlay && !popup.contains(e.target)) {
+                closeVideoExportPopup();
+            }
+        });
+
+        // Close popup with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeVideoExportPopup();
+            }
+        });
       // Color Palette System (unchanged but improved organization)
       class ColorPalette {
         constructor() {
