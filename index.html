@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Grid Architecture - Morphological Design System</title>
+    <title>Gm Pattern Tool v3</title>
     <style>
       * {
         margin: 0;
@@ -14,22 +14,26 @@
       body {
         font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
           "Helvetica Neue", sans-serif;
-        background: #fafbfc;
+      
         height: 100vh;
         display: flex;
         overflow: hidden;
-        color: #1a1a1a;
+      
+        background: var(--ui-bg, #fafbfc);
+  color: var(--ui-text, #1a1a1a);
       }
 
       .controls {
-        width: 320px;
-        background: #ffffff;
-        border-right: 1px solid #e8eaed;
+        width: 340px;
+      
+     
         overflow-y: auto;
         z-index: 10;
         transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.04);
         position: relative;
+        background: var(--ui-sidebar, #ffffff);
+  border-right: 1px solid var(--ui-border, #e8eaed);
       }
 
       .controls.collapsed {
@@ -38,8 +42,8 @@
 
       .header {
         padding: 24px 24px 20px 24px;
-        border-bottom: 1px solid #f1f3f4;
-        background: #ffffff;
+        background: var(--ui-sidebar, #ffffff);
+        border-bottom: 1px solid var(--ui-border, #f1f3f4);
       }
 
       .logo-area {
@@ -53,14 +57,13 @@
         width: 32px;
         height: 32px;
         border-radius: 8px;
-        overflow: hidden;
-      }
-
-      .logo-placeholder img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
+        background: linear-gradient(135deg, #0956ff, #667eea);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
       }
 
       .title-group {
@@ -70,14 +73,14 @@
       .app-title {
         font-size: 18px;
         font-weight: 600;
-        color: #1a1a1a;
+        color: var(--ui-text, #1a1a1a);
         line-height: 1.2;
         margin-bottom: 2px;
       }
 
       .app-subtitle {
         font-size: 12px;
-        color: #5f6368;
+        color: var(--ui-text-secondary, #5f6368);
         font-weight: 400;
         line-height: 1.3;
       }
@@ -104,6 +107,11 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
       }
 
+      .control-label {
+  color: var(--ui-text-secondary, #5f6368);
+}
+
+
       .controls-content {
         padding: 0 24px 24px 24px;
       }
@@ -120,8 +128,17 @@
         font-size: 13px;
         font-weight: 600;
         margin-bottom: 16px;
-        color: #3c4043;
+        color: var(--ui-text, #3c4043);
         letter-spacing: -0.01em;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .section-icon {
+        width: 16px;
+        height: 16px;
+        opacity: 0.6;
       }
 
       .control-item {
@@ -150,7 +167,7 @@
       input[type="range"] {
         flex: 1;
         height: 2px;
-        background: #e8eaed;
+        background: var(--ui-slider-track, #e8eaed);
         border-radius: 1px;
         outline: none;
         -webkit-appearance: none;
@@ -161,7 +178,7 @@
         -webkit-appearance: none;
         width: 16px;
         height: 16px;
-        background: #0956ff;
+        background: var(--ui-slider-thumb, #0956ff);
         border-radius: 50%;
         cursor: pointer;
         border: none;
@@ -170,16 +187,27 @@
       }
 
       input[type="range"]::-webkit-slider-thumb:hover {
-        background: #0956ff;
+        background: var(--ui-slider-thumb, #0956ff);
         transform: scale(1.1);
         box-shadow: 0 3px 8px rgba(25, 118, 210, 0.4);
       }
 
-      input[type="range"]:focus::-webkit-slider-thumb {
-        background: #0956ff;
-        transform: scale(1.1);
-        box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.12);
-      }
+      /* Firefox support */
+input[type="range"]::-moz-range-track {
+  background: var(--ui-slider-track, #e8eaed);
+  height: 2px;
+  border: none;
+  border-radius: 1px;
+}
+
+input[type="range"]::-moz-range-thumb {
+  background: var(--ui-slider-thumb, #0956ff);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
 
       .value-display {
         font-size: 12px;
@@ -197,29 +225,46 @@
         margin-top: 8px;
       }
 
+      .button-grid.three-col {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+
+      .option-btn, .primary-btn {
+  background: var(--ui-sidebar, #ffffff);
+  border: 1px solid var(--ui-border, #e8eaed);
+  color: var(--ui-text, #3c4043);
+}
+
+.option-btn:hover, .primary-btn:hover {
+  background: var(--ui-hover, #f8f9fa);
+}
+
+.option-btn.active, .primary-btn.active {
+  background: var(--ui-active, #0956ff);
+  border-color: var(--ui-active, #0956ff);
+  color: var(--ui-sidebar, #ffffff);
+}
+
+
+
       .option-btn {
         padding: 10px 12px;
-        border: 1px solid #e8eaed;
+       
         border-radius: 6px;
-        background: #ffffff;
+       
         font-size: 12px;
         cursor: pointer;
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         text-align: center;
         font-weight: 500;
-        color: #3c4043;
+        
         letter-spacing: -0.01em;
       }
 
-      .option-btn:hover {
-        background: #f8f9fa;
-        border-color: #dadce0;
-      }
+     
 
       .option-btn.active {
-        background: #0956ff;
-        color: #ffffff;
-        border-color: #0956ff;
+       
         box-shadow: 0 2px 4px rgba(25, 118, 210, 0.2);
       }
 
@@ -232,27 +277,22 @@
 
       .primary-btn {
         padding: 12px 16px;
-        border: 1px solid #e8eaed;
+       
         border-radius: 8px;
-        background: #ffffff;
+        
         font-size: 13px;
         cursor: pointer;
         transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         text-align: center;
         font-weight: 500;
-        color: #3c4043;
+       
         letter-spacing: -0.01em;
       }
 
-      .primary-btn:hover {
-        background: #f8f9fa;
-        border-color: #dadce0;
-      }
+     
 
       .primary-btn.active {
-        background: #0956ff;
-        color: #ffffff;
-        border-color: #0956ff;
+     
         box-shadow: 0 2px 6px rgba(25, 118, 210, 0.24);
       }
 
@@ -276,7 +316,7 @@
       .export-btn {
         width: 100%;
         padding: 12px 16px;
-        background: #0956ff;
+        background: var(--ui-accent, #0956ff);
         color: #ffffff;
         border: none;
         border-radius: 8px;
@@ -292,10 +332,6 @@
         background: #0956ff;
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
-      }
-
-      .export-btn:active {
-        transform: translateY(0);
       }
 
       .stats {
@@ -330,7 +366,6 @@
         color: #2e7d32;
       }
 
-      /* Grid-inspired dividers */
       .section-divider {
         height: 1px;
         background: linear-gradient(
@@ -343,21 +378,408 @@
         margin: 24px 0;
       }
 
-      /* Subtle grid pattern in background */
-      .controls::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-image: linear-gradient(#f8f9fa 1px, transparent 1px),
-          linear-gradient(90deg, #f8f9fa 1px, transparent 1px);
-        background-size: 20px 20px;
-        opacity: 0.3;
-        pointer-events: none;
-        z-index: -1;
+      /* Color Palette Styles */
+      .color-palette-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-top: 8px;
       }
+
+      .palette-option {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        border-radius: 6px;
+        background: var(--ui-sidebar, #ffffff);
+  border: 1px solid var(--ui-border, #e8eaed);
+  color: var(--ui-text, #3c4043);
+        cursor: pointer;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 12px;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+      }
+
+      .palette-option:hover {
+        background: var(--ui-hover, #f8f9fa);
+
+      }
+
+      .palette-option.active {
+        background: var(--ui-active, #0956ff);
+  border-color: var(--ui-active, #0956ff);
+  color: var(--ui-sidebar, #ffffff);
+        box-shadow: 0 2px 4px rgba(25, 118, 210, 0.1);
+      }
+
+      .color-swatch {
+        display: flex;
+        gap: 4px;
+      }
+
+      .swatch-color {
+        width: 16px;
+        height: 16px;
+        border-radius: 3px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .palette-name {
+        flex: 1;
+        text-align: left;
+      }
+
+      .linked-control {
+        background: var(--ui-sidebar, #ffffff);
+        border: 1px solid var(--ui-border, #e8eaed);
+        border-radius: 6px;
+        padding: 12px;
+        margin-top: 8px;
+      }
+
+      .linked-control .control-label {
+        margin-bottom: 4px;
+        font-size: 11px;
+        color: #5f6368;
+      }
+
+
+  /* EXPORT VIDEO */
+
+      .video-export-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-export-popup {
+            background: var(--ui-sidebar, #ffffff);
+            border: 1px solid var(--ui-border, #e8eaed);
+            border-radius: 12px;
+            padding: 24px;
+            width: 400px;
+            max-width: 90vw;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .popup-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .popup-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--ui-text, #1a1a1a);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--ui-text-secondary, #5f6368);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+        }
+
+        .close-btn:hover {
+            background: var(--ui-hover, #f8f9fa);
+        }
+
+        .video-settings {
+            display: grid;
+            gap: 16px;
+        }
+
+        .setting-group {
+            display: grid;
+            gap: 8px;
+        }
+
+        .setting-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--ui-text, #3c4043);
+        }
+
+        .setting-control {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .setting-control input[type="range"] {
+            flex: 1;
+            height: 2px;
+            background: var(--ui-slider-track, #e8eaed);
+            border-radius: 1px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .setting-control input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--ui-slider-thumb, #0956ff);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .setting-value {
+            font-size: 12px;
+            color: var(--ui-text-secondary, #5f6368);
+            width: 60px;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .quality-select {
+            width: 100%;
+            padding: 8px 12px;
+            background: var(--ui-sidebar, #ffffff);
+            border: 1px solid var(--ui-border, #e8eaed);
+            border-radius: 6px;
+            color: var(--ui-text, #3c4043);
+            font-size: 13px;
+        }
+
+        .export-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .action-btn {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid var(--ui-border, #e8eaed);
+        }
+
+        .action-btn.primary {
+            background: var(--ui-accent, #0956ff);
+            color: #ffffff;
+            border-color: var(--ui-accent, #0956ff);
+        }
+
+        .action-btn.secondary {
+            background: var(--ui-sidebar, #ffffff);
+            color: var(--ui-text, #3c4043);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .action-btn.primary:hover {
+            box-shadow: 0 4px 12px rgba(9, 86, 255, 0.3);
+        }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .recording-status {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            padding: 12px;
+            background: #e8f5e8;
+            border: 1px solid #c8e6c9;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #2e7d32;
+        }
+
+        .recording-dot {
+            width: 8px;
+            height: 8px;
+            background: #e53e3e;
+            border-radius: 50%;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--ui-slider-track, #e8eaed);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--ui-accent, #0956ff);
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        /* Button to trigger video export */
+        .video-export-btn {
+            width: 100%;
+            padding: 12px 16px;
+            background: #28a745;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            letter-spacing: -0.01em;
+            margin-top: 12px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .video-export-btn:hover {
+            background: #218838;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .preset-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.preset-card {
+  background: var(--ui-sidebar, #ffffff);
+  border: 1px solid var(--ui-border, #e8eaed);
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.preset-card:hover {
+  background: var(--ui-hover, #f8f9fa);
+  border-color: var(--ui-accent, #0956ff);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(9, 86, 255, 0.1);
+}
+
+.preset-card.active {
+  background: var(--ui-active, #0956ff);
+  border-color: var(--ui-active, #0956ff);
+  color: white;
+  box-shadow: 0 4px 12px rgba(9, 86, 255, 0.3);
+}
+
+.preset-preview {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  background: rgba(0,0,0,0.02);
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.preset-card.active .preset-preview {
+  background: rgba(255,255,255,0.1);
+}
+
+.preview-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+
+.preview-bar {
+  border-radius: 1px;
+  transition: all 0.2s ease;
+}
+
+.preset-card.active .preview-bar {
+  background: rgba(255,255,255,0.8) !important;
+}
+
+.preset-info {
+  text-align: center;
+}
+
+.preset-name {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 2px;
+  color: inherit;
+}
+
+.preset-desc {
+  font-size: 10px;
+  color: var(--ui-text-secondary, #5f6368);
+  line-height: 1.3;
+}
+
+.preset-card.active .preset-desc {
+  color: rgba(255,255,255,0.8);
+}
+
+.logo-svg-container {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Adaptive colors */
+.logo-svg .logo-primary {
+  fill: var(--ui-accent, #0956ff);
+  transition: fill 0.3s ease;
+}
+
+.logo-svg .logo-secondary {
+  fill: var(--ui-text, #1a1a1a);
+  transition: fill 0.3s ease;
+}
+
+.logo-svg .logo-bg {
+  fill: var(--ui-sidebar, #ffffff);
+  stroke: var(--ui-border, #e8eaed);
+  stroke-width: 1;
+  transition: all 0.3s ease;
+}
     </style>
   </head>
   <body>
@@ -377,17 +799,36 @@
 
       <div class="header">
         <div class="logo-area">
-          <div class="logo-placeholder">
-            <img src="./images/gmLogo.png" alt="Logo" />
-          </div>
+            <div class="logo-svg-container">
+                <svg class="logo-svg" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <svg id="uuid-9d3a8586-e32d-4fe0-9ae0-4a10b9a3c96a" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1000 1000">
+                      <!-- Generator: Adobe Illustrator 29.4.0, SVG Export Plug-In . SVG Version: 2.1.0 Build 152)  -->
+                      <defs>
+                        <style>
+                          .st0 {
+                            fill: #0956ff;
+                          }
+                    
+                          .st1 {
+                            fill: #fff;
+                          }
+                        </style>
+                      </defs>
+                      <rect class="st0" width="1000" height="1000"/>
+                      <path class="st1" d="M780,358.3v235.8h-64.8v-226.3c0-15.7-10.3-25.8-25.6-25.8h-36.7v252.1h-64.8v-252.1h-62.2v252.1h-64.8v-308.4h246.3c45.2,0,72.6,28,72.6,72.6M411.9,285.6v320.9c0,37.8-16.8,107.8-127,107.8h-27.3v-56.9h27.3c43.3-.8,61.3-19.1,62.1-50.5v-12.9h-54.2c-43.1,0-72.6-29.1-72.6-72.6v-163.2c0-43.4,28.9-72.6,72.6-72.6h119.2ZM347,341.9h-36.5c-15.3,0-25.7,10.7-25.7,25.6v143.9c0,15.5,10.9,26.2,26.4,26.2h35.8v-195.8s0,0,0,0ZM461.1,714.4h318.9v-56.9h-318.9v56.9Z"/>
+                    </svg>
+                </svg>
+              </div>
           <div class="title-group">
-            <div class="app-title">Underline Pattern</div>
-            <div class="app-subtitle">Kinetic design system</div>
+            <div class="app-title">Pattern Tool</div>
+            <div class="app-subtitle">Kinetic Design System</div>
           </div>
         </div>
       </div>
 
       <div class="controls-content">
+        <!-- MODE SELECTION -->
         <div class="control-section">
           <div class="primary-controls">
             <button class="primary-btn active" id="gridView">
@@ -398,209 +839,352 @@
 
           <div class="primary-controls">
             <button class="primary-btn active" id="stillMode">
-              Base Config
+              Static Mode
             </button>
             <button class="primary-btn" id="flowMode">Flow State</button>
           </div>
 
-          <div class="status-indicator" id="statusIndicator"></div>
-        </div>
-
-        <div class="control-section">
-          <div class="section-title">Motion Dynamics</div>
-
-          <div class="control-item">
-            <label class="control-label">Velocity</label>
-            <div class="control-row">
-              <input
-                type="range"
-                id="flowSpeed"
-                min="0.3"
-                max="2.5"
-                step="0.1"
-                value="1"
-              />
-              <span class="value-display" id="flowSpeedValue">1.0</span>
-            </div>
-          </div>
-
-          <div class="control-item">
-            <label class="control-label">Precision</label>
-            <div class="control-row">
-              <input
-                type="range"
-                id="morphSmoothness"
-                min="2"
-                max="12"
-                step="0.5"
-                value="6"
-              />
-              <span class="value-display" id="morphSmoothnessValue">6.0</span>
-            </div>
+          <div class="status-indicator" id="statusIndicator">
+            Static Blueprint Mode
           </div>
         </div>
 
-        <div class="section-divider"></div>
-
         <div class="control-section">
-          <div class="section-title">Blueprint Structure</div>
+            <div class="section-title">
+              <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+                <line x1="7" y1="2" x2="7" y2="22"/>
+                <line x1="17" y1="2" x2="17" y2="22"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <line x1="2" y1="7" x2="7" y2="7"/>
+                <line x1="2" y1="17" x2="7" y2="17"/>
+                <line x1="17" y1="7" x2="22" y2="7"/>
+                <line x1="17" y1="17" x2="22" y2="17"/>
+              </svg>
+              Design Presets
+            </div>
+          
+            <div class="preset-grid">
+              <div class="preset-card" data-preset="minimal">
+                <div class="preset-preview">
+                  <div class="preview-bars">
+                    <div class="preview-bar" style="width: 60%; height: 4px; background: #e8e6e3;"></div>
+                    <div class="preview-bar" style="width: 80%; height: 4px; background: #e8e6e3;"></div>
+                    <div class="preview-bar" style="width: 70%; height: 4px; background: #e8e6e3;"></div>
+                  </div>
+                </div>
+                <div class="preset-info">
+                  <div class="preset-name">Golden</div>
+                  <div class="preset-desc">Static</div>
+                </div>
+              </div>
+          
+              <div class="preset-card" data-preset="organic">
+                <div class="preset-preview">
+                  <div class="preview-bars">
+                    <div class="preview-bar" style="width: 40%; height: 6px; background: #0956ff;"></div>
+                    <div class="preview-bar" style="width: 90%; height: 3px; background: #0956ff;"></div>
+                    <div class="preview-bar" style="width: 65%; height: 8px; background: #0956ff;"></div>
+                  </div>
+                </div>
+                <div class="preset-info">
+                  <div class="preset-name">Organic</div>
+                  <div class="preset-desc">Flow</div>
+                </div>
+              </div>
+          
+              <div class="preset-card" data-preset="dynamic">
+                <div class="preset-preview">
+                  <div class="preview-bars">
+                    <div class="preview-bar" style="width: 30%; height: 8px; background: #000000;"></div>
+                    <div class="preview-bar" style="width: 95%; height: 2px; background: #000000;"></div>
+                    <div class="preview-bar" style="width: 50%; height: 10px; background: #000000;"></div>
+                  </div>
+                </div>
+                <div class="preset-info">
+                  <div class="preset-name">Pulse</div>
+                  <div class="preset-desc">Flow</div>
+                </div>
+              </div>
+          
+              <div class="preset-card" data-preset="architectural">
+                <div class="preset-preview">
+                  <div class="preview-bars">
+                    <div class="preview-bar" style="width: 75%; height: 5px; background: #48505e;"></div>
+                    <div class="preview-bar" style="width: 60%; height: 5px; background: #48505e;"></div>
+                    <div class="preview-bar" style="width: 85%; height: 5px; background: #48505e;"></div>
+                  </div>
+                </div>
+                <div class="preset-info">
+                  <div class="preset-name">Cruise</div>
+                  <div class="preset-desc">Flow</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        <!-- ENGINEERING SPECS -->
+        <div class="control-section">
+          <div class="section-title">
+            <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
+            </svg>
+            Engineering Specs
+          </div>
 
           <div class="control-item">
-            <label class="control-label">Route Lanes</label>
+            <label class="control-label">Material Palette</label>
+            <div class="color-palette-grid">
+              <div class="palette-option active" data-palette="ocean">
+                <div class="color-swatch">
+                  <div class="swatch-color" style="background: #0956ff"></div>
+                  <div class="swatch-color" style="background: #ffffff"></div>
+                </div>
+                <span class="palette-name">GM Blue & White</span>
+              </div>
+
+              <div class="palette-option" data-palette="warm">
+                <div class="color-swatch">
+                  <div class="swatch-color" style="background: #e8e6e3"></div>
+                  <div class="swatch-color" style="background: #ffffff"></div>
+                </div>
+                <span class="palette-name">Warm Gray 100 & White</span>
+              </div>
+
+              <div class="palette-option" data-palette="dark">
+                <div class="color-swatch">
+                  <div class="swatch-color" style="background: #000000"></div>
+                  <div class="swatch-color" style="background: #201e1c"></div>
+                </div>
+                <span class="palette-name">Dark Gray & Black</span>
+              </div>
+
+              <div class="palette-option" data-palette="navy">
+                <div class="color-swatch">
+                  <div class="swatch-color" style="background: #48505e"></div>
+                  <div class="swatch-color" style="background: #655e7c"></div>
+                </div>
+                <span class="palette-name">Cool Gray 500 & 600</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHASSIS ARCHITECTURE -->
+        <div class="control-section">
+          <div class="section-title">
+            <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+            </svg>
+            Chassis Architecture
+          </div>
+
+          <div class="control-item">
+            <label class="control-label">Lane Count</label>
             <div class="control-row">
-              <input type="range" id="columns" min="4" max="12" value="6" />
-              <span class="value-display" id="columnsValue">6</span>
+              <input type="range" id="columns" min="1" max="20" value="1" />
+              <span class="value-display" id="columnsValue">1</span>
             </div>
           </div>
 
           <div class="control-item">
-            <label class="control-label">Pattern Segments</label>
+            <label class="control-label">Segments per Lane</label>
             <div class="control-row">
-              <input type="range" id="baseCells" min="6" max="18" value="10" />
-              <span class="value-display" id="baseCellsValue">10</span>
+              <input type="range" id="baseCells" min="1" max="30" value="2" />
+              <span class="value-display" id="baseCellsValue">2</span>
             </div>
           </div>
 
           <div class="control-item">
-            <label class="control-label">Span</label>
+            <label class="control-label">Frame Width</label>
             <div class="control-row">
-              <input
-                type="range"
-                id="frameWidth"
-                min="600"
-                max="1200"
-                value="800"
-              />
-              <span class="value-display" id="frameWidthValue">800</span>
+              <input type="range" id="frameWidth" min="600" max="1200" value="900" />
+              <span class="value-display" id="frameWidthValue">900</span>
             </div>
           </div>
 
           <div class="control-item">
-            <label class="control-label">Depth</label>
+            <label class="control-label">Frame Height</label>
             <div class="control-row">
-              <input
-                type="range"
-                id="frameHeight"
-                min="400"
-                max="800"
-                value="600"
-              />
+              <input type="range" id="frameHeight" min="400" max="800" value="600" />
               <span class="value-display" id="frameHeightValue">600</span>
             </div>
           </div>
         </div>
 
+        <!-- DYNAMICS & FLOW -->
         <div class="control-section">
-          <div class="section-title">Traffic Flow</div>
-
-          <div class="control-item">
-            <label class="control-label">Movement</label>
-            <div class="button-grid">
-              <button class="option-btn active" data-density="wave">
-                Highway
-              </button>
-              <button class="option-btn" data-density="pulse">
-                Acceleration
-              </button>
-              <button class="option-btn" data-density="sweep">
-                Lane Shift
-              </button>
-              <button class="option-btn" data-density="breath">Cruise</button>
-            </div>
+          <div class="section-title">
+            <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2 2z"/>
+              <line x1="8" y1="1" x2="8" y2="6"/>
+              <line x1="16" y1="1" x2="16" y2="6"/>
+            </svg>
+            Dynamics & Flow
           </div>
 
           <div class="control-item">
-            <label class="control-label">Traffic Density</label>
-            <div class="control-row">
-              <input
-                type="range"
-                id="densityRange"
-                min="0.4"
-                max="2.2"
-                step="0.1"
-                value="1.2"
-              />
-              <span class="value-display" id="densityRangeValue">1.2</span>
-            </div>
-          </div>
-
-          <div class="control-item">
-            <label class="control-label">Response Time</label>
-            <div class="control-row">
-              <input
-                type="range"
-                id="flowIntensity"
-                min="0.3"
-                max="1.8"
-                step="0.1"
-                value="0.8"
-              />
-              <span class="value-display" id="flowIntensityValue">0.8</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="control-section">
-          <div class="section-title">Design Language</div>
-
-          <div class="control-item">
-            <label class="control-label">Proportion System</label>
-            <div class="button-grid">
-              <button class="option-btn active" data-ratio="fibonacci">
-                Aerodynamic
-              </button>
-              <button class="option-btn" data-ratio="golden">Precision</button>
-              <button class="option-btn" data-ratio="harmonic">
-                Performance
-              </button>
-              <button class="option-btn" data-ratio="prime">Utility</button>
-            </div>
-          </div>
-
-          <div class="control-item">
-            <label class="control-label">Scale Variation</label>
-            <div class="control-row">
-              <input
-                type="range"
-                id="ratioVariance"
-                min="1.2"
-                max="4.5"
-                step="0.1"
-                value="2.8"
-              />
-              <span class="value-display" id="ratioVarianceValue">2.8</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="control-section">
-          <div class="section-title">Connection Points</div>
-
-          <div class="control-item">
-            <label class="control-label">Underline Weight</label>
-            <div class="control-row">
-              <input
-                type="range"
-                id="connectorSize"
-                min="2"
-                max="14"
-                value="5"
-              />
-              <span class="value-display" id="connectorSizeValue">5</span>
-            </div>
-          </div>
-
-          <div class="control-item">
-            <label class="control-label">Flow Response</label>
-            <div class="button-grid">
-              <button class="option-btn active" data-connector="fixed">
+            <label class="control-label">Traffic Pattern</label>
+            <div class="button-grid three-col">
+              <button class="option-btn active" data-movement="standard">
                 Static
               </button>
-              <button class="option-btn" data-connector="flow">Adaptive</button>
-              <button class="option-btn" data-connector="inverse">
-                Counter
+              <button class="option-btn" data-movement="wave">
+                Highway
               </button>
-              <button class="option-btn" data-connector="pulse">
+              <button class="option-btn" data-movement="pulse">
+                Pulse
+              </button>
+              <button class="option-btn" data-movement="sweep">
+                Sweep
+              </button>
+              <button class="option-btn" data-movement="breath">
+                Cruise
+              </button>
+              <button class="option-btn" data-movement="offset">
+                Offset
+              </button>
+            </div>
+          </div>
+
+          <div class="linked-control" id="staticControls" style="display: block;">
+            <div class="control-item">
+              <label class="control-label">Static Pattern</label>
+              <div class="button-grid">
+                <button class="option-btn active" data-static="uniform">
+                  Uniform
+                </button>
+                <button class="option-btn" data-static="alternating">
+                  Alternating
+                </button>
+                <button class="option-btn" data-static="cascade">
+                  Cascade
+                </button>
+                <button class="option-btn" data-static="fibonacci">
+                  Fibonacci
+                </button>
+                <button class="option-btn" data-static="golden">
+                  Golden
+                </button>
+                <button class="option-btn" data-static="mirror">
+                  Mirror
+                </button>
+              </div>
+            </div>
+
+            <div class="control-item">
+              <label class="control-label">Pattern Intensity</label>
+              <div class="control-row">
+                <input type="range" id="staticIntensity" min="0.1" max="2.0" step="0.1" value="1.0" />
+                <span class="value-display" id="staticIntensityValue">1.0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="linked-control" id="flowControls" style="display: none;">
+            <div class="control-item">
+              <label class="control-label">Flow Velocity</label>
+              <div class="control-row">
+                <input type="range" id="flowSpeed" min="0.3" max="2.5" step="0.1" value="1" />
+                <span class="value-display" id="flowSpeedValue">1.0</span>
+              </div>
+            </div>
+
+            <div class="control-item">
+                <label class="control-label">Flow Smoothness</label>
+                <div class="control-row">
+                  <input type="range" id="flowSmoothness" min="0.3" max="3.0" step="0.1" value="1.0" />
+                  <span class="value-display" id="flowSmoothnessValue">1.0</span>
+                </div>
+              </div>
+
+            <div class="control-item">
+              <label class="control-label">Response Intensity</label>
+              <div class="control-row">
+                <input type="range" id="flowIntensity" min="0.3" max="2.0" step="0.1" value="1.0" />
+                <span class="value-display" id="flowIntensityValue">1.0</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+       
+
+        <!-- PRECISION RATIOS -->
+        <div class="control-section">
+          <div class="section-title">
+            <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>
+            </svg>
+            Precision Ratios
+          </div>
+
+          <div class="control-item">
+            <label class="control-label">Engineering System</label>
+            <div class="button-grid">
+              <button class="option-btn" data-ratio="fibonacci">
+                Fibonacci
+              </button>
+              <button class="option-btn" data-ratio="golden">Golden</button>
+              <button class="option-btn" data-ratio="harmonic">
+                Harmonic
+              </button>
+              <button class="option-btn active" data-ratio="uniform">Uniform</button>
+            </div>
+          </div>
+
+          <div class="control-item">
+            <label class="control-label">Tolerance Range</label>
+            <div class="control-row">
+              <input type="range" id="ratioVariance" min="1.2" max="4.5" step="0.1" value="1" />
+              <span class="value-display" id="ratioVarianceValue">1</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONNECTION JOINTS -->
+        <div class="control-section">
+          <div class="section-title">
+            <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+            Connection Joints
+          </div>
+
+          <div class="control-item">
+            <label class="control-label">Base Thickness</label>
+            <div class="control-row">
+              <input type="range" id="connectorSize" min="1" max="30" value="12" />
+              <span class="value-display" id="connectorSizeValue">12</span>
+            </div>
+          </div>
+
+          <div class="control-item">
+            <label class="control-label">Thickness Variance</label>
+            <div class="control-row">
+              <input type="range" id="weightVariation" min="1.0" max="6.0" step="0.2" value="2.5" />
+              <span class="value-display" id="weightVariationValue">2.5</span>
+            </div>
+          </div>
+
+          <div class="control-item">
+            <label class="control-label">Dynamic Response</label>
+            <div class="button-grid">
+              <button class="option-btn active" data-connector="proportional">
+                Proportional
+              </button>
+              <button class="option-btn" data-connector="inverse">
+                Inverse
+              </button>
+              <button class="option-btn" data-connector="fixed">
+                Fixed
+              </button>
+              <button class="option-btn" data-connector="rhythmic">
                 Rhythmic
               </button>
             </div>
@@ -608,11 +1192,15 @@
         </div>
 
         <button class="export-btn" onclick="exportGrid()">
-          Export Pattern Blueprint
+          Export Blueprint
+        </button>
+
+        <button class="video-export-btn" onclick="openVideoExportPopup()">
+            Export Video
         </button>
 
         <div class="stats" id="stats">
-          Base Config: 6×10 | 800×600 | Aerodynamic+Highway
+          Static Blueprint: 3×6 | 900×600 | Fibonacci | GM Blue
         </div>
       </div>
     </div>
@@ -621,86 +1209,1054 @@
       <canvas id="canvas"></canvas>
     </div>
 
-    <!-- You can add your existing JavaScript here -->
+    <div class="video-export-overlay" id="videoExportOverlay">
+        <div class="video-export-popup">
+            <div class="popup-header">
+                <h3 class="popup-title">Export Video</h3>
+                <button class="close-btn" onclick="closeVideoExportPopup()">&times;</button>
+            </div>
+
+            <div class="video-settings">
+                <div class="setting-group">
+                    <label class="setting-label">Duration (seconds)</label>
+                    <div class="setting-control">
+                        <input type="range" id="videoDuration" min="2" max="30" value="5" step="1">
+                        <span class="setting-value" id="videoDurationValue">5s</span>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Frame Rate (fps)</label>
+                    <div class="setting-control">
+                        <input type="range" id="videoFrameRate" min="15" max="60" value="30" step="15">
+                        <span class="setting-value" id="videoFrameRateValue">30fps</span>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Quality</label>
+                    <select class="quality-select" id="videoQuality">
+                        <option value="720">HD (720p)</option>
+                        <option value="1080" selected>Full HD (1080p)</option>
+                        <option value="1440">2K (1440p)</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <label class="setting-label">Export Format</label>
+                    <select class="quality-select" id="videoFormat">
+                        <option value="webm">WebM (VP8 - better compatibility)</option>
+                        <option value="mp4">MP4 (H.264 - if supported)</option>
+                    </select>
+                    <div style="font-size: 11px; color: var(--ui-text-secondary, #5f6368); margin-top: 4px;">
+                        MP4 support varies by browser. WebM recommended for universal playback.
+                    </div>
+                </div>
+            </div>
+
+            <div class="recording-status" id="recordingStatus">
+                <div class="recording-dot"></div>
+                <span id="recordingText">Recording... 0s</span>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <div class="export-actions">
+                <button class="action-btn secondary" onclick="closeVideoExportPopup()">
+                    Cancel
+                </button>
+                <button class="action-btn primary" id="startRecordingBtn" onclick="startVideoRecording()">
+                    Start Recording
+                </button>
+            </div>
+        </div>
+    </div>
+
+
     <script>
-      class MorphologicalConstrainedGrid {
+      // ============================================================================
+      // STREAMLINED GRID SYSTEM v3.0 - Reorganized and Enhanced
+      // ============================================================================
+
+
+       // Video recording variables
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let recordingStartTime = 0;
+        let recordingInterval = null;
+
+        // Open video export popup
+        function openVideoExportPopup() {
+            document.getElementById('videoExportOverlay').style.display = 'flex';
+            setupVideoSettings();
+        }
+
+        // Close video export popup
+        function closeVideoExportPopup() {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                stopVideoRecording();
+            }
+            document.getElementById('videoExportOverlay').style.display = 'none';
+        }
+
+        // Setup video settings controls
+        function setupVideoSettings() {
+            const durationSlider = document.getElementById('videoDuration');
+            const durationValue = document.getElementById('videoDurationValue');
+            const frameRateSlider = document.getElementById('videoFrameRate');
+            const frameRateValue = document.getElementById('videoFrameRateValue');
+
+            // Duration slider
+            durationSlider.addEventListener('input', (e) => {
+                durationValue.textContent = e.target.value + 's';
+            });
+
+            // Frame rate slider
+            frameRateSlider.addEventListener('input', (e) => {
+                frameRateValue.textContent = e.target.value + 'fps';
+            });
+        }
+
+        // Start video recording
+        async function startVideoRecording() {
+            const canvas = document.getElementById('canvas');
+            if (!canvas) {
+                alert('Canvas not found!');
+                return;
+            }
+
+            // Get settings
+            const duration = parseInt(document.getElementById('videoDuration').value) * 1000; // Convert to ms
+            const frameRate = parseInt(document.getElementById('videoFrameRate').value);
+            const format = document.getElementById('videoFormat').value;
+
+            try {
+                // Create video stream from canvas
+                const stream = canvas.captureStream(frameRate);
+                
+                // Setup MediaRecorder with better codec support
+                let mediaRecorderOptions;
+                
+                if (format === 'mp4') {
+                    // Try H.264 codec for better compatibility
+                    if (MediaRecorder.isTypeSupported('video/mp4; codecs=h264')) {
+                        mediaRecorderOptions = {
+                            mimeType: 'video/mp4; codecs=h264',
+                            videoBitsPerSecond: 2500000
+                        };
+                    } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+                        mediaRecorderOptions = {
+                            mimeType: 'video/mp4',
+                            videoBitsPerSecond: 2500000
+                        };
+                    } else {
+                        // Fallback to WebM if MP4 not supported
+                        console.warn('MP4 not supported, falling back to WebM');
+                        mediaRecorderOptions = {
+                            mimeType: 'video/webm; codecs=vp8',
+                            videoBitsPerSecond: 2500000
+                        };
+                    }
+                } else {
+                    // WebM with VP8 for better compatibility than VP9
+                    if (MediaRecorder.isTypeSupported('video/webm; codecs=vp8')) {
+                        mediaRecorderOptions = {
+                            mimeType: 'video/webm; codecs=vp8',
+                            videoBitsPerSecond: 2500000
+                        };
+                    } else {
+                        mediaRecorderOptions = {
+                            mimeType: 'video/webm',
+                            videoBitsPerSecond: 2500000
+                        };
+                    }
+                }
+
+                mediaRecorder = new MediaRecorder(stream, mediaRecorderOptions);
+                console.log('Using codec:', mediaRecorderOptions.mimeType);
+
+                recordedChunks = [];
+
+                // Handle data available
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+
+                // Handle recording stop
+                mediaRecorder.onstop = () => {
+                    downloadVideoFile();
+                    hideRecordingStatus();
+                };
+
+                // Start recording
+                mediaRecorder.start();
+                recordingStartTime = Date.now();
+                
+                // Show recording status
+                showRecordingStatus(duration);
+                
+                // Auto-stop after duration
+                setTimeout(() => {
+                    if (mediaRecorder && mediaRecorder.state === 'recording') {
+                        stopVideoRecording();
+                    }
+                }, duration);
+
+                console.log(`Started recording: ${duration/1000}s at ${frameRate}fps`);
+
+            } catch (error) {
+                console.error('Error starting video recording:', error);
+                alert('Error starting video recording. Your browser might not support this feature.');
+            }
+        }
+
+        // Stop video recording
+        function stopVideoRecording() {
+            if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
+                clearInterval(recordingInterval);
+            }
+        }
+
+        // Show recording status
+        function showRecordingStatus(duration) {
+            const statusDiv = document.getElementById('recordingStatus');
+            const textSpan = document.getElementById('recordingText');
+            const progressFill = document.getElementById('progressFill');
+            const startBtn = document.getElementById('startRecordingBtn');
+
+            statusDiv.style.display = 'flex';
+            startBtn.disabled = true;
+            startBtn.textContent = 'Recording...';
+
+            // Update progress
+            recordingInterval = setInterval(() => {
+                const elapsed = Date.now() - recordingStartTime;
+                const progress = (elapsed / duration) * 100;
+                const seconds = Math.floor(elapsed / 1000);
+
+                textSpan.textContent = `Recording... ${seconds}s`;
+                progressFill.style.width = Math.min(progress, 100) + '%';
+
+                if (elapsed >= duration) {
+                    clearInterval(recordingInterval);
+                }
+            }, 100);
+        }
+
+        // Hide recording status
+        function hideRecordingStatus() {
+            const statusDiv = document.getElementById('recordingStatus');
+            const startBtn = document.getElementById('startRecordingBtn');
+            const progressFill = document.getElementById('progressFill');
+
+            statusDiv.style.display = 'none';
+            startBtn.disabled = false;
+            startBtn.textContent = 'Start Recording';
+            progressFill.style.width = '0%';
+        }
+
+        // Download the recorded video
+        function downloadVideoFile() {
+            if (recordedChunks.length === 0) {
+                alert('No video data recorded');
+                return;
+            }
+
+            // Get actual format from MediaRecorder
+            const actualMimeType = mediaRecorder.mimeType;
+            console.log('Actual recorded format:', actualMimeType);
+            
+            // Determine file extension based on actual mime type
+            let fileExtension = 'webm'; // default
+            if (actualMimeType.includes('mp4')) {
+                fileExtension = 'mp4';
+            } else if (actualMimeType.includes('webm')) {
+                fileExtension = 'webm';
+            }
+            
+            const blob = new Blob(recordedChunks, { type: actualMimeType });
+            const url = URL.createObjectURL(blob);
+            
+            // Generate filename with actual format
+            const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+            const duration = document.getElementById('videoDuration').value;
+            const frameRate = document.getElementById('videoFrameRate').value;
+            const mode = window.gridSystem.config.getParam("showGrid") ? "design" : "export";
+            const palette = window.gridSystem.colorPalette.currentPalette;
+            
+            const filename = `grid-video-${mode}-${palette}-${duration}s-${frameRate}fps-${timestamp}.${fileExtension}`;
+            
+            // Download
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            // Cleanup
+            URL.revokeObjectURL(url);
+            
+            console.log(`Downloaded: ${filename} (${(blob.size / 1024 / 1024).toFixed(2)} MB)`);
+            console.log(`Codec used: ${actualMimeType}`);
+            
+            // Close popup after successful download
+            setTimeout(() => {
+                closeVideoExportPopup();
+            }, 1000);
+        }
+
+        // Close popup when clicking outside
+        document.addEventListener('click', (e) => {
+            const overlay = document.getElementById('videoExportOverlay');
+            const popup = document.querySelector('.video-export-popup');
+            
+            if (e.target === overlay && !popup.contains(e.target)) {
+                closeVideoExportPopup();
+            }
+        });
+
+        // Close popup with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeVideoExportPopup();
+            }
+        });
+      // Color Palette System (unchanged but improved organization)
+      class ColorPalette {
+        constructor() {
+          this.palettes = {
+            ocean: {
+              name: "Ocean Blue",
+              background: "#ffffff",
+              canvasBackground: "#ffffff",
+              primary: "#0956ff",
+              secondary: "#667eea",
+              gridLight: "#667eea",
+              gridMedium: "#667eea",
+              gridDark: "#667eeaf",
+              cellBorder: "#667eea",
+              frameColor: "#667eea",
+              centerGuide: "#764ba2",
+              centerGuideStatic: "#f1f2f6",
+              shadowColor: "#0956ff",
+              
+              //ui colors
+              uiBackground: "#ffffff",
+    uiSidebar: "#ffffff", 
+    uiText: "#1a1a1a",
+    uiTextSecondary: "#5f6368",
+    uiAccent: "#0956ff",
+    uiBorder: "#e8eaed",
+    uiHover: "#f8f9fa",
+    uiActive: "#0956ff",
+    uiSliderTrack: "#e8eaed",
+    uiSliderThumb: "#0956ff"
+            },
+            warm: {
+              name: "Warm Grey",
+              background: "#ffffff",
+              canvasBackground: "#ffffff",
+              primary: "#E8E6E3",
+              secondary: "#a69384",
+              gridLight: "#ddd8d2",
+              gridMedium: "#e6e1db",
+              gridDark: "#d4cfc7",
+              cellBorder: "#ddd8d2",
+              frameColor: "#a69384",
+              centerGuide: "#8b7b6b",
+              centerGuideStatic: "#e6e1db",
+              shadowColor: "#8b7b6b",
+              //ui colors
+              uiBackground: "#f5f3f0",
+    uiSidebar: "#ffffff", 
+    uiText: "#3c3935",
+    uiTextSecondary: "#6b6460",
+    uiAccent: "#8b7b6b",
+    uiBorder: "#d4cfc7",
+    uiHover: "#e0ddd8",
+    uiActive: "#8b7b6b",
+     uiSliderTrack: "#d4cfc7",  // Darker than background so it's visible
+    uiSliderThumb: "#8b7b6b"
+            },
+            dark: {
+              name: "Dark Mode",
+              background: "#201E1C",
+              canvasBackground: "#201E1C",
+              primary: "#000000",
+              secondary: "#2d2d2d",
+              gridLight: "#505050",
+              gridMedium: "#4a4a4a",
+              gridDark: "#363636",
+              cellBorder: "#505050",
+              frameColor: "#2d2d2d",
+              centerGuide: "#1a1a1a",
+              centerGuideStatic: "#4a4a4a",
+              shadowColor: "#1a1a1a",
+              //ui colors
+              uiBackground: "#201E1C",
+    uiSidebar: "#000000", 
+    uiText: "#e8e6e3",
+    uiTextSecondary: "#a8a5a2",
+    uiAccent: "#666666",
+    uiBorder: "#505050",
+    uiHover: "#3a3835",
+    uiActive: "#666666",
+    uiSliderTrack: "#505050",
+    uiSliderThumb: "#666666"
+            },
+            navy: {
+              name: "Deep Blue",
+              background: "#48505E",
+              canvasBackground: "#48505E",
+              primary: "#656E7C",
+              secondary: "#3d566e",
+              gridLight: "#656E7C",
+              gridMedium: "#656E7C",
+              gridDark: "#656E7C",
+              cellBorder: "#445561",
+              frameColor: "#3d566e",
+              centerGuide: "#2c3e50",
+              centerGuideStatic: "#4a6278",
+              shadowColor: "#2c3e50",
+              //ui colors
+              uiBackground: "#48505E",
+    uiSidebar: "#3d4552", 
+    uiText: "#e8eaed",
+    uiTextSecondary: "#b8bcc2",
+    uiAccent: "#656E7C",
+    uiBorder: "#5a6169",
+    uiHover: "#4a525f",
+    uiActive: "#656E7C",
+    uiSliderTrack: "#5a6169",
+    uiSliderThumb: "#656E7C"
+            },
+          };
+
+          this.currentPalette = "ocean";
+        }
+
+        setPalette(paletteName) {
+          if (this.palettes[paletteName]) {
+            this.currentPalette = paletteName;
+            this.updateCanvasBackground();
+            document.documentElement.setAttribute('data-theme', paletteName);
+          }
+        }
+
+        getCurrentPalette() {
+          return this.palettes[this.currentPalette];
+        }
+
+        getColor(colorKey) {
+          return this.palettes[this.currentPalette][colorKey];
+        }
+
+        updateCanvasBackground() {
+          const canvasContainer = document.querySelector(".canvas-container");
+          if (canvasContainer) {
+            canvasContainer.style.background = this.getColor("canvasBackground");
+          }
+        }
+        updateUITheme() {
+  const palette = this.getCurrentPalette();
+  const root = document.documentElement;
+  
+  // Set CSS custom properties
+  root.style.setProperty('--ui-bg', palette.uiBackground);
+  root.style.setProperty('--ui-sidebar', palette.uiSidebar);
+  root.style.setProperty('--ui-text', palette.uiText);
+  root.style.setProperty('--ui-text-secondary', palette.uiTextSecondary);
+  root.style.setProperty('--ui-accent', palette.uiAccent);
+  root.style.setProperty('--ui-border', palette.uiBorder);
+  root.style.setProperty('--ui-hover', palette.uiHover);
+  root.style.setProperty('--ui-active', palette.uiActive);
+  root.style.setProperty('--ui-slider-track', palette.uiSliderTrack);
+  root.style.setProperty('--ui-slider-thumb', palette.uiSliderThumb);
+}
+
+setPalette(paletteName) {
+  if (this.palettes[paletteName]) {
+    this.currentPalette = paletteName;
+    this.updateCanvasBackground();
+    this.updateUITheme(); // Add this line
+  }
+}
+      }
+
+      // Enhanced Configuration with static patterns
+      class GridConfig {
+        constructor() {
+          this.params = {
+            // Grid structure
+            columns: 1,
+            baseCells: 2,
+            frameWidth: 900,
+            frameHeight: 600,
+
+            minConnectorThreshold: 0.0,
+maxConnectorMultiplier: 8.0,
+varianceSharpness: 1.0,
+connectorOpacityLink: false,
+
+flowSmoothness: 1.0,  // 0.5 = choppy, 1.0 = normal, 2.0 = very smooth
+
+            // Movement system
+            movementPattern: "standard",
+            flowSpeed: 1.0,
+            flowIntensity: 1.0,
+
+            // Static pattern system
+            staticPattern: "uniform",
+            staticIntensity: 1.0,
+
+            // Proportional system
+            ratioSystem: "uniform",
+            ratioVariance: 1.0,
+
+            // Connector system
+            connectorSize: 12,
+            weightVariation: 2.5,
+            connectorResponse: "proportional",
+
+            // Display modes
+            isFlowing: false,
+            showGrid: true,
+            colorPalette: "ocean",
+          };
+        }
+
+        updateParam(key, value) {
+          this.params[key] = value;
+        }
+
+        getParam(key) {
+          return this.params[key];
+        }
+      }
+
+      // Enhanced Movement System with grid structure integration
+      class MovementSystems {
+        constructor() {
+          this.systems = {
+            standard: this.calculateStatic.bind(this),
+            offset: this.calculateOffset.bind(this),
+            wave: this.calculateWave.bind(this),
+            pulse: this.calculatePulse.bind(this),
+            sweep: this.calculateSweep.bind(this),
+            breath: this.calculateBreath.bind(this),
+          };
+        }
+
+        calculate(pattern, columnIndex, cellIndex, totalColumns, time, intensity, smoothness = 1.0) {
+  const system = this.systems[pattern];
+  if (!system) return { heightMod: 1.0, connectorMod: 1.0, opacity: 1.0 };
+
+  const normalizedColumn = totalColumns > 1 ? columnIndex / (totalColumns - 1) : 0.5;
+  
+  // Apply smoothness to time - higher values = smoother transitions
+  const smoothTime = time / smoothness;
+  
+  const result = system(normalizedColumn, cellIndex, smoothTime, intensity);
+  
+  // Apply additional smoothing to the result if needed
+  const smoothingFactor = Math.min(smoothness, 2.0); // Cap smoothing effect
+  
+  return {
+    heightMod: Math.max(0.2, Math.min(2.5, result.heightMod)),
+    connectorMod: Math.max(0.1, Math.min(3.0, result.connectorMod)),
+    opacity: 1.0,
+  };
+}
+
+        calculateStatic(normalizedColumn, cellIndex, time, intensity) {
+          return { heightMod: 1.0, connectorMod: 1.0, opacity: 1.0 };
+        }
+
+        calculateOffset(normalizedColumn, cellIndex, time, intensity) {
+          const columnOffset = Math.floor(normalizedColumn * 10) % 2 === 0 ? 1.0 : 0.8;
+          const cellOffset = cellIndex % 2 === 0 ? 1.0 : 0.9;
+          const combined = (columnOffset + cellOffset) / 2;
+          
+          return { 
+            heightMod: combined, 
+            connectorMod: 1.0 - (combined - 1.0) * 0.5, 
+            opacity: 1.0 
+          };
+        }
+
+        calculateWave(normalizedColumn, cellIndex, time, intensity) {
+          const wavePhase = Math.sin(normalizedColumn * Math.PI * 2 + time * 2) * intensity;
+          const cellWave = Math.sin(cellIndex * 0.5 + time * 1.5) * 0.3 * intensity;
+          const combined = wavePhase + cellWave;
+          
+          return { 
+            heightMod: 1.0 + combined * 0.5, 
+            connectorMod: 1.0 + combined * 0.8, 
+            opacity: 1.0 // Fixed: Solid color
+          };
+        }
+
+        calculatePulse(normalizedColumn, cellIndex, time, intensity) {
+          const pulsePhase = Math.sin(time * 3) * 0.5 + 0.5;
+          const distance = Math.abs(normalizedColumn - 0.5) * 2;
+          const cellPhase = Math.sin(cellIndex * 0.8 + time * 2) * 0.3;
+          
+          const modulation = pulsePhase * (1.0 - distance * 0.4) * intensity + cellPhase;
+          
+          return { 
+            heightMod: 0.7 + modulation * 0.6, 
+            connectorMod: 0.5 + modulation * 1.0, 
+            opacity: 1.0 // Fixed: Solid color
+          };
+        }
+
+        calculateSweep(normalizedColumn, cellIndex, time, intensity) {
+          const sweepPos = (time * 0.5) % 2;
+          const sweepPhase = sweepPos > 1 ? 2 - sweepPos : sweepPos;
+          const sweepDistance = Math.abs(normalizedColumn - sweepPhase);
+          const cellDelay = cellIndex * 0.1;
+          
+          const activation = Math.max(0, 1.0 - sweepDistance * 2) * intensity;
+          const delayedActivation = Math.max(0, activation - cellDelay);
+          
+          return { 
+            heightMod: 0.6 + delayedActivation * 0.8, 
+            connectorMod: 0.4 + delayedActivation * 1.2, 
+            opacity: 1.0 // Fixed: Solid color
+          };
+        }
+
+        calculateBreath(normalizedColumn, cellIndex, time, intensity) {
+          const breathPhase = Math.sin(time * 0.8) * 0.5 + 0.5;
+          const centerDistance = Math.abs(normalizedColumn - 0.5);
+          const cellBreath = Math.sin(cellIndex * 0.3 + time * 0.6) * 0.2;
+          
+          const expansion = breathPhase * (1.0 - centerDistance * 0.6) * intensity + cellBreath;
+          
+          return { 
+            heightMod: 0.8 + expansion * 0.4, 
+            connectorMod: 0.7 + expansion * 0.6, 
+            opacity: 1.0 // Fixed: Solid color
+          };
+        }
+      }
+
+      // Static Pattern System for sophisticated layouts
+      class StaticPatternSystem {
+        constructor() {
+          this.patterns = {
+            uniform: this.calculateUniform.bind(this),
+            alternating: this.calculateAlternating.bind(this),
+            cascade: this.calculateCascade.bind(this),
+            fibonacci: this.calculateFibonacci.bind(this),
+            golden: this.calculateGolden.bind(this),
+            mirror: this.calculateMirror.bind(this),
+          };
+        }
+
+        calculate(pattern, columnIndex, cellIndex, totalColumns, totalCells, intensity) {
+          const system = this.patterns[pattern];
+          if (!system) return { heightMod: 1.0, connectorMod: 1.0, opacity: 1.0 };
+
+          const result = system(columnIndex, cellIndex, totalColumns, totalCells, intensity);
+          
+          return {
+            heightMod: Math.max(0.3, Math.min(2.5, result.heightMod)),
+            connectorMod: Math.max(0.2, Math.min(3.0, result.connectorMod)),
+            opacity: 1.0,
+          };
+        }
+
+        calculateUniform(columnIndex, cellIndex, totalColumns, totalCells, intensity) {
+          return { heightMod: 1.0, connectorMod: 1.0, opacity: 1.0 };
+        }
+
+        calculateAlternating(columnIndex, cellIndex, totalColumns, totalCells, intensity) {
+          const columnAlt = columnIndex % 2 === 0 ? 1.0 : 0.7;
+          const cellAlt = cellIndex % 2 === 0 ? 1.0 : 0.8;
+          const checkerboard = (columnIndex + cellIndex) % 2 === 0 ? 1.0 : 0.75;
+          
+          const combined = (columnAlt + cellAlt + checkerboard) / 3;
+          const modulated = 1.0 + (combined - 1.0) * intensity;
+          
+          return {
+            heightMod: modulated,
+            connectorMod: 1.0 + (combined - 1.0) * intensity * 0.8,
+            opacity: 1.0
+          };
+        }
+
+        calculateCascade(columnIndex, cellIndex, totalColumns, totalCells, intensity) {
+          const columnPhase = columnIndex / Math.max(totalColumns - 1, 1);
+          const cellPhase = cellIndex / Math.max(totalCells - 1, 1);
+          
+          // Create a cascading wave across columns and down cells
+          const cascade = Math.sin(columnPhase * Math.PI * 2 + cellPhase * Math.PI) * 0.5 + 0.5;
+          const modulated = 0.6 + cascade * 0.8 * intensity;
+          
+          return {
+            heightMod: modulated,
+            connectorMod: 0.5 + cascade * 1.0 * intensity,
+            opacity: 1.0
+          };
+        }
+
+        calculateFibonacci(columnIndex, cellIndex, totalColumns, totalCells, intensity) {
+          const fibSequence = [1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
+          
+          // Use fibonacci numbers to create organic growth patterns
+          const columnFib = fibSequence[columnIndex % fibSequence.length] / 34;
+          const cellFib = fibSequence[cellIndex % fibSequence.length] / 34;
+          
+          // Combine for complex organic scaling
+          const combined = (columnFib + cellFib * 0.7) / 1.7;
+          const modulated = 0.5 + combined * intensity;
+          
+          return {
+            heightMod: modulated,
+            connectorMod: 0.4 + combined * 1.2 * intensity,
+            opacity: 1.0
+          };
+        }
+
+        calculateGolden(columnIndex, cellIndex, totalColumns, totalCells, intensity) {
+          const goldenRatio = 1.618;
+          
+          // Use golden ratio for proportional scaling
+          const columnRatio = Math.pow(goldenRatio, (columnIndex - totalColumns/2) * 0.3);
+          const cellRatio = Math.pow(goldenRatio, (cellIndex - totalCells/2) * 0.2);
+          
+          // Normalize and apply intensity
+          const normalized = (columnRatio * cellRatio) / (goldenRatio * goldenRatio);
+          const modulated = 0.4 + normalized * 0.8 * intensity;
+          
+          return {
+            heightMod: Math.max(0.3, Math.min(2.0, modulated)),
+            connectorMod: Math.max(0.2, Math.min(2.5, normalized * intensity)),
+            opacity: 1.0
+          };
+        }
+
+        calculateMirror(columnIndex, cellIndex, totalColumns, totalCells, intensity) {
+          // Create symmetrical patterns
+          const columnCenter = (totalColumns - 1) / 2;
+          const cellCenter = (totalCells - 1) / 2;
+          
+          const columnDistance = Math.abs(columnIndex - columnCenter) / columnCenter;
+          const cellDistance = Math.abs(cellIndex - cellCenter) / cellCenter;
+          
+          // Combine distances for radial symmetry
+          const combined = (columnDistance + cellDistance) / 2;
+          const mirrored = 1.0 - combined * 0.5;
+          const modulated = 0.5 + mirrored * 0.8 * intensity;
+          
+          return {
+            heightMod: modulated,
+            connectorMod: 0.6 + mirrored * 0.8 * intensity,
+            opacity: 1.0
+          };
+        }
+      }
+
+      // FIXED MathSequences class - this was the missing piece!
+      class MathSequences {
+        constructor() {
+          this.fibonacci = [1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
+          this.golden = [1, 1.618, 2.618, 4.236, 6.854];
+          this.harmonic = [1, 0.5, 0.333, 0.25, 0.2, 0.167, 0.143, 0.125];
+        }
+
+        getRatioSequence(cellCount, columnIndex, system, variance) {
+          const ratios = [];
+
+          for (let i = 0; i < cellCount; i++) {
+            let ratio = 1.0;
+
+            switch (system) {
+              case "fibonacci":
+                const fibIndex = i % this.fibonacci.length;
+                ratio = this.fibonacci[fibIndex] / 8;
+                break;
+              case "golden":
+                const goldenIndex = i % this.golden.length;
+                ratio = this.golden[goldenIndex] / 6;
+                break;
+              case "harmonic":
+                const harmonicIndex = i % this.harmonic.length;
+                ratio = this.harmonic[harmonicIndex] * 4;
+                break;
+              case "uniform":
+                ratio = 1.0;
+                break;
+            }
+
+            const minRatio = 1 / variance;
+            const maxRatio = variance;
+            ratio = minRatio + ratio * (maxRatio - minRatio);
+            ratios.push(Math.max(0.2, Math.min(4.0, ratio)));
+          }
+
+          return ratios;
+        }
+      }
+
+      // Enhanced Connector System with better flow response
+      // Enhanced Connector System with expanded variance range and better control
+class ConnectorSystem {
+  constructor(config) {
+    this.config = config;
+  }
+
+  calculateConnectorHeight(baseSize, cellHeight, movement, time, columnIndex, cellIndex) {
+    const variation = this.config.getParam("weightVariation");
+    const response = this.config.getParam("connectorResponse");
+    const minThreshold = this.config.getParam("minConnectorThreshold") || 0.0;
+    const maxMultiplier = this.config.getParam("maxConnectorMultiplier") || 8.0;
+    
+    // DEBUG: Log what response mode we're in
+    if (columnIndex === 0 && cellIndex === 0 && Math.floor(time * 5) % 25 === 0) {
+      console.log('CONNECTOR RESPONSE MODE:', response);
+    }
+    
+    let height = baseSize;
+    let varianceMultiplier = 1.0;
+
+    // Calculate base variance multiplier - keeping values more reasonable
+    switch (response) {
+      case "proportional":
+        // Use cell height ratio with movement modifier
+        const heightRatio = cellHeight / 60;
+        varianceMultiplier = heightRatio * movement.connectorMod;
+        break;
+        
+      case "inverse":
+        // Inverse relationship - smaller cells get thicker connectors
+        const inverseRatio = 60 / Math.max(cellHeight, 20);
+        varianceMultiplier = inverseRatio * (2 - movement.connectorMod);
+        break;
+        
+      case "fixed":
+        // Fixed size regardless of cell height
+        varianceMultiplier = 1.0;
+        break;
+        
+      case "rhythmic":
+        // DEBUG: Rhythmic variation that definitely stays visible
+        const rhythm = Math.sin(time * 2 + columnIndex * 0.8 + cellIndex * 0.4) * 0.4 + 1.0; // Range 0.6 to 1.4
+        varianceMultiplier = rhythm;
+        
+        // DEBUG: Log rhythmic values for first connector only - simplified condition
+        if (columnIndex === 0 && cellIndex === 0) {
+          console.log('RHYTHMIC VALUES:', {
+            time: time.toFixed(2),
+            rhythm: rhythm.toFixed(3),
+            varianceMultiplier: varianceMultiplier.toFixed(3),
+            baseSize,
+            variation,
+            minThreshold,
+            maxMultiplier,
+            willBeVisible: varianceMultiplier > 0.1
+          });
+        }
+        break;
+        
+      case "organic":
+        // Combine multiple factors for organic variation
+        const organicBase = Math.sin(columnIndex * 0.7 + cellIndex * 0.4) * 0.3 + 0.7; // Range 0.4 to 1.0
+        const organicFlow = Math.sin(time * 1.5 + columnIndex * 0.3) * 0.2 + 0.8; // Range 0.6 to 1.0
+        varianceMultiplier = (organicBase * organicFlow) * movement.connectorMod;
+        break;
+        
+      case "exponential":
+        // FIXED: Less aggressive exponential scaling
+        const expBase = Math.pow(Math.max(0.3, movement.connectorMod), 1.5); // Gentler curve
+        const positionFactor = Math.sin((columnIndex + cellIndex) * 0.5) * 0.2 + 0.8; // Range 0.6 to 1.0
+        varianceMultiplier = expBase * positionFactor;
+        break;
+        
+      default:
+        // DEBUG: Catch unknown response types
+        console.log('UNKNOWN RESPONSE TYPE:', response);
+        varianceMultiplier = 1.0;
+        break;
+    }
+
+    // FIXED: Smoother variance application with less dramatic jumps
+    // Clamp variance multiplier to reasonable range first
+    varianceMultiplier = Math.max(0.1, Math.min(3.0, varianceMultiplier));
+    
+    // Apply variance more smoothly
+    if (varianceMultiplier <= 1.0) {
+      // Scale down smoothly to minimum
+      const t = varianceMultiplier; // 0.1 to 1.0
+      height = baseSize * (minThreshold + t * (variation - minThreshold));
+    } else {
+      // Scale up smoothly to maximum
+      const t = (varianceMultiplier - 1.0) / 2.0; // 0 to 1 range for multipliers 1-3
+      height = baseSize * (variation + t * (maxMultiplier - variation));
+    }
+
+    // Final bounds check
+    const absoluteMin = Math.max(0, minThreshold);
+    const absoluteMax = baseSize * maxMultiplier;
+    
+    const finalHeight = Math.max(absoluteMin, Math.min(absoluteMax, height));
+
+    // DEBUG: Log final calculations for rhythmic mode - simplified condition
+    if (response === "rhythmic" && columnIndex === 0 && cellIndex === 0) {
+      console.log('RHYTHMIC FINAL HEIGHT:', {
+        varianceMultiplier: varianceMultiplier.toFixed(3),
+        calculatedHeight: height.toFixed(2),
+        finalHeight: finalHeight.toFixed(2),
+        absoluteMin,
+        absoluteMax,
+        isVisible: finalHeight > 1
+      });
+    }
+    
+    return finalHeight;
+  }
+}
+
+// Enhanced Configuration with new parameters
+function enhanceGridConfig(config) {
+  // Add new parameters to the existing config
+  const newParams = {
+    minConnectorThreshold: 0.0,     // Minimum connector thickness (0 = invisible)
+    maxConnectorMultiplier: 8.0,    // Maximum multiplier for connector thickness
+    varianceSharpness: 1.0,         // Controls how sharp/smooth the variance transitions are
+    connectorOpacityLink: false,    // Whether to link opacity to connector size
+  };
+  
+  // Merge with existing params
+  Object.assign(config.params, newParams);
+  
+  return config;
+}
+
+// Enhanced UI Controls for the new parameters
+function addEnhancedConnectorControls() {
+  // Find the Connection Joints section by looking for the specific text content
+  const sections = document.querySelectorAll('.control-section');
+  let connectionSection = null;
+  
+  sections.forEach(section => {
+    const sectionTitle = section.querySelector('.section-title');
+    if (sectionTitle && sectionTitle.textContent.includes('Connection Joints')) {
+      connectionSection = section;
+    }
+  });
+  
+  if (connectionSection) {
+    // Add new controls HTML
+    const newControlsHTML = `
+      <div class="control-item">
+        <label class="control-label">Minimum Thickness</label>
+        <div class="control-row">
+          <input type="range" id="minConnectorThreshold" min="-2" max="1" step="0.1" value="0" />
+          <span class="value-display" id="minConnectorThresholdValue">0</span>
+        </div>
+      </div>
+
+      <div class="control-item">
+        <label class="control-label">Maximum Multiplier</label>
+        <div class="control-row">
+          <input type="range" id="maxConnectorMultiplier" min="2" max="30" step="0.5" value="8" />
+          <span class="value-display" id="maxConnectorMultiplierValue">8.0</span>
+        </div>
+      </div>
+
+      <div class="control-item">
+        <label class="control-label">Variance Sharpness</label>
+        <div class="control-row">
+          <input type="range" id="varianceSharpness" min="0.5" max="3.0" step="0.1" value="1.0" />
+          <span class="value-display" id="varianceSharpnessValue">1.0</span>
+        </div>
+      </div>
+
+      <div class="control-item">
+        <label class="control-label">Advanced Response Types</label>
+        <div class="button-grid">
+          <button class="option-btn" data-connector="organic">
+            Organic
+          </button>
+          <button class="option-btn" data-connector="exponential">
+            Exponential
+          </button>
+        </div>
+      </div>
+    `;
+    
+    // Insert before the export button
+    const exportBtn = connectionSection.querySelector('.export-btn');
+    if (exportBtn) {
+      exportBtn.insertAdjacentHTML('beforebegin', newControlsHTML);
+    } else {
+      // If no export button in this section, add at the end of controls-content
+      const controlsContent = connectionSection.querySelector('.controls-content') || connectionSection;
+      controlsContent.insertAdjacentHTML('beforeend', newControlsHTML);
+    }
+  }
+}
+
+// Enhanced setup function for the new controls
+function setupEnhancedConnectorControls(gridSystem) {
+  // Setup range controls for new parameters
+  const newRangeControls = [
+    "minConnectorThreshold", 
+    "maxConnectorMultiplier", 
+    "varianceSharpness"
+  ];
+
+  newRangeControls.forEach((controlId) => {
+    const slider = document.getElementById(controlId);
+    const display = document.getElementById(controlId + "Value");
+
+    if (slider && display) {
+      display.textContent = slider.value;
+
+      slider.addEventListener("input", (e) => {
+        const value = parseFloat(e.target.value);
+        gridSystem.config.updateParam(controlId, value);
+        display.textContent = value % 1 === 0 ? value : value.toFixed(1);
+      });
+    }
+  });
+
+  // Setup new connector response types
+  document.querySelectorAll('[data-connector]').forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const value = btn.dataset.connector;
+      gridSystem.config.updateParam("connectorResponse", value);
+      gridSystem.updateButtonSelection('[data-connector]', value);
+    });
+  });
+}
+
+      // Main Grid System - Streamlined and Enhanced
+      class StreamlinedGridSystem {
         constructor() {
           this.canvas = document.getElementById("canvas");
           this.ctx = this.canvas.getContext("2d");
 
-          // Enhanced parameters for morphological animation
-          this.params = {
-            // Grid architecture
-            columns: 6,
-            baseCells: 10,
-            frameWidth: 800,
-            frameHeight: 600,
-
-            // Mathematical systems
-            ratioSystem: "fibonacci",
-            ratioVariance: 2.8,
-
-            // Density flow
-            densityPattern: "wave",
-            densityRange: 1.2,
-            flowIntensity: 0.8,
-
-            // Connector flow
-            connectorSize: 5,
-            connectorResponse: "fixed",
-
-            // Morphological animation
-            isFlowing: false,
-            flowSpeed: 1,
-            morphSmoothness: 6,
-            showGrid: true,
-          };
-
-          // Morphological state system - tracks continuous transformations
-          this.morphState = {
-            // Cell morphology - tracks each cell's continuous state
-            cells: new Map(), // cellId -> { height, ratio, targetHeight, targetRatio, velocity }
-
-            // Column morphology - tracks density changes
-            columns: new Map(), // columnIndex -> { cellCount, targetCellCount, velocity }
-
-            // Connector morphology - tracks connector changes
-            connectors: new Map(), // connectorId -> { height, targetHeight, velocity }
-
-            // Flow timing
-            lastUpdate: 0,
-            updateInterval: 80, // milliseconds between morphological updates
-
-            // Continuous interpolation
-            interpolationSpeed: 0.02,
-
-            // Morphological forces
-            expansionForce: 0.15,
-            contractionForce: 0.12,
-            dampening: 0.85,
-          };
-
-          // Mathematical sequences
-          this.fibonacci = [1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
-          this.golden = [1, 1.618, 2.618, 4.236, 6.854]; // Golden ratio powers
-          this.primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
-
+          // Initialize modular components
+          this.config = new GridConfig();
+          this.config = enhanceGridConfig(this.config);
+          this.colorPalette = new ColorPalette();
+          this.movementSystems = new MovementSystems();
+          this.staticPatternSystem = new StaticPatternSystem();
+          this.mathSequences = new MathSequences();
+          this.connectorSystem = new ConnectorSystem(this.config);
+          this.colorPalette.updateUITheme();
+          this.designPresets = new DesignPresets();
+          // Animation state
           this.time = 0;
           this.animationFrame = null;
-          this.renderedCells = [];
-          this.renderedConnectors = [];
-
-          // Movement system registry for future extensibility
-          this.movementSystems = {
-            wave: this.calculateWaveInterference.bind(this),
-            pulse: this.calculatePulseMovement.bind(this),
-            sweep: this.calculateSweepMovement.bind(this),
-            breath: this.calculateBreathMovement.bind(this),
-            // Future systems can be added here:
-            // harmonic: this.calculateHarmonicResonance.bind(this),
-            // cellular: this.calculateCellularAutomata.bind(this),
-            // gravity: this.calculateGravitationalField.bind(this),
-          };
 
           this.init();
         }
@@ -708,9 +2264,7 @@
         init() {
           this.setupCanvas();
           this.setupControls();
-          this.initializeMorphology();
-          this.generateInitialState();
-          this.startMorphologicalLoop();
+          this.startAnimationLoop();
         }
 
         setupCanvas() {
@@ -719,7 +2273,6 @@
             const rect = container.getBoundingClientRect();
             this.canvas.width = Math.floor(rect.width);
             this.canvas.height = Math.floor(rect.height);
-            this.generateInitialState();
           };
 
           resizeCanvas();
@@ -727,29 +2280,112 @@
         }
 
         setupControls() {
-          // Collapsible controls - add null checks
           const toggleBtn = document.getElementById("toggleBtn");
           const controls = document.getElementById("controls");
-
+          
           if (toggleBtn && controls) {
             toggleBtn.addEventListener("click", () => {
               controls.classList.toggle("collapsed");
             });
           }
 
-          // Range controls with morphological updates
-          const rangeControls = [
-            "columns",
-            "baseCells",
-            "frameWidth",
-            "frameHeight",
-            "ratioVariance",
-            "densityRange",
-            "flowIntensity",
-            "connectorSize",
-            "flowSpeed",
-            "morphSmoothness",
-          ];
+          this.setupRangeControls();
+          this.setupButtonControls();
+          this.setupViewControls();
+          this.setupColorPalettes();
+          this.setupMovementControls();
+          
+          addEnhancedConnectorControls();
+setupEnhancedConnectorControls(this);
+this.setupPresetControls();
+
+
+        }
+
+        setupPresetControls() {
+  const presetCards = document.querySelectorAll('.preset-card');
+  
+  presetCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const presetName = card.dataset.preset;
+      
+      // Update active state
+      presetCards.forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      
+      // Apply the preset
+      this.applyPreset(presetName);
+      
+      // Optional: Show confirmation
+      const presetInfo = this.designPresets.getPreset(presetName);
+      console.log(`🎨 Applied: ${presetInfo.name} - ${presetInfo.description}`);
+    });
+  });
+}
+
+        setupMovementControls() {
+          const movementButtons = document.querySelectorAll("[data-movement]");
+          const flowControls = document.getElementById("flowControls");
+          const staticControls = document.getElementById("staticControls");
+
+          movementButtons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const movement = btn.dataset.movement;
+              this.config.updateParam("movementPattern", movement);
+              
+              // Show/hide controls based on movement type
+              if (movement === "standard") {
+                flowControls.style.display = "none";
+                staticControls.style.display = "block";
+                this.config.updateParam("isFlowing", false);
+                document.getElementById("stillMode").classList.add("active");
+                document.getElementById("flowMode").classList.remove("active");
+              } else {
+                flowControls.style.display = "block";
+                staticControls.style.display = "none";
+                this.config.updateParam("isFlowing", true);
+                document.getElementById("flowMode").classList.add("active");
+                document.getElementById("stillMode").classList.remove("active");
+              }
+
+              this.updateButtonSelection("[data-movement]", movement);
+              this.updateStatusIndicator();
+            });
+          });
+
+          // Setup static pattern controls
+          const staticButtons = document.querySelectorAll("[data-static]");
+          staticButtons.forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const pattern = btn.dataset.static;
+              this.config.updateParam("staticPattern", pattern);
+              this.updateButtonSelection("[data-static]", pattern);
+            });
+          });
+        }
+
+        setupColorPalettes() {
+          const paletteOptions = document.querySelectorAll(".palette-option");
+
+          paletteOptions.forEach((option) => {
+            option.addEventListener("click", () => {
+              const paletteName = option.dataset.palette;
+
+              paletteOptions.forEach((opt) => opt.classList.remove("active"));
+              option.classList.add("active");
+
+              this.colorPalette.setPalette(paletteName);
+              this.config.updateParam("colorPalette", paletteName);
+            });
+          });
+        }
+
+        setupRangeControls() {
+            const rangeControls = [
+  "columns", "baseCells", "frameWidth", "frameHeight",
+  "ratioVariance", "connectorSize", "weightVariation",
+  "flowSpeed", "flowIntensity", "staticIntensity", "flowSmoothness"  // Add this
+];
 
           rangeControls.forEach((controlId) => {
             const slider = document.getElementById(controlId);
@@ -760,73 +2396,75 @@
 
               slider.addEventListener("input", (e) => {
                 const value = parseFloat(e.target.value);
-                this.params[controlId] = value;
-                display.textContent =
-                  value % 1 === 0 ? value : value.toFixed(1);
-
-                // Trigger morphological update
-                this.scheduleMorphologicalUpdate();
+                this.config.updateParam(controlId, value);
+                display.textContent = value % 1 === 0 ? value : value.toFixed(1);
               });
             }
           });
-
-          this.setupPatternControls();
-          this.setupAnimationControls();
-          this.setupViewControls();
         }
 
-        setupPatternControls() {
-          ["ratio", "density", "connector"].forEach((type) => {
+        setupButtonControls() {
+          ["ratio", "connector"].forEach((type) => {
             document.querySelectorAll(`[data-${type}]`).forEach((btn) => {
               btn.addEventListener("click", () => {
                 const value = btn.dataset[type];
 
-                if (type === "ratio") this.params.ratioSystem = value;
-                else if (type === "density") this.params.densityPattern = value;
-                else if (type === "connector")
-                  this.params.connectorResponse = value;
+                if (type === "ratio") this.config.updateParam("ratioSystem", value);
+                else if (type === "connector") this.config.updateParam("connectorResponse", value);
 
                 this.updateButtonSelection(`[data-${type}]`, value);
-                this.scheduleMorphologicalUpdate();
               });
             });
           });
         }
 
-        setupAnimationControls() {
+        setupViewControls() {
           const stillBtn = document.getElementById("stillMode");
           const flowBtn = document.getElementById("flowMode");
-
-          if (stillBtn && flowBtn) {
-            stillBtn.addEventListener("click", () => {
-              this.params.isFlowing = false;
-              stillBtn.classList.add("active");
-              flowBtn.classList.remove("active");
-            });
-
-            flowBtn.addEventListener("click", () => {
-              this.params.isFlowing = true;
-              flowBtn.classList.add("active");
-              stillBtn.classList.remove("active");
-            });
-          }
-        }
-
-        setupViewControls() {
           const gridBtn = document.getElementById("gridView");
           const cleanBtn = document.getElementById("cleanView");
 
+          if (stillBtn && flowBtn) {
+            stillBtn.addEventListener("click", () => {
+              this.config.updateParam("isFlowing", false);
+              this.config.updateParam("movementPattern", "standard");
+              stillBtn.classList.add("active");
+              flowBtn.classList.remove("active");
+              document.getElementById("flowControls").style.display = "none";
+              document.getElementById("staticControls").style.display = "block";
+              this.updateButtonSelection("[data-movement]", "standard");
+              this.updateStatusIndicator();
+            });
+
+            flowBtn.addEventListener("click", () => {
+              // Only activate if not in standard movement
+              const currentMovement = this.config.getParam("movementPattern");
+              if (currentMovement === "standard") {
+                this.config.updateParam("movementPattern", "wave");
+                this.updateButtonSelection("[data-movement]", "wave");
+                document.getElementById("flowControls").style.display = "block";
+                document.getElementById("staticControls").style.display = "none";
+              }
+              this.config.updateParam("isFlowing", true);
+              flowBtn.classList.add("active");
+              stillBtn.classList.remove("active");
+              this.updateStatusIndicator();
+            });
+          }
+
           if (gridBtn && cleanBtn) {
             gridBtn.addEventListener("click", () => {
-              this.params.showGrid = true;
+              this.config.updateParam("showGrid", true);
               gridBtn.classList.add("active");
               cleanBtn.classList.remove("active");
+              this.updateStatusIndicator();
             });
 
             cleanBtn.addEventListener("click", () => {
-              this.params.showGrid = false;
+              this.config.updateParam("showGrid", false);
               cleanBtn.classList.add("active");
               gridBtn.classList.remove("active");
+              this.updateStatusIndicator();
             });
           }
         }
@@ -834,498 +2472,115 @@
         updateButtonSelection(selector, activeValue) {
           document.querySelectorAll(selector).forEach((btn) => {
             const dataAttr = selector.slice(6, -1);
-            btn.classList.toggle(
-              "active",
-              btn.dataset[dataAttr] === activeValue
-            );
+            btn.classList.toggle("active", btn.dataset[dataAttr] === activeValue);
           });
         }
 
-        // MORPHOLOGICAL SYSTEM
-        initializeMorphology() {
-          this.morphState.cells.clear();
-          this.morphState.columns.clear();
-          this.morphState.connectors.clear();
-          this.morphState.lastUpdate = Date.now();
-        }
+        updateStatusIndicator() {
+          const indicator = document.getElementById("statusIndicator");
+          if (!indicator) return;
 
-        scheduleMorphologicalUpdate() {
-          // Force immediate morphological recalculation
-          this.morphState.lastUpdate =
-            Date.now() - this.morphState.updateInterval;
-        }
+          const isFlowing = this.config.getParam("isFlowing");
+          const showGrid = this.config.getParam("showGrid");
+          const movementPattern = this.config.getParam("movementPattern");
 
-        updateMorphologicalTargets() {
-          const currentTime = Date.now();
-          const timeSinceUpdate = currentTime - this.morphState.lastUpdate;
+          let statusText = "";
+          let className = "status-indicator";
 
-          if (timeSinceUpdate >= this.morphState.updateInterval) {
-            // Generate new morphological targets
-            this.calculateMorphologicalTargets();
-            this.morphState.lastUpdate = currentTime;
+          if (isFlowing && movementPattern !== "standard") {
+            statusText = `Animated ${showGrid ? "Design" : "Export"} Mode`;
+            className += " flowing";
+          } else {
+            statusText = `Static ${showGrid ? "Design" : "Export"} Mode`;
           }
 
-          // Apply continuous morphological forces
-          this.applyMorphologicalForces();
+          indicator.textContent = statusText;
+          indicator.className = className;
         }
 
-        calculateMorphologicalTargets() {
-          // Calculate target states for each column
-          for (let col = 0; col < this.params.columns; col++) {
-            const targetDensity = this.calculateDensityFlow(col);
-            const targetCellCount = Math.round(
-              this.params.baseCells * targetDensity
-            );
+        generateColumnData(columnIndex, time) {
+          const cells = [];
+          const connectors = [];
+          const baseCellCount = this.config.getParam("baseCells");
+          const ratios = this.mathSequences.getRatioSequence(
+            baseCellCount,
+            columnIndex,
+            this.config.getParam("ratioSystem"),
+            this.config.getParam("ratioVariance")
+          );
 
-            // Get or create column state
-            if (!this.morphState.columns.has(col)) {
-              this.morphState.columns.set(col, {
-                cellCount: targetCellCount,
-                targetCellCount: targetCellCount,
-                velocity: 0,
-              });
-            } else {
-              const columnState = this.morphState.columns.get(col);
-              columnState.targetCellCount = targetCellCount;
-            }
+          const baseSpacing = 60;
+          let currentY = 0;
 
-            // Calculate target cell properties
-            this.calculateCellTargets(col, targetCellCount);
-          }
-        }
+          for (let cellIndex = 0; cellIndex < baseCellCount; cellIndex++) {
+            let movement;
 
-        calculateCellTargets(columnIndex, cellCount) {
-          const ratios = this.calculateRatioSequence(cellCount, columnIndex);
-          const availableHeight = this.params.frameHeight * 0.85;
-          const connectorSpace = this.params.connectorSize * (cellCount - 1);
-          const cellSpace = availableHeight - connectorSpace;
-          const totalRatio = ratios.reduce((sum, ratio) => sum + ratio, 0);
-
-          for (let i = 0; i < cellCount; i++) {
-            const cellId = `${columnIndex}-${i}`;
-            const targetHeight = (cellSpace * ratios[i]) / totalRatio;
-            const targetRatio = ratios[i];
-
-            if (!this.morphState.cells.has(cellId)) {
-              this.morphState.cells.set(cellId, {
-                height: targetHeight,
-                ratio: targetRatio,
-                targetHeight: targetHeight,
-                targetRatio: targetRatio,
-                velocityHeight: 0,
-                velocityRatio: 0,
-              });
-            } else {
-              const cellState = this.morphState.cells.get(cellId);
-              cellState.targetHeight = targetHeight;
-              cellState.targetRatio = targetRatio;
-            }
-
-            // Calculate connector targets
-            if (i < cellCount - 1) {
-              const connectorId = `${columnIndex}-${i}-connector`;
-              const targetConnectorHeight = this.calculateConnectorTarget(
-                cellId,
-                targetHeight
-              );
-
-              if (!this.morphState.connectors.has(connectorId)) {
-                this.morphState.connectors.set(connectorId, {
-                  height: targetConnectorHeight,
-                  targetHeight: targetConnectorHeight,
-                  velocity: 0,
-                });
-              } else {
-                const connectorState =
-                  this.morphState.connectors.get(connectorId);
-                connectorState.targetHeight = targetConnectorHeight;
-              }
-            }
-          }
-        }
-
-        applyMorphologicalForces() {
-          const dampening = this.morphState.dampening;
-          const speed =
-            this.morphState.interpolationSpeed * this.params.morphSmoothness;
-
-          // Apply forces to columns (cell count changes)
-          this.morphState.columns.forEach((columnState, columnIndex) => {
-            const diff = columnState.targetCellCount - columnState.cellCount;
-
-            if (Math.abs(diff) > 0.1) {
-              // Apply expansion/contraction force
-              const force =
-                diff > 0
-                  ? this.morphState.expansionForce
-                  : this.morphState.contractionForce;
-              columnState.velocity += diff * force;
-              columnState.velocity *= dampening;
-              columnState.cellCount += columnState.velocity * speed;
-
-              // Clamp to reasonable bounds
-              columnState.cellCount = Math.max(
-                1,
-                Math.min(20, columnState.cellCount)
+            // Calculate movement effects based on mode
+            if (this.config.getParam("isFlowing")) {
+  movement = this.movementSystems.calculate(
+    this.config.getParam("movementPattern"),
+    columnIndex,
+    cellIndex,
+    this.config.getParam("columns"),
+    time,
+    this.config.getParam("flowIntensity"),
+    this.config.getParam("flowSmoothness")  // Add this line
+  );
+} else {
+              // Use static pattern system for static mode
+              movement = this.staticPatternSystem.calculate(
+                this.config.getParam("staticPattern"),
+                columnIndex,
+                cellIndex,
+                this.config.getParam("columns"),
+                baseCellCount,
+                this.config.getParam("staticIntensity")
               );
             }
-          });
 
-          // Apply forces to cells (height and ratio changes)
-          this.morphState.cells.forEach((cellState, cellId) => {
-            // Height morphology
-            const heightDiff = cellState.targetHeight - cellState.height;
-            if (Math.abs(heightDiff) > 0.5) {
-              const heightForce =
-                heightDiff > 0
-                  ? this.morphState.expansionForce
-                  : this.morphState.contractionForce;
-              cellState.velocityHeight += heightDiff * heightForce;
-              cellState.velocityHeight *= dampening;
-              cellState.height += cellState.velocityHeight * speed;
-              cellState.height = Math.max(2, cellState.height);
-            }
+            const currentRatio = ratios[cellIndex];
+            const cellHeight = baseSpacing * currentRatio * movement.heightMod;
 
-            // Ratio morphology
-            const ratioDiff = cellState.targetRatio - cellState.ratio;
-            if (Math.abs(ratioDiff) > 0.01) {
-              cellState.velocityRatio += ratioDiff * 0.1;
-              cellState.velocityRatio *= dampening;
-              cellState.ratio += cellState.velocityRatio * speed;
-              cellState.ratio = Math.max(0.2, Math.min(5, cellState.ratio));
-            }
-          });
+            cells.push({
+              y: currentY,
+              height: cellHeight,
+              opacity: movement.opacity,
+              index: cellIndex,
+              columnIndex: columnIndex,
+              movement: movement
+            });
 
-          // Apply forces to connectors
-          this.morphState.connectors.forEach((connectorState, connectorId) => {
-            const diff = connectorState.targetHeight - connectorState.height;
-            if (Math.abs(diff) > 0.2) {
-              const force =
-                diff > 0
-                  ? this.morphState.expansionForce
-                  : this.morphState.contractionForce;
-              connectorState.velocity += diff * force;
-              connectorState.velocity *= dampening;
-              connectorState.height += connectorState.velocity * speed;
-              connectorState.height = Math.max(
-                1,
-                Math.min(20, connectorState.height)
+            currentY += cellHeight;
+
+            // Add connector (except after last cell)
+            if (cellIndex < baseCellCount - 1) {
+              const connectorHeight = this.connectorSystem.calculateConnectorHeight(
+                this.config.getParam("connectorSize"),
+                cellHeight,
+                movement,
+                time,
+                columnIndex,  // Add this
+                cellIndex  
               );
-            }
-          });
-        }
 
-        // CALCULATION SYSTEMS
-        calculateDensityFlow(columnIndex) {
-          const normalizedPos =
-            columnIndex / Math.max(1, this.params.columns - 1);
-          const timeOffset = this.params.isFlowing
-            ? this.time * this.params.flowSpeed
-            : 0;
-
-          // Use modular movement system
-          const movementSystem =
-            this.movementSystems[this.params.densityPattern];
-          let density = movementSystem
-            ? movementSystem(normalizedPos, timeOffset)
-            : 1.0;
-
-          return Math.max(
-            0.3,
-            Math.min(
-              2.0,
-              density * this.params.densityRange * this.params.flowIntensity
-            )
-          );
-        }
-
-        // WAVE INTERFERENCE SYSTEM
-        calculateWaveInterference(normalizedPos, timeOffset) {
-          // Golden ratio wave source at φ position
-          const goldenRatioPos = 0.618;
-          const goldenWave = this.createWaveFromSource(
-            normalizedPos,
-            goldenRatioPos,
-            timeOffset,
-            1.0, // amplitude
-            2.4, // frequency
-            0 // phase offset
-          );
-
-          // Fibonacci sequence wave source at 1/φ position
-          const fibonacciPos = 1 - 0.618; // 0.382
-          const fibonacciWave = this.createWaveFromSource(
-            normalizedPos,
-            fibonacciPos,
-            timeOffset,
-            0.7, // amplitude
-            1.618, // frequency (golden ratio)
-            Math.PI / 3 // phase offset
-          );
-
-          // Prime ratio wave source at 1/3 position
-          const primePos = 1 / 3;
-          const primeWave = this.createWaveFromSource(
-            normalizedPos,
-            primePos,
-            timeOffset,
-            0.5, // amplitude
-            3.0, // frequency
-            Math.PI / 2 // phase offset
-          );
-
-          // Constructive/destructive interference
-          const interference = goldenWave + fibonacciWave + primeWave;
-
-          // Normalize and apply base density
-          const normalizedInterference = Math.tanh(interference) * 0.5 + 0.5;
-
-          return 0.4 + normalizedInterference * 1.2;
-        }
-
-        createWaveFromSource(
-          position,
-          sourcePos,
-          time,
-          amplitude,
-          frequency,
-          phaseOffset
-        ) {
-          // Distance-based amplitude decay
-          const distance = Math.abs(position - sourcePos);
-          const distanceDecay = Math.exp(-distance * 2.0); // exponential decay
-
-          // Wave equation with distance and time
-          const spatialPhase = distance * frequency * Math.PI;
-          const temporalPhase = time * frequency;
-          const totalPhase = spatialPhase + temporalPhase + phaseOffset;
-
-          // Wave with distance-based amplitude modulation
-          return amplitude * distanceDecay * Math.sin(totalPhase);
-        }
-
-        // LEGACY MOVEMENT SYSTEMS (refactored for modularity)
-        calculatePulseMovement(normalizedPos, timeOffset) {
-          const pulsePhase = Math.sin(timeOffset * 2) * 0.5 + 0.5;
-          const distance = Math.abs(normalizedPos - 0.5) * 2;
-          return 0.4 + pulsePhase * (1.2 - distance);
-        }
-
-        calculateSweepMovement(normalizedPos, timeOffset) {
-          const sweepPos = (timeOffset * 0.3) % 2;
-          const sweepDistance = Math.abs(
-            normalizedPos - (sweepPos > 1 ? 2 - sweepPos : sweepPos)
-          );
-          return 0.6 + (1 - sweepDistance) * 0.8;
-        }
-
-        calculateBreathMovement(normalizedPos, timeOffset) {
-          const breathPhase = Math.sin(timeOffset * 0.8) * 0.5 + 0.5;
-          const centerDistance = Math.abs(normalizedPos - 0.5);
-          return 0.4 + breathPhase * (1.4 - centerDistance * 1.5);
-        }
-
-        calculateRatioSequence(cellCount, columnIndex) {
-          const ratios = [];
-
-          for (let i = 0; i < cellCount; i++) {
-            let ratio = 1.0;
-
-            switch (this.params.ratioSystem) {
-              case "fibonacci":
-                const fibIndex = i % this.fibonacci.length;
-                ratio = this.fibonacci[fibIndex] / 8;
-                break;
-
-              case "golden":
-                const goldenIndex = i % this.golden.length;
-                ratio = this.golden[goldenIndex] / 6;
-                break;
-
-              case "harmonic":
-                ratio = (1 / (i + 1)) * 5;
-                break;
-
-              case "prime":
-                const primeIndex = i % this.primes.length;
-                ratio = this.primes[primeIndex] / 20;
-                break;
-            }
-
-            // Apply variance scaling
-            const minRatio = 1 / this.params.ratioVariance;
-            const maxRatio = this.params.ratioVariance;
-            ratio = minRatio + ratio * (maxRatio - minRatio);
-
-            ratios.push(Math.max(0.2, Math.min(4.0, ratio)));
-          }
-
-          return ratios;
-        }
-
-        calculateConnectorTarget(cellId, cellHeight) {
-          let connectorHeight = this.params.connectorSize;
-
-          switch (this.params.connectorResponse) {
-            case "flow":
-              connectorHeight = Math.max(2, cellHeight * 0.12);
-              break;
-
-            case "inverse":
-              connectorHeight = Math.max(
-                2,
-                this.params.connectorSize * (60 / cellHeight)
-              );
-              break;
-
-            case "pulse":
-              const pulsePhase =
-                Math.sin(this.time * this.params.flowSpeed * 3) * 0.5 + 0.5;
-              connectorHeight = this.params.connectorSize * (0.5 + pulsePhase);
-              break;
-
-            case "fixed":
-            default:
-              break;
-          }
-
-          return Math.max(1, Math.min(20, connectorHeight));
-        }
-
-        // RENDERING SYSTEM
-        generateInitialState() {
-          if (!this.params.isFlowing) {
-            // Static mode - direct generation
-            this.generateStaticGrid();
-          }
-        }
-
-        generateStaticGrid() {
-          this.renderedCells = [];
-          this.renderedConnectors = [];
-
-          const gridX = (this.canvas.width - this.params.frameWidth) / 2;
-          const gridY = (this.canvas.height - this.params.frameHeight) / 2;
-          const columnWidth = this.params.frameWidth / this.params.columns;
-
-          for (let col = 0; col < this.params.columns; col++) {
-            const density = this.calculateDensityFlow(col);
-            const cellCount = Math.round(this.params.baseCells * density);
-            const ratios = this.calculateRatioSequence(cellCount, col);
-
-            const availableHeight = this.params.frameHeight * 0.85;
-            const connectorSpace = this.params.connectorSize * (cellCount - 1);
-            const cellSpace = availableHeight - connectorSpace;
-            const totalRatio = ratios.reduce((sum, ratio) => sum + ratio, 0);
-
-            const columnX = gridX + col * columnWidth;
-            let currentY = gridY;
-
-            for (let i = 0; i < cellCount; i++) {
-              const cellHeight = (cellSpace * ratios[i]) / totalRatio;
-
-              const cell = {
-                columnIndex: col,
-                rowIndex: i,
-                x: columnX,
+              connectors.push({
                 y: currentY,
-                width: columnWidth,
-                height: Math.max(2, cellHeight),
-                ratio: ratios[i],
-              };
+                height: connectorHeight,
+                opacity: movement.opacity,
+                columnIndex: columnIndex
+              });
 
-              this.renderedCells.push(cell);
-              currentY += cell.height;
-
-              // Add connector
-              if (i < cellCount - 1) {
-                const connectorHeight = this.calculateConnectorTarget(
-                  `${col}-${i}`,
-                  cell.height
-                );
-                const connector = {
-                  columnIndex: col,
-                  rowIndex: i,
-                  x: columnX,
-                  y: currentY,
-                  width: columnWidth,
-                  height: connectorHeight,
-                };
-
-                this.renderedConnectors.push(connector);
-                currentY += connector.height;
-              }
+              currentY += connectorHeight;
             }
           }
+
+          return { cells, connectors, totalHeight: currentY };
         }
 
-        generateMorphologicalGrid() {
-          this.renderedCells = [];
-          this.renderedConnectors = [];
-
-          const gridX = (this.canvas.width - this.params.frameWidth) / 2;
-          const gridY = (this.canvas.height - this.params.frameHeight) / 2;
-          const columnWidth = this.params.frameWidth / this.params.columns;
-
-          for (let col = 0; col < this.params.columns; col++) {
-            const columnState = this.morphState.columns.get(col);
-            if (!columnState) continue;
-
-            const cellCount = Math.round(columnState.cellCount);
-            const columnX = gridX + col * columnWidth;
-            let currentY = gridY;
-
-            for (let i = 0; i < cellCount; i++) {
-              const cellId = `${col}-${i}`;
-              const cellState = this.morphState.cells.get(cellId);
-
-              if (cellState && cellState.height > 1) {
-                const cell = {
-                  columnIndex: col,
-                  rowIndex: i,
-                  x: columnX,
-                  y: currentY,
-                  width: columnWidth,
-                  height: cellState.height,
-                  ratio: cellState.ratio,
-                };
-
-                this.renderedCells.push(cell);
-                currentY += cell.height;
-
-                // Add morphological connector
-                if (i < cellCount - 1) {
-                  const connectorId = `${col}-${i}-connector`;
-                  const connectorState =
-                    this.morphState.connectors.get(connectorId);
-
-                  if (connectorState) {
-                    const connector = {
-                      columnIndex: col,
-                      rowIndex: i,
-                      x: columnX,
-                      y: currentY,
-                      width: columnWidth,
-                      height: connectorState.height,
-                    };
-
-                    this.renderedConnectors.push(connector);
-                    currentY += connector.height;
-                  }
-                }
-              }
-            }
-          }
-        }
-
-        startMorphologicalLoop() {
-          const animate = () => {
-            if (this.params.isFlowing) {
-              this.time += 0.016 * this.params.flowSpeed;
-              this.updateMorphologicalTargets();
-              this.generateMorphologicalGrid();
-            } else {
-              this.generateStaticGrid();
+        startAnimationLoop() {
+          const animate = (timestamp) => {
+            if (this.config.getParam("isFlowing")) {
+              this.time += 0.016 * this.config.getParam("flowSpeed");
             }
 
             this.render();
@@ -1338,208 +2593,355 @@
 
         render() {
           // Clear canvas
-          this.ctx.fillStyle = "#ffffff";
+          this.ctx.fillStyle = this.colorPalette.getColor("background");
           this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-          if (this.params.showGrid) {
-            this.renderGridMode();
-          } else {
-            this.renderCleanMode();
+          const gridX = (this.canvas.width - this.config.getParam("frameWidth")) / 2;
+          const gridY = (this.canvas.height - this.config.getParam("frameHeight")) / 2;
+          const columnWidth = this.config.getParam("frameWidth") / this.config.getParam("columns");
+
+          // Render grid guides if in design mode
+          if (this.config.getParam("showGrid")) {
+            this.renderGridGuides(gridX, gridY);
           }
 
-          this.renderBlueConnectors();
+          // Generate and render each column
+          const columns = this.config.getParam("columns");
+          let maxHeight = 0;
+
+          for (let col = 0; col < columns; col++) {
+            const columnData = this.generateColumnData(col, this.time);
+            maxHeight = Math.max(maxHeight, columnData.totalHeight);
+            
+            const columnX = gridX + col * columnWidth;
+            
+            // Scale to fit frame height
+            const scale = this.config.getParam("frameHeight") / columnData.totalHeight;
+            
+            this.renderColumn(columnData, columnX, gridY, columnWidth, scale);
+          }
         }
 
-        renderGridMode() {
-          // Draw constraint frame
-          const gridX = (this.canvas.width - this.params.frameWidth) / 2;
-          const gridY = (this.canvas.height - this.params.frameHeight) / 2;
+        renderColumn(columnData, x, startY, width, scale) {
+          const { cells, connectors } = columnData;
 
-          this.ctx.strokeStyle = "#667eea";
-          this.ctx.lineWidth = 2;
-          this.ctx.setLineDash([8, 8]);
-          this.ctx.beginPath();
-          this.ctx.rect(
-            gridX,
-            gridY,
-            this.params.frameWidth,
-            this.params.frameHeight
-          );
-          this.ctx.stroke();
-          this.ctx.setLineDash([]);
+          // Render cells
+          cells.forEach(cell => {
+            const y = startY + cell.y * scale;
+            const height = cell.height * scale;
 
-          // Column guides
-          this.ctx.strokeStyle = "#e9ecef";
-          this.ctx.lineWidth = 1;
-          const columnWidth = this.params.frameWidth / this.params.columns;
+            // Fixed: Always solid opacity
+            this.ctx.globalAlpha = 1.0;
+            
+            // Cell background
+            this.ctx.fillStyle = this.colorPalette.getColor("background");
+            this.ctx.fillRect(x, y, width, height);
 
-          for (let col = 1; col < this.params.columns; col++) {
-            const x = gridX + col * columnWidth;
+            // Cell border (if in design mode)
+            if (this.config.getParam("showGrid")) {
+              this.ctx.strokeStyle = this.colorPalette.getColor("cellBorder");
+              this.ctx.lineWidth = 1;
+              this.ctx.strokeRect(x, y, width, height);
+
+              // Render subdivision guides
+              this.renderCellSubdivisions(x, y, width, height, cell);
+            }
+
+            this.ctx.globalAlpha = 1.0;
+          });
+
+          // Render connectors
+          connectors.forEach(connector => {
+            const y = startY + connector.y * scale;
+            const height = connector.height * scale;
+
+            // Fixed: Always solid opacity
+            this.ctx.globalAlpha = 1.0;
+            this.ctx.fillStyle = this.colorPalette.getColor("primary");
+            this.ctx.fillRect(x, y, width, height);
+            this.ctx.globalAlpha = 1.0;
+          });
+        }
+
+        renderCellSubdivisions(x, y, width, height, cell) {
+          const subdivisions = Math.max(2, Math.ceil(height / 20));
+          const unitHeight = height / subdivisions;
+
+          this.ctx.save();
+          this.ctx.strokeStyle = this.colorPalette.getColor("gridLight");
+          this.ctx.lineWidth = 0.5;
+          this.ctx.globalAlpha = 0.6;
+
+          for (let i = 1; i < subdivisions; i++) {
+            const lineY = y + i * unitHeight;
             this.ctx.beginPath();
-            this.ctx.moveTo(x, gridY);
-            this.ctx.lineTo(x, gridY + this.params.frameHeight);
+            this.ctx.moveTo(x + width * 0.1, lineY);
+            this.ctx.lineTo(x + width * 0.9, lineY);
             this.ctx.stroke();
           }
 
-          // Center guides with morphological indication
-          this.ctx.strokeStyle = this.params.isFlowing ? "#764ba2" : "#f1f2f6";
-          this.ctx.lineWidth = this.params.isFlowing ? 1 : 0.5;
+          this.ctx.restore();
+        }
+
+        renderGridGuides(gridX, gridY) {
+          const frameWidth = this.config.getParam("frameWidth");
+          const frameHeight = this.config.getParam("frameHeight");
+
+          // Draw frame boundary
+          this.ctx.strokeStyle = this.colorPalette.getColor("frameColor");
+          this.ctx.lineWidth = 2;
+          this.ctx.setLineDash([8, 8]);
+          this.ctx.strokeRect(gridX, gridY, frameWidth, frameHeight);
+          this.ctx.setLineDash([]);
+
+          // Column guides
+          if (this.config.getParam("columns") > 1) {
+            this.ctx.strokeStyle = this.colorPalette.getColor("cellBorder");
+            this.ctx.lineWidth = 1;
+            const columnWidth = frameWidth / this.config.getParam("columns");
+
+            for (let col = 1; col < this.config.getParam("columns"); col++) {
+              const x = gridX + col * columnWidth;
+              this.ctx.beginPath();
+              this.ctx.moveTo(x, gridY);
+              this.ctx.lineTo(x, gridY + frameHeight);
+              this.ctx.stroke();
+            }
+          }
+
+          // Center guides
+          this.ctx.strokeStyle = this.colorPalette.getColor("centerGuideStatic");
+          this.ctx.lineWidth = 0.5;
           this.ctx.setLineDash([6, 6]);
 
           // Horizontal center
           this.ctx.beginPath();
-          this.ctx.moveTo(gridX, gridY + this.params.frameHeight / 2);
-          this.ctx.lineTo(
-            gridX + this.params.frameWidth,
-            gridY + this.params.frameHeight / 2
-          );
+          this.ctx.moveTo(gridX, gridY + frameHeight / 2);
+          this.ctx.lineTo(gridX + frameWidth, gridY + frameHeight / 2);
           this.ctx.stroke();
 
           // Vertical center
           this.ctx.beginPath();
-          this.ctx.moveTo(gridX + this.params.frameWidth / 2, gridY);
-          this.ctx.lineTo(
-            gridX + this.params.frameWidth / 2,
-            gridY + this.params.frameHeight
-          );
+          this.ctx.moveTo(gridX + frameWidth / 2, gridY);
+          this.ctx.lineTo(gridX + frameWidth / 2, gridY + frameHeight);
           this.ctx.stroke();
 
           this.ctx.setLineDash([]);
-
-          // Render white space cells
-          this.renderWhiteSpaceCells();
-        }
-
-        renderCleanMode() {
-          // Pure morphological expression - only blue connectors visible
-          return;
-        }
-
-        renderWhiteSpaceCells() {
-          this.renderedCells.forEach((cell) => {
-            // Cell fill with subtle morphological indication
-            this.ctx.fillStyle = this.params.isFlowing ? "#fefefe" : "#ffffff";
-            this.ctx.fillRect(cell.x, cell.y, cell.width, cell.height);
-
-            // Cell boundary
-            this.ctx.strokeStyle = this.params.isFlowing
-              ? "#e3f2fd"
-              : "#e9ecef";
-            this.ctx.lineWidth = 1;
-            this.ctx.beginPath();
-            this.ctx.rect(cell.x, cell.y, cell.width, cell.height);
-            this.ctx.stroke();
-
-            // Internal spacing with morphological awareness
-            const spacing = Math.max(2, cell.height * 0.1);
-            if (
-              spacing > 4 &&
-              cell.width > spacing * 2 &&
-              cell.height > spacing * 2
-            ) {
-              const innerX = cell.x + spacing;
-              const innerY = cell.y + spacing;
-              const innerWidth = cell.width - spacing * 2;
-              const innerHeight = cell.height - spacing * 2;
-
-              this.ctx.fillStyle = this.params.isFlowing
-                ? "#f3e5f5"
-                : "#f8f9fa";
-              this.ctx.fillRect(innerX, innerY, innerWidth, innerHeight);
-
-              this.ctx.strokeStyle = this.params.isFlowing
-                ? "#ce93d8"
-                : "#dee2e6";
-              this.ctx.lineWidth = 0.5;
-              this.ctx.beginPath();
-              this.ctx.rect(innerX, innerY, innerWidth, innerHeight);
-              this.ctx.stroke();
-            }
-          });
-        }
-
-        renderBlueConnectors() {
-          this.renderedConnectors.forEach((connector) => {
-            // Enhanced connector with morphological flow indication
-            if (this.params.isFlowing && connector.height > 4) {
-              // Gradient for flow visualization
-              const gradient = this.ctx.createLinearGradient(
-                connector.x,
-                connector.y,
-                connector.x,
-                connector.y + connector.height
-              );
-              gradient.addColorStop(0, "#0956FF");
-              gradient.addColorStop(0.5, "#0956FF");
-              gradient.addColorStop(1, "#0956FF");
-
-              this.ctx.fillStyle = gradient;
-            } else {
-              this.ctx.fillStyle = "#0956FF";
-            }
-
-            this.ctx.fillRect(
-              connector.x,
-              connector.y,
-              connector.width,
-              connector.height
-            );
-
-            // Subtle glow effect for flowing state
-            if (this.params.isFlowing && connector.height > 3) {
-              this.ctx.shadowColor = "#0956FF";
-              this.ctx.shadowBlur = 2;
-              this.ctx.fillRect(
-                connector.x,
-                connector.y,
-                connector.width,
-                connector.height
-              );
-              this.ctx.shadowBlur = 0;
-            }
-          });
         }
 
         updateStats() {
           const statsElement = document.getElementById("stats");
-          if (!statsElement) return; // Add null check
+          if (!statsElement) return;
 
-          const totalCells = this.renderedCells.length;
-          const totalConnectors = this.renderedConnectors.length;
-          const {
-            columns,
-            baseCells,
-            frameWidth,
-            frameHeight,
-            ratioSystem,
-            densityPattern,
-          } = this.params;
+          const columns = this.config.getParam("columns");
+          const baseCells = this.config.getParam("baseCells");
+          const frameWidth = this.config.getParam("frameWidth");
+          const frameHeight = this.config.getParam("frameHeight");
+          const ratioSystem = this.config.getParam("ratioSystem");
+          const paletteName = this.colorPalette.getCurrentPalette().name;
+          const movementPattern = this.config.getParam("movementPattern");
 
-          const flowState = this.params.isFlowing ? "Flowing" : "Static";
-          const viewMode = this.params.showGrid ? "Grid" : "Clean";
+          const flowState = this.config.getParam("isFlowing") && movementPattern !== "standard" ? "Animated" : "Static";
+          const viewMode = this.config.getParam("showGrid") ? "Design" : "Export";
 
-          const statsText = `${flowState} ${viewMode}: ${columns}×${baseCells} | ${frameWidth}×${frameHeight} | ${totalCells} cells | ${ratioSystem}+${densityPattern}`;
-
+          const statsText = `${flowState} ${viewMode}: ${columns}×${baseCells} | ${frameWidth}×${frameHeight} | ${ratioSystem} | ${paletteName}`;
           statsElement.textContent = statsText;
         }
+
+        applyPreset(presetName) {
+  const preset = this.designPresets.getPreset(presetName);
+  if (!preset) return;
+
+  console.log(`🎨 Applying preset: ${preset.name}`);
+
+  // Apply all configuration values
+  Object.entries(preset.config).forEach(([key, value]) => {
+    this.config.updateParam(key, value);
+  });
+
+  // Update all UI controls to reflect new values
+  this.updateUIFromConfig();
+  
+  // Update status and stats
+  this.updateStatusIndicator();
+  
+  console.log(`✅ Preset applied: ${preset.description}`);
+}
+
+updateUIFromConfig() {
+  // Update all range sliders
+  const rangeControls = [
+    "columns", "baseCells", "frameWidth", "frameHeight",
+    "ratioVariance", "connectorSize", "weightVariation",
+    "flowSpeed", "flowIntensity", "staticIntensity", "flowSmoothness"
+  ];
+
+  rangeControls.forEach(controlId => {
+    const slider = document.getElementById(controlId);
+    const display = document.getElementById(controlId + "Value");
+    const value = this.config.getParam(controlId);
+
+    if (slider && display && value !== undefined) {
+      slider.value = value;
+      display.textContent = value % 1 === 0 ? value : value.toFixed(1);
+    }
+  });
+
+  // Update button selections
+  this.updateButtonSelection("[data-ratio]", this.config.getParam("ratioSystem"));
+  this.updateButtonSelection("[data-connector]", this.config.getParam("connectorResponse"));
+  this.updateButtonSelection("[data-movement]", this.config.getParam("movementPattern"));
+  this.updateButtonSelection("[data-static]", this.config.getParam("staticPattern"));
+
+  // Update color palette
+  const paletteName = this.config.getParam("colorPalette");
+  if (paletteName) {
+    this.colorPalette.setPalette(paletteName);
+    document.querySelectorAll(".palette-option").forEach(option => {
+      option.classList.toggle("active", option.dataset.palette === paletteName);
+    });
+  }
+
+  // Update view mode buttons
+  const isFlowing = this.config.getParam("isFlowing");
+  const movementPattern = this.config.getParam("movementPattern");
+  
+  if (isFlowing && movementPattern !== "standard") {
+    document.getElementById("flowMode")?.classList.add("active");
+    document.getElementById("stillMode")?.classList.remove("active");
+    document.getElementById("flowControls").style.display = "block";
+    document.getElementById("staticControls").style.display = "none";
+  } else {
+    document.getElementById("stillMode")?.classList.add("active");
+    document.getElementById("flowMode")?.classList.remove("active");
+    document.getElementById("flowControls").style.display = "none";
+    document.getElementById("staticControls").style.display = "block";
+  }
+}
       }
+
+      class DesignPresets {
+  constructor() {
+    this.presets = {
+      minimal: {
+        name: "Minimal Architecture",
+        description: "Clean, simple grid with uniform proportions",
+        config: {
+          columns: 20,
+          baseCells: 30,
+          frameWidth: 1200,
+          frameHeight: 640,
+          ratioSystem: "uniform",
+          ratioVariance: 1.0,
+          connectorSize: 30,
+          weightVariation: 1.5,
+          connectorResponse: "fixed",
+          staticPattern: "golden",
+          staticIntensity: 1.0,
+          movementPattern: "standard",
+          isFlowing: false,
+          colorPalette: "warm"
+        }
+      },
+      
+      organic: {
+        name: "Organic Flow",
+        description: "Natural, flowing patterns with fibonacci ratios",
+        config: {
+          columns: 2,
+          baseCells: 9,
+          frameWidth: 1200,
+          frameHeight: 700,
+          ratioSystem: "uniform",
+          ratioVariance: 2.8,
+          connectorSize: 15,
+          weightVariation: 4.0,
+          connectorResponse: "rhythmic",
+          staticPattern: "fibonacci",
+          staticIntensity: 1.6,
+          movementPattern: "pulse",
+          isFlowing: true,
+          flowSpeed: 0.5,
+          flowIntensity: 1.4,
+          flowSmoothness: 1.8,
+          colorPalette: "ocean"
+        }
+      },
+      
+      dynamic: {
+        name: "Dynamic Pulse",
+        description: "High-energy animation with dramatic variations",
+        config: {
+          columns: 7,
+          baseCells: 8,
+          frameWidth: 1100,
+          frameHeight: 650,
+          ratioSystem: "golden",
+          ratioVariance: 3.5,
+          connectorSize: 20,
+          weightVariation: 5.5,
+          connectorResponse: "proportional",
+          staticPattern: "cascade",
+          staticIntensity: 1.8,
+          movementPattern: "pulse",
+          isFlowing: true,
+          flowSpeed: 1.8,
+          flowIntensity: 1.7,
+          flowSmoothness: 1.2,
+          colorPalette: "dark"
+        }
+      },
+      
+      architectural: {
+        name: "Architectural Study",
+        description: "Structured, professional grid for technical work",
+        config: {
+          columns: 5,
+          baseCells: 10,
+          frameWidth: 1200,
+          frameHeight: 800,
+          ratioSystem: "golden",
+          ratioVariance: 2.2,
+          connectorSize: 28,
+          weightVariation: 6,
+          connectorResponse: "rhythmic",
+          staticPattern: "mirror",
+          staticIntensity: 1.3,
+          movementPattern: "cruise",
+          isFlowing: true,
+          flowSpeed: 1.2,
+          flowIntensity: 1.0,
+          flowSmoothness: 2.0,
+          colorPalette: "navy"
+        }
+      }
+    };
+  }
+
+  getPreset(presetName) {
+    return this.presets[presetName];
+  }
+
+  getAllPresets() {
+    return Object.keys(this.presets).map(key => ({
+      key,
+      ...this.presets[key]
+    }));
+  }
+}
 
       // Global functions
       window.exportGrid = function () {
         const canvas = document.getElementById("canvas");
-        if (!canvas) return; // Add null check
+        if (!canvas) return;
 
-        const timestamp = new Date()
-          .toISOString()
-          .slice(0, 19)
-          .replace(/:/g, "-");
-        const mode = window.gridSystem.params.showGrid ? "grid" : "clean";
-        const flowState = window.gridSystem.params.isFlowing
-          ? "flowing"
-          : "static";
+        const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, "-");
+        const mode = window.gridSystem.config.getParam("showGrid") ? "design" : "export";
+        const flowState = window.gridSystem.config.getParam("isFlowing") ? "animated" : "static";
+        const palette = window.gridSystem.colorPalette.currentPalette;
 
         const link = document.createElement("a");
-        link.download = `morphological-grid-${mode}-${flowState}-${timestamp}.png`;
+        link.download = `grid-v3-${mode}-${flowState}-${palette}-${timestamp}.png`;
         link.href = canvas.toDataURL();
         link.click();
       };
@@ -1552,7 +2954,7 @@
           return;
         }
 
-        const gridSystem = new MorphologicalConstrainedGrid();
+        const gridSystem = new StreamlinedGridSystem();
         window.gridSystem = gridSystem;
 
         // Enhanced keyboard shortcuts
@@ -1563,7 +2965,7 @@
               const stillBtn = document.getElementById("stillMode");
               const flowBtn = document.getElementById("flowMode");
               if (stillBtn && flowBtn) {
-                if (gridSystem.params.isFlowing) {
+                if (gridSystem.config.getParam("isFlowing")) {
                   stillBtn.click();
                 } else {
                   flowBtn.click();
@@ -1576,7 +2978,7 @@
               const gridBtn = document.getElementById("gridView");
               const cleanBtn = document.getElementById("cleanView");
               if (gridBtn && cleanBtn) {
-                if (gridSystem.params.showGrid) {
+                if (gridSystem.config.getParam("showGrid")) {
                   cleanBtn.click();
                 } else {
                   gridBtn.click();
@@ -1587,9 +2989,12 @@
             case "c":
               e.preventDefault();
               const toggleBtn = document.getElementById("toggleBtn");
-              if (toggleBtn) {
-                toggleBtn.click();
-              }
+              if (toggleBtn) toggleBtn.click();
+              break;
+
+            case "e":
+              e.preventDefault();
+              if (window.exportGrid) exportGrid();
               break;
 
             case "r":
@@ -1597,66 +3002,24 @@
               location.reload();
               break;
 
-            case "e":
-              e.preventDefault();
-              if (window.exportGrid) {
-                exportGrid();
-              }
-              break;
+            // Movement shortcuts
+            case "1": e.preventDefault(); document.querySelector('[data-movement="standard"]')?.click(); break;
+            case "2": e.preventDefault(); document.querySelector('[data-movement="wave"]')?.click(); break;
+            case "3": e.preventDefault(); document.querySelector('[data-movement="pulse"]')?.click(); break;
+            case "4": e.preventDefault(); document.querySelector('[data-movement="sweep"]')?.click(); break;
+            case "5": e.preventDefault(); document.querySelector('[data-movement="breath"]')?.click(); break;
+            case "6": e.preventDefault(); document.querySelector('[data-movement="offset"]')?.click(); break;
           }
         });
 
-        // Development console utilities
-        console.log("🌊 Morphological Constrained Grid System initialized");
-        console.log(
-          "🎯 Innovation: Wave interference movement with mathematical significance"
-        );
-        console.log(
-          "⌨️  Controls: Space=flow, V=view, C=controls, E=export, R=reset"
-        );
-        console.log(
-          "🏗️  Architecture: Velocity-based morphology within fixed boundaries"
-        );
-        console.log("🎨 Clean Mode: Pure mathematical flow visualization");
-        console.log(
-          "🌀 Wave System: Golden ratio + Fibonacci + Prime interference"
-        );
-
-        // Development helpers
-        window.dumpMorphState = () => {
-          console.log("Morphological State:");
-          console.log("Cells:", gridSystem.morphState.cells);
-          console.log("Columns:", gridSystem.morphState.columns);
-          console.log("Connectors:", gridSystem.morphState.connectors);
-        };
-
-        window.triggerMorphUpdate = () => {
-          gridSystem.scheduleMorphologicalUpdate();
-          console.log("Morphological update triggered");
-        };
-
-        window.inspectWaveSystem = () => {
-          const time = gridSystem.time;
-          console.log("Wave Interference Analysis:");
-          for (let col = 0; col < gridSystem.params.columns; col++) {
-            const normalizedPos =
-              col / Math.max(1, gridSystem.params.columns - 1);
-            const density = gridSystem.calculateWaveInterference(
-              normalizedPos,
-              time
-            );
-            console.log(
-              `Column ${col}: pos=${normalizedPos.toFixed(
-                3
-              )}, density=${density.toFixed(3)}`
-            );
-          }
-        };
-
-        window.addNewMovementSystem = (name, systemFunction) => {
-          gridSystem.movementSystems[name] = systemFunction.bind(gridSystem);
-          console.log(`Added new movement system: ${name}`);
-        };
+        console.log("🌊 Streamlined Grid System v3.0 initialized");
+        console.log("✨ Key improvements:");
+        console.log("  • Logical control grouping");
+        console.log("  • Movement affects entire grid structure");
+        console.log("  • Enhanced connector flow response");
+        console.log("  • Streamlined terminology");
+        console.log("⌨️  Controls: Space=flow, V=view, C=controls, E=export");
+        console.log("🎮 Movement: 1=Static, 2=Wave, 3=Pulse, 4=Sweep, 5=Breath, 6=Offset");
       });
     </script>
   </body>
