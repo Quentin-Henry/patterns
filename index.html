@@ -780,9 +780,261 @@ input[type="range"]::-moz-range-thumb {
   stroke-width: 1;
   transition: all 0.3s ease;
 }
+
+.password-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(20px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+}
+
+.password-form-container {
+  background: var(--ui-sidebar, #ffffff);
+  border: 1px solid var(--ui-border, #e8eaed);
+  border-radius: 16px;
+  padding: 48px 40px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  text-align: center;
+  max-width: 420px;
+  width: 90%;
+  position: relative;
+}
+
+.password-form-container::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  right: -1px;
+  bottom: -1px;
+  background: linear-gradient(135deg, #0956ff, #667eea);
+  border-radius: 16px;
+  z-index: -1;
+  opacity: 0.1;
+}
+
+.password-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0956ff, #667eea);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 18px;
+  margin: 0 auto 24px;
+}
+
+.password-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--ui-text, #1a1a1a);
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+}
+
+.password-subtitle {
+  font-size: 15px;
+  color: var(--ui-text-secondary, #5f6368);
+  margin: 0 0 32px 0;
+  line-height: 1.4;
+}
+
+.password-input {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid var(--ui-border, #e8eaed);
+  border-radius: 12px;
+  font-size: 16px;
+  font-family: inherit;
+  background: var(--ui-sidebar, #ffffff);
+  color: var(--ui-text, #1a1a1a);
+  margin-bottom: 20px;
+  box-sizing: border-box;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.password-input:focus {
+  outline: none;
+  border-color: var(--ui-accent, #0956ff);
+  box-shadow: 0 0 0 4px rgba(9, 86, 255, 0.1);
+}
+
+.password-submit {
+  width: 100%;
+  padding: 16px 20px;
+  background: var(--ui-accent, #0956ff);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  letter-spacing: -0.01em;
+}
+
+.password-submit:hover {
+  background: #0746cc;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(9, 86, 255, 0.4);
+}
+
+.password-submit:active {
+  transform: translateY(0);
+}
+
+.password-error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-top: 16px;
+  display: none;
+  text-align: left;
+}
+
+.password-error.show {
+  display: block;
+}
+
+/* Hide main content by default */
+.main-site-content {
+  display: none;
+}
+
+.main-site-content.authenticated {
+  display: block;
+}
+
+/* Loading state */
+.password-submit.loading {
+  background: #94a3b8;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.password-submit.loading:hover {
+  background: #94a3b8;
+  transform: none;
+  box-shadow: none;
+}
+.main-site-content {
+  display: none; /* Hidden by default */
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.main-site-content.authenticated {
+  display: flex !important; /* Force flex display */
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Force canvas container to take up space */
+.canvas-container {
+  flex: 1 !important;
+  background: #ffffff;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  min-width: 400px !important; /* Minimum width */
+  min-height: 300px !important; /* Minimum height */
+}
+
+/* Ensure canvas is visible and sized */
+#canvas {
+  background: #ffffff;
+  display: block !important;
+  border-radius: 0;
+  box-shadow: none;
+  min-width: 400px;
+  min-height: 300px;
+}
+
+/* Fix for the controls when authenticated */
+.main-site-content.authenticated .controls {
+  display: block !important;
+  width: 340px;
+  height: 100vh;
+}
+
+/* Force body layout when authenticated */
+body:has(.main-site-content.authenticated) {
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+/* Alternative: If the :has selector doesn't work, use this class approach */
+.authenticated-layout {
+  height: 100vh !important;
+  display: flex !important;
+  overflow: hidden !important;
+}
+
+.authenticated-layout .main-site-content {
+  display: flex !important;
+  width: 100% !important;
+  height: 100vh !important;
+}
+
+/* Debug styles - add these temporarily to see what's happening */
+.debug .canvas-container {
+  border: 3px solid red !important;
+  background: yellow !important;
+}
+
+.debug #canvas {
+  border: 2px solid blue !important;
+  background: lightgreen !important;
+}
+
+.debug .main-site-content {
+  border: 2px solid purple !important;
+}
     </style>
   </head>
   <body>
+    <div class="password-overlay" id="passwordOverlay">
+        <div class="password-form-container">
+          <h1 class="password-title">Protected Access</h1>
+          <p class="password-subtitle">Enter your password to access the Grid Architecture tool</p>
+          
+          <form id="passwordForm">
+            <input 
+              type="password" 
+              class="password-input" 
+              id="passwordInput" 
+              placeholder="Enter password"
+              autocomplete="current-password"
+              autofocus
+            >
+            <button type="submit" class="password-submit" id="passwordSubmit">
+              Access Tool
+            </button>
+            <div class="password-error" id="passwordError">
+              <strong>Access denied.</strong> Please check your password and try again.
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="main-site-content" id="mainSiteContent">
     <div class="controls" id="controls">
       <div class="toggle-btn" id="toggleBtn" title="Toggle Controls">
         <svg
@@ -1272,8 +1524,232 @@ input[type="range"]::-moz-range-thumb {
             </div>
         </div>
     </div>
+</div>
+
+<script>
+  const PASSWORD_CONFIG = {
+  correctPassword: "patterntool2025",
+  sessionKey: "grid_tool_authenticated",
+  sessionExpiry: null
+};
+
+    // Check authentication on page load
+    function checkAuthentication() {
+  console.log("Checking authentication...");
+  
+  const authData = sessionStorage.getItem(PASSWORD_CONFIG.sessionKey);
+  console.log("Auth data from storage:", authData);
+  
+  if (authData) {
+    try {
+      const data = JSON.parse(authData);
+      const now = Date.now();
+      
+      console.log("Parsed auth data:", data);
+      
+      // Check if session is still valid
+      if (!PASSWORD_CONFIG.sessionExpiry || !data.expires || data.expires > now) {
+        console.log("✅ Authentication valid");
+        showMainContentFixed();
+        return true;
+      } else {
+        console.log("❌ Session expired");
+        sessionStorage.removeItem(PASSWORD_CONFIG.sessionKey);
+      }
+    } catch (e) {
+      console.log("❌ Invalid auth data:", e);
+      sessionStorage.removeItem(PASSWORD_CONFIG.sessionKey);
+    }
+  } else {
+    console.log("❌ No auth data found");
+  }
+  
+  return false;
+}
+
+function initializeCanvasAfterAuth() {
+  console.log("🎨 Initializing canvas after authentication...");
+  
+  const canvas = document.getElementById("canvas");
+  const container = canvas?.parentElement;
+  
+  if (!canvas) {
+    console.error("❌ Canvas not found!");
+    return;
+  }
+  
+  if (!container) {
+    console.error("❌ Canvas container not found!");
+    return;
+  }
+  
+  // Force container to be visible
+  container.style.display = 'flex';
+  container.style.visibility = 'visible';
+  
+  // Force reflow
+  container.offsetHeight;
+  
+  // Get container dimensions
+  const rect = container.getBoundingClientRect();
+  console.log("Container dimensions:", rect.width, "x", rect.height);
+  
+  if (rect.width > 0 && rect.height > 0) {
+    // Set canvas size
+    canvas.width = Math.floor(rect.width);
+    canvas.height = Math.floor(rect.height);
+    
+    console.log("Canvas sized to:", canvas.width, "x", canvas.height);
+    
+    // Initialize grid system
+    try {
+      if (window.gridSystem) {
+        console.log("Reinitializing existing grid system...");
+        window.gridSystem.setupCanvas();
+        window.gridSystem.render();
+      } else {
+        console.log("Creating new grid system...");
+        window.gridSystem = new StreamlinedGridSystem();
+      }
+      
+      console.log("✅ Grid system initialized successfully");
+      
+    } catch (error) {
+      console.error("❌ Error initializing grid system:", error);
+    }
+    
+  } else {
+    console.error("❌ Container has zero dimensions");
+    
+    // Retry after another delay
+    setTimeout(() => {
+      console.log("🔄 Retrying canvas initialization...");
+      initializeCanvasAfterAuth();
+    }, 500);
+  }
+}
+
+    function setupPasswordForm() {
+  const form = document.getElementById('passwordForm');
+  const input = document.getElementById('passwordInput');
+  const submit = document.getElementById('passwordSubmit');
+  const error = document.getElementById('passwordError');
+
+  console.log("Password form setup initiated...");
+  console.log("Expected password:", PASSWORD_CONFIG.correctPassword);
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    console.log("Form submitted");
+    
+    const enteredPassword = input.value.trim();
+    console.log("Entered password:", enteredPassword);
+    console.log("Correct password:", PASSWORD_CONFIG.correctPassword);
+    console.log("Passwords match:", enteredPassword === PASSWORD_CONFIG.correctPassword);
+    
+    // Clear previous error
+    error.classList.remove('show');
+    
+    // Add loading state
+    submit.classList.add('loading');
+    submit.textContent = 'Verifying...';
+    
+    // Simulate brief delay for better UX
+    setTimeout(() => {
+      if (enteredPassword === PASSWORD_CONFIG.correctPassword) {
+        console.log("✅ Password correct, authenticating...");
+        
+        // Store authentication
+        const authData = {
+          authenticated: true,
+          timestamp: Date.now(),
+          expires: PASSWORD_CONFIG.sessionExpiry ? 
+            Date.now() + PASSWORD_CONFIG.sessionExpiry : null
+        };
+        
+        sessionStorage.setItem(
+          PASSWORD_CONFIG.sessionKey, 
+          JSON.stringify(authData)
+        );
+        
+        console.log("Auth data stored:", authData);
+        
+        // Call the show main content function
+        showMainContentFixed();
+        
+      } else {
+        console.log("❌ Password incorrect");
+        
+        // Show error
+        error.classList.add('show');
+        input.value = '';
+        input.focus();
+        
+        // Remove loading state
+        submit.classList.remove('loading');
+        submit.textContent = 'Access Tool';
+      }
+    }, 800);
+  });
+
+  // Clear error when user starts typing
+  input.addEventListener('input', function() {
+    error.classList.remove('show');
+    if (submit.classList.contains('loading')) {
+      submit.classList.remove('loading');
+      submit.textContent = 'Access Tool';
+    }
+  });
+
+  console.log("Password form setup complete");
+}
+function showMainContentFixed() {
+  console.log("🔓 Authentication successful, showing main content...");
+  
+  const overlay = document.getElementById('passwordOverlay');
+  const content = document.getElementById('mainSiteContent');
+  
+  if (!overlay || !content) {
+    console.error("Overlay or content elements not found!");
+    return;
+  }
+  
+  // Hide overlay and show content
+  overlay.style.display = 'none';
+  content.classList.add('authenticated');
+  content.style.display = 'flex';
+  
+  console.log("Content should now be visible");
+  
+  // Initialize canvas after a short delay
+  setTimeout(() => {
+    initializeCanvasAfterAuth();
+  }, 100);
+}
 
 
+    // Optional: Add logout function
+    function logout() {
+      sessionStorage.removeItem(PASSWORD_CONFIG.sessionKey);
+      location.reload();
+    }
+
+    // Initialize password protection
+    document.addEventListener('DOMContentLoaded', function() {
+      if (!checkAuthentication()) {
+        setupPasswordForm();
+        // Focus password input
+        document.getElementById('passwordInput').focus();
+      }
+    });
+
+    // Optional: Add keyboard shortcut for logout (Ctrl+Shift+L)
+    document.addEventListener('keydown', function(e) {
+      if (e.ctrlKey && e.shiftKey && e.key === 'L') {
+        logout();
+      }
+    });
+  </script>
     <script>
       // ============================================================================
       // STREAMLINED GRID SYSTEM v3.0 - Reorganized and Enhanced
@@ -2959,58 +3435,87 @@ updateUIFromConfig() {
 
         // Enhanced keyboard shortcuts
         document.addEventListener("keydown", (e) => {
-          switch (e.key.toLowerCase()) {
-            case " ":
-              e.preventDefault();
-              const stillBtn = document.getElementById("stillMode");
-              const flowBtn = document.getElementById("flowMode");
-              if (stillBtn && flowBtn) {
-                if (gridSystem.config.getParam("isFlowing")) {
-                  stillBtn.click();
-                } else {
-                  flowBtn.click();
-                }
-              }
-              break;
+  // Check if password overlay is visible (user hasn't authenticated yet)
+  const passwordOverlay = document.getElementById("passwordOverlay");
+  const isPasswordVisible = passwordOverlay && passwordOverlay.style.display !== "none";
+  
+  // Check if user is typing in password input
+  const isPasswordInput = e.target && e.target.id === "passwordInput";
+  
+  // Skip shortcuts if password overlay is visible or user is typing password
+  if (isPasswordVisible || isPasswordInput) {
+    return; // Exit early, don't process shortcuts
+  }
+  
+  // Check if user is typing in any input field
+  if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") {
+    return; // Don't trigger shortcuts when typing in inputs
+  }
+  
+  // Your existing keyboard shortcuts (only run when authenticated and not in inputs)
+  switch (e.key.toLowerCase()) {
+    case " ":
+      e.preventDefault();
+      const stillBtn = document.getElementById("stillMode");
+      const flowBtn = document.getElementById("flowMode");
+      if (stillBtn && flowBtn) {
+        if (gridSystem.config.getParam("isFlowing")) {
+          stillBtn.click();
+        } else {
+          flowBtn.click();
+        }
+      }
+      break;
 
-            case "v":
-              e.preventDefault();
-              const gridBtn = document.getElementById("gridView");
-              const cleanBtn = document.getElementById("cleanView");
-              if (gridBtn && cleanBtn) {
-                if (gridSystem.config.getParam("showGrid")) {
-                  cleanBtn.click();
-                } else {
-                  gridBtn.click();
-                }
-              }
-              break;
+    case "v":
+      e.preventDefault();
+      const gridBtn = document.getElementById("gridView");
+      const cleanBtn = document.getElementById("cleanView");
+      if (gridBtn && cleanBtn) {
+        if (gridSystem.config.getParam("showGrid")) {
+          cleanBtn.click();
+        } else {
+          gridBtn.click();
+        }
+      }
+      break;
 
-            case "c":
-              e.preventDefault();
-              const toggleBtn = document.getElementById("toggleBtn");
-              if (toggleBtn) toggleBtn.click();
-              break;
+    case "c":
+      e.preventDefault();
+      const toggleBtn = document.getElementById("toggleBtn");
+      if (toggleBtn) toggleBtn.click();
+      break;
 
-            case "e":
-              e.preventDefault();
-              if (window.exportGrid) exportGrid();
-              break;
+    case "e":
+      e.preventDefault();
+      if (window.exportGrid) exportGrid();
+      break;
 
-            case "r":
-              e.preventDefault();
-              location.reload();
-              break;
+    case "r":
+      e.preventDefault();
+      location.reload();
+      break;
 
-            // Movement shortcuts
-            case "1": e.preventDefault(); document.querySelector('[data-movement="standard"]')?.click(); break;
-            case "2": e.preventDefault(); document.querySelector('[data-movement="wave"]')?.click(); break;
-            case "3": e.preventDefault(); document.querySelector('[data-movement="pulse"]')?.click(); break;
-            case "4": e.preventDefault(); document.querySelector('[data-movement="sweep"]')?.click(); break;
-            case "5": e.preventDefault(); document.querySelector('[data-movement="breath"]')?.click(); break;
-            case "6": e.preventDefault(); document.querySelector('[data-movement="offset"]')?.click(); break;
-          }
-        });
+    // Movement shortcuts
+    case "1": e.preventDefault(); document.querySelector('[data-movement="standard"]')?.click(); break;
+    case "2": e.preventDefault(); document.querySelector('[data-movement="wave"]')?.click(); break;
+    case "3": e.preventDefault(); document.querySelector('[data-movement="pulse"]')?.click(); break;
+    case "4": e.preventDefault(); document.querySelector('[data-movement="sweep"]')?.click(); break;
+    case "5": e.preventDefault(); document.querySelector('[data-movement="breath"]')?.click(); break;
+    case "6": e.preventDefault(); document.querySelector('[data-movement="offset"]')?.click(); break;
+    
+    // Preset shortcuts (only if authenticated)
+    case "q": e.preventDefault(); document.querySelector('[data-preset="minimal"]')?.click(); break;
+    case "w": e.preventDefault(); document.querySelector('[data-preset="organic"]')?.click(); break;
+    case "a": e.preventDefault(); document.querySelector('[data-preset="dynamic"]')?.click(); break;
+    case "s": e.preventDefault(); document.querySelector('[data-preset="architectural"]')?.click(); break;
+  }
+  
+  // Special logout shortcut (works even during password entry, but different combo)
+  if (e.ctrlKey && e.shiftKey && e.key === 'L') {
+    logout();
+  }
+});
 
         console.log("🌊 Streamlined Grid System v3.0 initialized");
         console.log("✨ Key improvements:");
