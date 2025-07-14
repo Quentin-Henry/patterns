@@ -747,6 +747,39 @@ input[type="range"]::-moz-range-thumb {
 .preset-card.active .preset-desc {
   color: rgba(255,255,255,0.8);
 }
+
+.logo-svg-container {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Adaptive colors */
+.logo-svg .logo-primary {
+  fill: var(--ui-accent, #0956ff);
+  transition: fill 0.3s ease;
+}
+
+.logo-svg .logo-secondary {
+  fill: var(--ui-text, #1a1a1a);
+  transition: fill 0.3s ease;
+}
+
+.logo-svg .logo-bg {
+  fill: var(--ui-sidebar, #ffffff);
+  stroke: var(--ui-border, #e8eaed);
+  stroke-width: 1;
+  transition: all 0.3s ease;
+}
     </style>
   </head>
   <body>
@@ -766,7 +799,27 @@ input[type="range"]::-moz-range-thumb {
 
       <div class="header">
         <div class="logo-area">
-          <div class="logo-placeholder">GM</div>
+            <div class="logo-svg-container">
+                <svg class="logo-svg" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                    <?xml version="1.0" encoding="UTF-8"?>
+                    <svg id="uuid-9d3a8586-e32d-4fe0-9ae0-4a10b9a3c96a" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1000 1000">
+                      <!-- Generator: Adobe Illustrator 29.4.0, SVG Export Plug-In . SVG Version: 2.1.0 Build 152)  -->
+                      <defs>
+                        <style>
+                          .st0 {
+                            fill: #0956ff;
+                          }
+                    
+                          .st1 {
+                            fill: #fff;
+                          }
+                        </style>
+                      </defs>
+                      <rect class="st0" width="1000" height="1000"/>
+                      <path class="st1" d="M780,358.3v235.8h-64.8v-226.3c0-15.7-10.3-25.8-25.6-25.8h-36.7v252.1h-64.8v-252.1h-62.2v252.1h-64.8v-308.4h246.3c45.2,0,72.6,28,72.6,72.6M411.9,285.6v320.9c0,37.8-16.8,107.8-127,107.8h-27.3v-56.9h27.3c43.3-.8,61.3-19.1,62.1-50.5v-12.9h-54.2c-43.1,0-72.6-29.1-72.6-72.6v-163.2c0-43.4,28.9-72.6,72.6-72.6h119.2ZM347,341.9h-36.5c-15.3,0-25.7,10.7-25.7,25.6v143.9c0,15.5,10.9,26.2,26.4,26.2h35.8v-195.8s0,0,0,0ZM461.1,714.4h318.9v-56.9h-318.9v56.9Z"/>
+                    </svg>
+                </svg>
+              </div>
           <div class="title-group">
             <div class="app-title">Pattern Tool</div>
             <div class="app-subtitle">Kinetic Design System</div>
@@ -1591,6 +1644,7 @@ input[type="range"]::-moz-range-thumb {
           if (this.palettes[paletteName]) {
             this.currentPalette = paletteName;
             this.updateCanvasBackground();
+            document.documentElement.setAttribute('data-theme', paletteName);
           }
         }
 
