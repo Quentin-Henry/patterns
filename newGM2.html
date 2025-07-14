@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Grid Architecture - Streamlined v3</title>
+    <title>Gm Pattern Tool v3</title>
     <style>
       * {
         margin: 0;
@@ -663,6 +663,90 @@ input[type="range"]::-moz-range-thumb {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
         }
+
+        .preset-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.preset-card {
+  background: var(--ui-sidebar, #ffffff);
+  border: 1px solid var(--ui-border, #e8eaed);
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.preset-card:hover {
+  background: var(--ui-hover, #f8f9fa);
+  border-color: var(--ui-accent, #0956ff);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(9, 86, 255, 0.1);
+}
+
+.preset-card.active {
+  background: var(--ui-active, #0956ff);
+  border-color: var(--ui-active, #0956ff);
+  color: white;
+  box-shadow: 0 4px 12px rgba(9, 86, 255, 0.3);
+}
+
+.preset-preview {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  background: rgba(0,0,0,0.02);
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.preset-card.active .preset-preview {
+  background: rgba(255,255,255,0.1);
+}
+
+.preview-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+
+.preview-bar {
+  border-radius: 1px;
+  transition: all 0.2s ease;
+}
+
+.preset-card.active .preview-bar {
+  background: rgba(255,255,255,0.8) !important;
+}
+
+.preset-info {
+  text-align: center;
+}
+
+.preset-name {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 2px;
+  color: inherit;
+}
+
+.preset-desc {
+  font-size: 10px;
+  color: var(--ui-text-secondary, #5f6368);
+  line-height: 1.3;
+}
+
+.preset-card.active .preset-desc {
+  color: rgba(255,255,255,0.8);
+}
     </style>
   </head>
   <body>
@@ -684,7 +768,7 @@ input[type="range"]::-moz-range-thumb {
         <div class="logo-area">
           <div class="logo-placeholder">GM</div>
           <div class="title-group">
-            <div class="app-title">Underline Pattern</div>
+            <div class="app-title">Pattern Tool</div>
             <div class="app-subtitle">Kinetic Design System</div>
           </div>
         </div>
@@ -711,6 +795,80 @@ input[type="range"]::-moz-range-thumb {
             Static Blueprint Mode
           </div>
         </div>
+
+        <div class="control-section">
+            <div class="section-title">
+              <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+                <line x1="7" y1="2" x2="7" y2="22"/>
+                <line x1="17" y1="2" x2="17" y2="22"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <line x1="2" y1="7" x2="7" y2="7"/>
+                <line x1="2" y1="17" x2="7" y2="17"/>
+                <line x1="17" y1="7" x2="22" y2="7"/>
+                <line x1="17" y1="17" x2="22" y2="17"/>
+              </svg>
+              Design Presets
+            </div>
+          
+            <div class="preset-grid">
+              <div class="preset-card" data-preset="minimal">
+                <div class="preset-preview">
+                  <div class="preview-bars">
+                    <div class="preview-bar" style="width: 60%; height: 4px; background: #e8e6e3;"></div>
+                    <div class="preview-bar" style="width: 80%; height: 4px; background: #e8e6e3;"></div>
+                    <div class="preview-bar" style="width: 70%; height: 4px; background: #e8e6e3;"></div>
+                  </div>
+                </div>
+                <div class="preset-info">
+                  <div class="preset-name">Golden</div>
+                  <div class="preset-desc">Static</div>
+                </div>
+              </div>
+          
+              <div class="preset-card" data-preset="organic">
+                <div class="preset-preview">
+                  <div class="preview-bars">
+                    <div class="preview-bar" style="width: 40%; height: 6px; background: #0956ff;"></div>
+                    <div class="preview-bar" style="width: 90%; height: 3px; background: #0956ff;"></div>
+                    <div class="preview-bar" style="width: 65%; height: 8px; background: #0956ff;"></div>
+                  </div>
+                </div>
+                <div class="preset-info">
+                  <div class="preset-name">Organic</div>
+                  <div class="preset-desc">Flow</div>
+                </div>
+              </div>
+          
+              <div class="preset-card" data-preset="dynamic">
+                <div class="preset-preview">
+                  <div class="preview-bars">
+                    <div class="preview-bar" style="width: 30%; height: 8px; background: #000000;"></div>
+                    <div class="preview-bar" style="width: 95%; height: 2px; background: #000000;"></div>
+                    <div class="preview-bar" style="width: 50%; height: 10px; background: #000000;"></div>
+                  </div>
+                </div>
+                <div class="preset-info">
+                  <div class="preset-name">Pulse</div>
+                  <div class="preset-desc">Flow</div>
+                </div>
+              </div>
+          
+              <div class="preset-card" data-preset="architectural">
+                <div class="preset-preview">
+                  <div class="preview-bars">
+                    <div class="preview-bar" style="width: 75%; height: 5px; background: #48505e;"></div>
+                    <div class="preview-bar" style="width: 60%; height: 5px; background: #48505e;"></div>
+                    <div class="preview-bar" style="width: 85%; height: 5px; background: #48505e;"></div>
+                  </div>
+                </div>
+                <div class="preset-info">
+                  <div class="preset-name">Cruise</div>
+                  <div class="preset-desc">Flow</div>
+                </div>
+              </div>
+            </div>
+          </div>
 
         <!-- ENGINEERING SPECS -->
         <div class="control-section">
@@ -1070,7 +1228,7 @@ input[type="range"]::-moz-range-thumb {
 
 
        // Video recording variables
-       let mediaRecorder = null;
+        let mediaRecorder = null;
         let recordedChunks = [];
         let recordingStartTime = 0;
         let recordingInterval = null;
@@ -1362,7 +1520,7 @@ input[type="range"]::-moz-range-thumb {
               shadowColor: "#8b7b6b",
               //ui colors
               uiBackground: "#f5f3f0",
-    uiSidebar: "#ebe8e4", 
+    uiSidebar: "#ffffff", 
     uiText: "#3c3935",
     uiTextSecondary: "#6b6460",
     uiAccent: "#8b7b6b",
@@ -1388,7 +1546,7 @@ input[type="range"]::-moz-range-thumb {
               shadowColor: "#1a1a1a",
               //ui colors
               uiBackground: "#201E1C",
-    uiSidebar: "#2d2b28", 
+    uiSidebar: "#000000", 
     uiText: "#e8e6e3",
     uiTextSecondary: "#a8a5a2",
     uiAccent: "#666666",
@@ -2041,6 +2199,7 @@ function setupEnhancedConnectorControls(gridSystem) {
           this.mathSequences = new MathSequences();
           this.connectorSystem = new ConnectorSystem(this.config);
           this.colorPalette.updateUITheme();
+          this.designPresets = new DesignPresets();
           // Animation state
           this.time = 0;
           this.animationFrame = null;
@@ -2084,7 +2243,31 @@ function setupEnhancedConnectorControls(gridSystem) {
           
           addEnhancedConnectorControls();
 setupEnhancedConnectorControls(this);
+this.setupPresetControls();
+
+
         }
+
+        setupPresetControls() {
+  const presetCards = document.querySelectorAll('.preset-card');
+  
+  presetCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const presetName = card.dataset.preset;
+      
+      // Update active state
+      presetCards.forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+      
+      // Apply the preset
+      this.applyPreset(presetName);
+      
+      // Optional: Show confirmation
+      const presetInfo = this.designPresets.getPreset(presetName);
+      console.log(`🎨 Applied: ${presetInfo.name} - ${presetInfo.description}`);
+    });
+  });
+}
 
         setupMovementControls() {
           const movementButtons = document.querySelectorAll("[data-movement]");
@@ -2510,7 +2693,188 @@ setupEnhancedConnectorControls(this);
           const statsText = `${flowState} ${viewMode}: ${columns}×${baseCells} | ${frameWidth}×${frameHeight} | ${ratioSystem} | ${paletteName}`;
           statsElement.textContent = statsText;
         }
+
+        applyPreset(presetName) {
+  const preset = this.designPresets.getPreset(presetName);
+  if (!preset) return;
+
+  console.log(`🎨 Applying preset: ${preset.name}`);
+
+  // Apply all configuration values
+  Object.entries(preset.config).forEach(([key, value]) => {
+    this.config.updateParam(key, value);
+  });
+
+  // Update all UI controls to reflect new values
+  this.updateUIFromConfig();
+  
+  // Update status and stats
+  this.updateStatusIndicator();
+  
+  console.log(`✅ Preset applied: ${preset.description}`);
+}
+
+updateUIFromConfig() {
+  // Update all range sliders
+  const rangeControls = [
+    "columns", "baseCells", "frameWidth", "frameHeight",
+    "ratioVariance", "connectorSize", "weightVariation",
+    "flowSpeed", "flowIntensity", "staticIntensity", "flowSmoothness"
+  ];
+
+  rangeControls.forEach(controlId => {
+    const slider = document.getElementById(controlId);
+    const display = document.getElementById(controlId + "Value");
+    const value = this.config.getParam(controlId);
+
+    if (slider && display && value !== undefined) {
+      slider.value = value;
+      display.textContent = value % 1 === 0 ? value : value.toFixed(1);
+    }
+  });
+
+  // Update button selections
+  this.updateButtonSelection("[data-ratio]", this.config.getParam("ratioSystem"));
+  this.updateButtonSelection("[data-connector]", this.config.getParam("connectorResponse"));
+  this.updateButtonSelection("[data-movement]", this.config.getParam("movementPattern"));
+  this.updateButtonSelection("[data-static]", this.config.getParam("staticPattern"));
+
+  // Update color palette
+  const paletteName = this.config.getParam("colorPalette");
+  if (paletteName) {
+    this.colorPalette.setPalette(paletteName);
+    document.querySelectorAll(".palette-option").forEach(option => {
+      option.classList.toggle("active", option.dataset.palette === paletteName);
+    });
+  }
+
+  // Update view mode buttons
+  const isFlowing = this.config.getParam("isFlowing");
+  const movementPattern = this.config.getParam("movementPattern");
+  
+  if (isFlowing && movementPattern !== "standard") {
+    document.getElementById("flowMode")?.classList.add("active");
+    document.getElementById("stillMode")?.classList.remove("active");
+    document.getElementById("flowControls").style.display = "block";
+    document.getElementById("staticControls").style.display = "none";
+  } else {
+    document.getElementById("stillMode")?.classList.add("active");
+    document.getElementById("flowMode")?.classList.remove("active");
+    document.getElementById("flowControls").style.display = "none";
+    document.getElementById("staticControls").style.display = "block";
+  }
+}
       }
+
+      class DesignPresets {
+  constructor() {
+    this.presets = {
+      minimal: {
+        name: "Minimal Architecture",
+        description: "Clean, simple grid with uniform proportions",
+        config: {
+          columns: 20,
+          baseCells: 30,
+          frameWidth: 1200,
+          frameHeight: 640,
+          ratioSystem: "uniform",
+          ratioVariance: 1.0,
+          connectorSize: 30,
+          weightVariation: 1.5,
+          connectorResponse: "fixed",
+          staticPattern: "golden",
+          staticIntensity: 1.0,
+          movementPattern: "standard",
+          isFlowing: false,
+          colorPalette: "warm"
+        }
+      },
+      
+      organic: {
+        name: "Organic Flow",
+        description: "Natural, flowing patterns with fibonacci ratios",
+        config: {
+          columns: 2,
+          baseCells: 9,
+          frameWidth: 1200,
+          frameHeight: 700,
+          ratioSystem: "uniform",
+          ratioVariance: 2.8,
+          connectorSize: 15,
+          weightVariation: 4.0,
+          connectorResponse: "rhythmic",
+          staticPattern: "fibonacci",
+          staticIntensity: 1.6,
+          movementPattern: "pulse",
+          isFlowing: true,
+          flowSpeed: 2.5,
+          flowIntensity: 1.4,
+          flowSmoothness: 1.8,
+          colorPalette: "ocean"
+        }
+      },
+      
+      dynamic: {
+        name: "Dynamic Pulse",
+        description: "High-energy animation with dramatic variations",
+        config: {
+          columns: 7,
+          baseCells: 8,
+          frameWidth: 1100,
+          frameHeight: 650,
+          ratioSystem: "golden",
+          ratioVariance: 3.5,
+          connectorSize: 20,
+          weightVariation: 5.5,
+          connectorResponse: "proportional",
+          staticPattern: "cascade",
+          staticIntensity: 1.8,
+          movementPattern: "pulse",
+          isFlowing: true,
+          flowSpeed: 1.8,
+          flowIntensity: 1.7,
+          flowSmoothness: 1.2,
+          colorPalette: "dark"
+        }
+      },
+      
+      architectural: {
+        name: "Architectural Study",
+        description: "Structured, professional grid for technical work",
+        config: {
+          columns: 5,
+          baseCells: 10,
+          frameWidth: 1200,
+          frameHeight: 800,
+          ratioSystem: "golden",
+          ratioVariance: 2.2,
+          connectorSize: 28,
+          weightVariation: 6,
+          connectorResponse: "rhythmic",
+          staticPattern: "mirror",
+          staticIntensity: 1.3,
+          movementPattern: "cruise",
+          isFlowing: true,
+          flowSpeed: 1.2,
+          flowIntensity: 1.0,
+          flowSmoothness: 2.0,
+          colorPalette: "navy"
+        }
+      }
+    };
+  }
+
+  getPreset(presetName) {
+    return this.presets[presetName];
+  }
+
+  getAllPresets() {
+    return Object.keys(this.presets).map(key => ({
+      key,
+      ...this.presets[key]
+    }));
+  }
+}
 
       // Global functions
       window.exportGrid = function () {
